@@ -1,0 +1,673 @@
+| Loading Grails 2.3.11
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/rdc-rmodules-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place rdc-rmodules plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-core-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-core plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-core-db-tests-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-core plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-core-db-tests-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-core-db-tests plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-gwas-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-gwas plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-java-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-java plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/biomart-domain-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place biomart-domain plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/search-domain-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place search-domain plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/folder-management-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place folder-management plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-legacy-db-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-legacy-db plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/dalliance-plugin-0.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place dalliance-plugin plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-mydas-0.1-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-mydas plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-rest-api-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-rest-api plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/blend4j-plugin-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place blend4j-plugin plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-metacore-plugin-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-metacore-plugin plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-core-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-core plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-core-db-tests-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-core plugin.
+| Warning Found a plugin directory at /Users/ruslan/.grails/2.3.11/projects/transmart/plugins/transmart-core-db-tests-1.2.2-SNAPSHOT that is a possible conflict and may prevent grails from using the in-place transmart-core-db-tests plugin.
+| Configuring classpath
+| Configuring classpath.
+| Environment set to development
+| Environment set to development.
+
+build - Dependencies for the build system only (total: 69)
++--- xalan:serializer:2.7.1
++--- org.grails:grails-bootstrap:2.3.11
+|    \--- org.slf4j:jcl-over-slf4j:1.7.5
+|    \--- org.slf4j:slf4j-api:1.7.5
+|    \--- jline:jline:2.12
+|    \--- org.apache.ant:ant:1.8.4
+|    \--- org.apache.ant:ant-launcher:1.8.4
+|    \--- org.apache.ant:ant-trax:1.7.1
+|    \--- net.java.dev.jna:jna:4.0.0
+|    \--- org.apache.ant:ant-junit:1.8.4
+|    \--- org.codehaus.gant:gant_groovy1.8:1.9.6
+|    \--- org.apache.ivy:ivy:2.3.0
+|    \--- org.fusesource.jansi:jansi:1.11
++--- org.grails:grails-scripts:2.3.11
+|    \--- org.spockframework:spock-core:0.7-groovy-2.0
+|         \--- org.hamcrest:hamcrest-core:1.3
+|    \--- junit:junit:4.11
++--- org.grails:grails-docs:2.3.11
+|    \--- org.xhtmlrenderer:core-renderer:R8
+|    \--- org.yaml:snakeyaml:1.8
+|    \--- org.grails:grails-gdoc-engine:1.0.1
+|    \--- com.lowagie:itext:2.0.8
+|         \--- bouncycastle:bcmail-jdk14:138
+|         \--- bouncycastle:bcprov-jdk14:138
+|    \--- commons-lang:commons-lang:2.6
++--- org.grails.plugins:rest-client-builder:2.0.1
+|    \--- org.grails:grails-datastore-rest-client:1.0.0.RELEASE
+|         \--- javax.servlet:javax.servlet-api:3.0.1
++--- org.apache.httpcomponents:httpclient:4.3.1
+|    \--- org.apache.httpcomponents:httpcore:4.3
+|    \--- commons-logging:commons-logging:1.1.3
+|    \--- commons-codec:commons-codec:1.6
++--- net.sf.opencsv:opencsv:2.3
++--- org.grails.plugins:tomcat:7.0.54
+|    \--- org.apache.tomcat:tomcat-catalina-ant:7.0.53
+|    \--- org.apache.tomcat.embed:tomcat-embed-jasper:7.0.53
+|         \--- org.apache.tomcat.embed:tomcat-embed-el:7.0.53
+|    \--- org.apache.tomcat.embed:tomcat-embed-logging-log4j:7.0.53
+|    \--- org.apache.tomcat.embed:tomcat-embed-websocket:7.0.53
+|    \--- org.eclipse.jdt.core.compiler:ecj:3.7.2
+|    \--- org.apache.tomcat.embed:tomcat-embed-core:7.0.53
++--- org.codehaus.groovy.modules.http-builder:http-builder:0.7.1
+|    \--- net.sf.json-lib:json-lib:2.3
+|         \--- commons-beanutils:commons-beanutils:1.8.0
+|         \--- commons-collections:commons-collections:3.2.1
+|         \--- net.sf.ezmorph:ezmorph:1.0.6
+|    \--- xml-resolver:xml-resolver:1.2
++--- org.grails.plugins:release:3.1.1
+|    \--- org.apache.maven:maven-ant-tasks:2.1.3
+|         \--- classworlds:classworlds:1.1-alpha-2
+|         \--- org.codehaus.plexus:plexus-container-default:1.0-alpha-9-stable-1
+|         \--- org.codehaus.plexus:plexus-utils:1.5.15
+|         \--- org.codehaus.plexus:plexus-interpolation:1.11
+|         \--- org.apache.maven:maven-artifact:2.2.1
+|         \--- org.apache.maven:maven-artifact-manager:2.2.1
+|              \--- org.apache.maven:maven-repository-metadata:2.2.1
+|              \--- backport-util-concurrent:backport-util-concurrent:3.1
+|         \--- org.apache.maven:maven-model:2.2.1
+|         \--- org.apache.maven:maven-project:2.2.1
+|              \--- org.apache.maven:maven-profile:2.2.1
+|              \--- org.apache.maven:maven-plugin-registry:2.2.1
+|         \--- org.apache.maven:maven-error-diagnostics:2.2.1
+|         \--- org.apache.maven:maven-settings:2.2.1
+|         \--- org.apache.maven.wagon:wagon-file:1.0-beta-6
+|         \--- org.apache.maven.wagon:wagon-http-lightweight:1.0-beta-6
+|              \--- org.apache.maven.wagon:wagon-http-shared:1.0-beta-6
+|                   \--- nekohtml:xercesMinimal:1.9.6.2
+|                   \--- nekohtml:nekohtml:1.9.6.2
+|         \--- org.apache.maven.wagon:wagon-provider-api:1.0-beta-6
+
+
+provided - Dependencies needed at development time, but not during deployment (total: 1)
++--- javax.servlet:javax.servlet-api:3.0.1
+
+
+compile - Dependencies placed on the classpath for compilation (total: 167)
++--- org.codehaus.groovy:groovy-all:2.1.9
++--- org.grails:grails-plugin-rest:2.3.11
+|    \--- org.slf4j:jcl-over-slf4j:1.7.5
+|    \--- org.slf4j:slf4j-api:1.7.5
+|    \--- org.grails:grails-plugin-datasource:2.3.11
+|         \--- org.springframework:spring-jdbc:3.2.9.RELEASE
+|         \--- org.apache.tomcat:tomcat-jdbc:7.0.50
+|              \--- org.apache.tomcat:tomcat-juli:7.0.50
+|         \--- org.springframework:spring-context:3.2.9.RELEASE
+|              \--- org.springframework:spring-aop:3.2.9.RELEASE
+|              \--- org.springframework:spring-expression:3.2.9.RELEASE
+|    \--- org.grails:grails-web:2.3.11
+|         \--- org.grails:grails-async:2.3.11
+|              \--- org.codehaus.gpars:gpars:1.1.0
+|                   \--- org.multiverse:multiverse-core:0.7.0
+|                   \--- org.codehaus.jsr166-mirror:jsr166y:1.7.0
+|         \--- org.springframework:spring-webmvc:3.2.9.RELEASE
+|         \--- org.grails:grails-databinding:2.3.11
+|         \--- commons-fileupload:commons-fileupload:1.3.1
+|         \--- opensymphony:sitemesh:2.4
+|         \--- org.springframework:spring-context-support:3.2.9.RELEASE
+|         \--- xpp3:xpp3_min:1.1.4c
+|         \--- commons-el:commons-el:1.0
+|         \--- commons-beanutils:commons-beanutils:1.8.3
+|         \--- org.objenesis:objenesis:1.4
+|         \--- org.grails:grails-spring:2.3.11
+|    \--- com.google.code.gson:gson:2.2.4
+|    \--- org.grails:grails-plugin-controllers:2.3.11
+|         \--- org.grails:grails-plugin-validation:2.3.11
++--- org.grails:grails-plugin-databinding:2.3.11
+|    \--- org.grails:grails-core:2.3.11
+|         \--- org.springframework:spring-web:3.2.9.RELEASE
+|         \--- aopalliance:aopalliance:1.0
+|         \--- asm:asm:3.3.1
+|         \--- commons-validator:commons-validator:1.3.1
+|         \--- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final
+|         \--- cglib:cglib:2.2.2
+|         \--- org.grails:grails-bootstrap:2.3.11
+|         \--- org.springframework:spring-core:3.2.9.RELEASE
+|         \--- org.springframework:spring-beans:3.2.9.RELEASE
++--- org.grails:grails-plugin-i18n:2.3.11
+|    \--- commons-lang:commons-lang:2.6
++--- org.grails:grails-plugin-filters:2.3.11
++--- org.grails:grails-plugin-gsp:2.3.11
+|    \--- org.grails:grails-logging:2.3.11
+|    \--- org.grails:grails-plugin-codecs:2.3.11
+|         \--- commons-codec:commons-codec:1.6
++--- org.grails:grails-plugin-log4j:2.3.11
+|    \--- org.slf4j:jul-to-slf4j:1.7.5
++--- org.grails:grails-plugin-services:2.3.11
+|    \--- org.springframework:spring-tx:3.2.9.RELEASE
++--- org.grails:grails-plugin-servlets:2.3.11
++--- org.grails:grails-plugin-url-mappings:2.3.11
+|    \--- commons-io:commons-io:2.2
+|    \--- com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.3.1
++--- org.transmartproject:transmart-core-api:1.2.2-20150610.094111-15
++--- antlr:antlr:2.7.7
++--- net.sf.opencsv:opencsv:2.3
++--- org.apache.lucene:lucene-core:2.4.0
++--- org.apache.lucene:lucene-demos:2.4.0
++--- org.apache.lucene:lucene-highlighter:2.4.0
++--- commons-net:commons-net:3.3
++--- org.apache.commons:commons-math:2.2
++--- org.rosuda:Rserve:1.7.3
+|    \--- org.rosuda:REngine:1.7.3
++--- net.sf.ehcache:ehcache:2.9.0
++--- javax.servlet:servlet-api:2.5
++--- axis:axis:1.4
+|    \--- org.apache.axis:axis-jaxrpc:1.4
+|    \--- org.apache.axis:axis-saaj:1.4
+|    \--- commons-logging:commons-logging:1.0.4
++--- org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RELEASE
+|    \--- org.opensaml:opensaml:2.6.1
+|         \--- org.opensaml:openws:1.5.1
+|              \--- org.opensaml:xmltooling:1.4.1
+|                   \--- org.bouncycastle:bcprov-jdk15:1.46
+|                   \--- ca.juliusdavies:not-yet-commons-ssl:0.3.9
+|              \--- org.apache.santuario:xmlsec:1.5.6
+|         \--- org.apache.velocity:velocity:1.7
+|         \--- org.owasp.esapi:esapi:2.0.1
+|         \--- joda-time:joda-time:2.2
+|    \--- xml-apis:xml-apis:1.4.01
++--- org.grails.plugins:hibernate:3.6.10.16
+|    \--- org.grails:grails-datastore-core:3.1.1.RELEASE
+|         \--- javax.transaction:jta:1.1
+|    \--- org.grails:grails-datastore-gorm:3.1.1.RELEASE
+|    \--- org.grails:grails-datastore-gorm-hibernate:3.1.1.RELEASE
+|         \--- org.grails:grails-datastore-gorm-hibernate-core:3.1.1.RELEASE
+|              \--- org.grails:grails-datastore-gorm-plugin-support:3.1.1.RELEASE
+|              \--- org.springframework:spring-orm:3.2.8.RELEASE
+|    \--- org.grails:grails-datastore-simple:3.1.1.RELEASE
+|    \--- commons-collections:commons-collections:3.2.1
+|    \--- org.hibernate:hibernate-core:3.6.10.Final
+|    \--- javax.validation:validation-api:1.0.0.GA
+|    \--- org.hibernate:hibernate-validator:4.1.0.Final
+|    \--- org.hibernate:hibernate-entitymanager:3.6.10.Final
+|    \--- org.hibernate:hibernate-commons-annotations:3.2.0.Final
++--- org.grails.plugins:cache-ehcache:1.0.5
+|    \--- org.grails.plugins:cache:1.1.8
++--- org.grails.plugins:quartz:1.0-RC2
+|    \--- org.quartz-scheduler:quartz:1.8.4
++--- org.grails.plugins:spring-security-ldap:2.0-RC2
+|    \--- org.springframework.security:spring-security-ldap:3.2.0.RC1
++--- org.grails.plugins:spring-security-core:2.0-RC5
+|    \--- org.springframework.security:spring-security-core:3.2.7.RELEASE
+|    \--- org.grails.plugins:webxml:1.4.1
++--- org.grails.plugins:spring-security-oauth2-provider:2.0-RC4
+|    \--- org.springframework.security.oauth:spring-security-oauth2:2.0.6.RELEASE
+|    \--- com.fasterxml.jackson.core:jackson-databind:2.4.1.3
+|         \--- com.fasterxml.jackson.core:jackson-annotations:2.4.0
+|         \--- com.fasterxml.jackson.core:jackson-core:2.4.1.1
++--- org.grails.plugins:codenarc:0.21
+|    \--- org.codenarc:CodeNarc:0.21
+|         \--- org.gmetrics:GMetrics:0.5
++--- org.grails.plugins:rdc-rmodules:1.2.2-20150708.101209-71
++--- org.grails.plugins:transmart-gwas:1.2.2-20150706.120152-93
++--- org.grails.plugins:transmart-java:1.2.2-20150608.184929-21
++--- org.grails.plugins:biomart-domain:1.2.2-20150608.185004-23
++--- org.grails.plugins:search-domain:1.2.2-20150608.185043-22
++--- org.grails.plugins:folder-management:1.2.2-20150706.120112-75
++--- org.grails.plugins:transmart-legacy-db:1.2.2-20150224.150955-6
++--- com.github.jmchilton.blend4j:blend4j:0.1.2
+|    \--- com.sun.jersey:jersey-client:1.17.1
+|    \--- com.sun.jersey:jersey-json:1.17.1
+|         \--- org.codehaus.jettison:jettison:1.1
+|         \--- com.sun.xml.bind:jaxb-impl:2.2.3-1
+|         \--- org.codehaus.jackson:jackson-xc:1.9.2
+|    \--- com.sun.jersey:jersey-core:1.17.1
+|    \--- com.sun.jersey.contribs:jersey-multipart:1.17.1
+|         \--- org.jvnet:mimepull:1.6
+|    \--- org.codehaus.jackson:jackson-core-asl:1.9.12
+|    \--- org.codehaus.jackson:jackson-mapper-asl:1.9.12
+|    \--- org.codehaus.jackson:jackson-jaxrs:1.9.12
++--- org.javassist:javassist:3.16.1-GA
++--- com.google.protobuf:protobuf-java:2.5.0
++--- org.grails.plugins:db-reverse-engineer:0.5
+|    \--- dom4j:dom4j:1.6.1
+|    \--- freemarker:freemarker:2.3.8
+|    \--- org.hibernate:hibernate-tools:3.6.0.CR1
+|    \--- org.hibernate:jtidy:r8-20060801
++--- org.hamcrest:hamcrest-library:1.3
++--- org.hamcrest:hamcrest-core:1.3
++--- uk.ac.ebi.mydas:mydas:1.7.0.hyve-20130809.111415-4
+|    \--- uk.ac.ebi.das:jdas:1.0.4
+|         \--- commons-httpclient:commons-httpclient:3.1
+|    \--- xpp3:xpp3:1.1.3.4.O
+|    \--- javax.xml.bind:jaxb-api:2.1
+|         \--- javax.xml.stream:stax-api:1.0-2
+|         \--- javax.activation:activation:1.1
++--- org.grails.plugins:resources:1.2.1
++--- org.codehaus.groovy.modules.http-builder:http-builder:0.7.1
+|    \--- net.sf.json-lib:json-lib:2.3
+|         \--- net.sf.ezmorph:ezmorph:1.0.6
+|    \--- net.sourceforge.nekohtml:nekohtml:1.9.16
+|    \--- xml-resolver:xml-resolver:1.2
++--- org.grails.plugins:mail:1.0
+|    \--- javax.mail:mail:1.4.3
++--- com.h2database:h2:1.3.176
++--- org.mapdb:mapdb:0.9.10
++--- com.google.guava:guava:16.0-dev-20140115-68c8348
++--- org.grails.plugins:sendfile:0.2
+
+
+runtime - Dependencies needed at runtime but not for compilation (total: 199)
++--- org.codehaus.groovy:groovy-all:2.1.9
++--- org.grails:grails-plugin-rest:2.3.11
+|    \--- org.slf4j:jcl-over-slf4j:1.7.5
+|    \--- org.slf4j:slf4j-api:1.7.5
+|    \--- org.grails:grails-plugin-datasource:2.3.11
+|         \--- org.springframework:spring-jdbc:3.2.9.RELEASE
+|         \--- org.apache.tomcat.embed:tomcat-embed-logging-log4j:7.0.50
+|         \--- org.apache.tomcat:tomcat-jdbc:7.0.50
+|              \--- org.apache.tomcat:tomcat-juli:7.0.50
+|         \--- org.springframework:spring-context:3.2.9.RELEASE
+|              \--- org.springframework:spring-aop:3.2.9.RELEASE
+|              \--- org.springframework:spring-expression:3.2.9.RELEASE
+|    \--- org.grails:grails-web:2.3.11
+|         \--- org.grails:grails-async:2.3.11
+|              \--- org.codehaus.gpars:gpars:1.1.0
+|                   \--- org.multiverse:multiverse-core:0.7.0
+|                   \--- org.codehaus.jsr166-mirror:jsr166y:1.7.0
+|         \--- taglibs:standard:1.1.2
+|         \--- org.aspectj:aspectjweaver:1.7.4
+|         \--- org.springframework:spring-webmvc:3.2.9.RELEASE
+|         \--- org.grails:grails-databinding:2.3.11
+|         \--- commons-fileupload:commons-fileupload:1.3.1
+|         \--- opensymphony:sitemesh:2.4
+|         \--- org.springframework:spring-aspects:3.2.9.RELEASE
+|         \--- org.aspectj:aspectjrt:1.7.4
+|         \--- org.springframework:spring-context-support:3.2.9.RELEASE
+|         \--- xpp3:xpp3_min:1.1.4c
+|         \--- javax.servlet:jstl:1.1.2
+|         \--- commons-el:commons-el:1.0
+|         \--- commons-beanutils:commons-beanutils:1.8.3
+|         \--- org.objenesis:objenesis:1.4
+|         \--- org.grails:grails-spring:2.3.11
+|    \--- com.google.code.gson:gson:2.2.4
+|    \--- org.grails:grails-plugin-controllers:2.3.11
+|         \--- org.grails:grails-plugin-validation:2.3.11
++--- org.grails:grails-plugin-databinding:2.3.11
+|    \--- org.grails:grails-core:2.3.11
+|         \--- xalan:serializer:2.7.1
+|         \--- oro:oro:2.0.8
+|         \--- org.springframework:spring-web:3.2.9.RELEASE
+|         \--- aopalliance:aopalliance:1.0
+|         \--- asm:asm:3.3.1
+|         \--- commons-validator:commons-validator:1.3.1
+|         \--- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final
+|         \--- cglib:cglib:2.2.2
+|         \--- org.grails:grails-bootstrap:2.3.11
+|         \--- org.springframework:spring-core:3.2.9.RELEASE
+|         \--- org.springframework:spring-beans:3.2.9.RELEASE
++--- org.grails:grails-plugin-i18n:2.3.11
+|    \--- commons-lang:commons-lang:2.6
++--- org.grails:grails-plugin-filters:2.3.11
++--- org.grails:grails-plugin-gsp:2.3.11
+|    \--- org.grails:grails-logging:2.3.11
+|    \--- org.grails:grails-plugin-codecs:2.3.11
+|         \--- commons-codec:commons-codec:1.6
++--- org.grails:grails-plugin-log4j:2.3.11
+|    \--- org.slf4j:jul-to-slf4j:1.7.5
++--- org.grails:grails-plugin-services:2.3.11
+|    \--- org.springframework:spring-tx:3.2.9.RELEASE
++--- org.grails:grails-plugin-servlets:2.3.11
++--- org.grails:grails-plugin-url-mappings:2.3.11
+|    \--- commons-io:commons-io:2.2
+|    \--- com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.3.1
++--- log4j:log4j:1.2.17
++--- org.grails:grails-resources:2.3.11
++--- com.oracle:ojdbc7:12.1.0.1
++--- org.transmartproject:transmart-core-api:1.2.2-20150610.094111-15
++--- antlr:antlr:2.7.7
++--- net.sf.opencsv:opencsv:2.3
++--- org.apache.lucene:lucene-core:2.4.0
++--- org.apache.lucene:lucene-demos:2.4.0
++--- org.apache.lucene:lucene-highlighter:2.4.0
++--- commons-net:commons-net:3.3
++--- org.apache.commons:commons-math:2.2
++--- org.rosuda:Rserve:1.7.3
+|    \--- org.rosuda:REngine:1.7.3
++--- net.sf.ehcache:ehcache:2.9.0
++--- javax.servlet:servlet-api:2.5
++--- axis:axis:1.4
+|    \--- org.apache.axis:axis-jaxrpc:1.4
+|    \--- org.apache.axis:axis-saaj:1.4
+|    \--- axis:axis-wsdl4j:1.5.1
+|    \--- commons-logging:commons-logging:1.0.4
+|    \--- commons-discovery:commons-discovery:0.2
++--- org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RELEASE
+|    \--- org.opensaml:opensaml:2.6.1
+|         \--- org.opensaml:openws:1.5.1
+|              \--- org.opensaml:xmltooling:1.4.1
+|                   \--- org.bouncycastle:bcprov-jdk15:1.46
+|                   \--- ca.juliusdavies:not-yet-commons-ssl:0.3.9
+|              \--- org.apache.santuario:xmlsec:1.5.6
+|         \--- org.apache.velocity:velocity:1.7
+|         \--- org.owasp.esapi:esapi:2.0.1
+|         \--- joda-time:joda-time:2.2
+|         \--- xalan:xalan:2.7.1
+|    \--- xml-apis:xml-apis:1.4.01
++--- org.springframework.security:spring-security-config:3.2.3.RELEASE
++--- org.springframework.security:spring-security-web:3.2.3.RELEASE
++--- org.grails.plugins:hibernate:3.6.10.16
+|    \--- org.hibernate:hibernate-ehcache:3.6.10.Final
+|    \--- net.sf.ehcache:ehcache-core:2.4.8
+|    \--- org.grails:grails-datastore-core:3.1.1.RELEASE
+|         \--- javax.transaction:jta:1.1
+|    \--- org.grails:grails-datastore-gorm:3.1.1.RELEASE
+|    \--- org.grails:grails-datastore-gorm-hibernate:3.1.1.RELEASE
+|         \--- org.grails:grails-datastore-gorm-hibernate-core:3.1.1.RELEASE
+|              \--- org.grails:grails-datastore-gorm-plugin-support:3.1.1.RELEASE
+|              \--- org.springframework:spring-orm:3.2.8.RELEASE
+|    \--- org.grails:grails-datastore-simple:3.1.1.RELEASE
+|    \--- commons-collections:commons-collections:3.2.1
+|    \--- org.hibernate:hibernate-core:3.6.10.Final
+|    \--- javax.validation:validation-api:1.0.0.GA
+|    \--- org.hibernate:hibernate-validator:4.1.0.Final
+|    \--- org.hibernate:hibernate-entitymanager:3.6.10.Final
+|    \--- org.hibernate:hibernate-commons-annotations:3.2.0.Final
++--- org.grails.plugins:cache-ehcache:1.0.5
+|    \--- org.grails.plugins:cache:1.1.8
++--- org.grails.plugins:quartz:1.0-RC2
+|    \--- org.quartz-scheduler:quartz:1.8.4
++--- org.grails.plugins:spring-security-ldap:2.0-RC2
+|    \--- org.springframework.security:spring-security-ldap:3.2.0.RC1
+|    \--- org.springframework.ldap:spring-ldap-core:1.3.2.RELEASE
++--- org.grails.plugins:spring-security-core:2.0-RC5
+|    \--- org.springframework.security:spring-security-core:3.2.7.RELEASE
+|    \--- org.grails.plugins:webxml:1.4.1
++--- org.grails.plugins:spring-security-oauth2-provider:2.0-RC4
+|    \--- org.springframework.security.oauth:spring-security-oauth2:2.0.6.RELEASE
+|    \--- com.fasterxml.jackson.core:jackson-databind:2.4.1.3
+|         \--- com.fasterxml.jackson.core:jackson-annotations:2.4.0
+|         \--- com.fasterxml.jackson.core:jackson-core:2.4.1.1
++--- org.grails.plugins:prototype:1.0
++--- org.grails.plugins:jquery:1.7.1
++--- org.grails.plugins:codenarc:0.21
+|    \--- org.codenarc:CodeNarc:0.21
+|         \--- org.gmetrics:GMetrics:0.5
++--- org.grails.plugins:rdc-rmodules:1.2.2-20150708.101209-71
++--- org.grails.plugins:transmart-core:1.2.2-20150706.115545-50
++--- org.grails.plugins:transmart-gwas:1.2.2-20150706.120152-93
++--- org.grails.plugins:transmart-java:1.2.2-20150608.184929-21
++--- org.grails.plugins:biomart-domain:1.2.2-20150608.185004-23
++--- org.grails.plugins:search-domain:1.2.2-20150608.185043-22
++--- org.grails.plugins:folder-management:1.2.2-20150706.120112-75
++--- org.grails.plugins:transmart-legacy-db:1.2.2-20150224.150955-6
++--- org.grails.plugins:dalliance-plugin:0.2-20150413.153105-23
++--- org.grails.plugins:transmart-mydas:0.1-20150115.132122-25
++--- org.grails.plugins:transmart-rest-api:1.2.2-20150720.141324-46
++--- org.grails.plugins:blend4j-plugin:1.2.2-20150724.145303-134
++--- org.grails.plugins:transmart-metacore-plugin:1.2.2-20150608.185947-6
++--- org.postgresql:postgresql:9.3-1100-jdbc41
++--- com.github.jmchilton.blend4j:blend4j:0.1.2
+|    \--- com.sun.jersey:jersey-client:1.17.1
+|    \--- com.sun.jersey:jersey-json:1.17.1
+|         \--- org.codehaus.jettison:jettison:1.1
+|         \--- com.sun.xml.bind:jaxb-impl:2.2.3-1
+|         \--- org.codehaus.jackson:jackson-xc:1.9.2
+|    \--- com.sun.jersey:jersey-core:1.17.1
+|    \--- com.sun.jersey.contribs:jersey-multipart:1.17.1
+|         \--- org.jvnet:mimepull:1.6
+|    \--- org.codehaus.jackson:jackson-core-asl:1.9.12
+|    \--- org.codehaus.jackson:jackson-mapper-asl:1.9.12
+|    \--- org.codehaus.jackson:jackson-jaxrs:1.9.12
++--- org.javassist:javassist:3.16.1-GA
++--- com.google.protobuf:protobuf-java:2.5.0
++--- com.oracle:ojdbc6:11.2.0.3.0
++--- org.grails.plugins:db-reverse-engineer:0.5
+|    \--- dom4j:dom4j:1.6.1
+|    \--- freemarker:freemarker:2.3.8
+|    \--- org.hibernate:hibernate-tools:3.6.0.CR1
+|    \--- org.hibernate:jtidy:r8-20060801
++--- org.hamcrest:hamcrest-library:1.3
++--- org.hamcrest:hamcrest-core:1.3
++--- uk.ac.ebi.mydas:mydas:1.7.0.hyve-20130809.111415-4
+|    \--- uk.ac.ebi.das:jdas:1.0.4
+|         \--- commons-httpclient:commons-httpclient:3.1
+|    \--- xpp3:xpp3:1.1.3.4.O
+|    \--- javax.xml.bind:jaxb-api:2.1
+|         \--- javax.xml.stream:stax-api:1.0-2
+|         \--- javax.activation:activation:1.1
++--- hsqldb:hsqldb:1.8.0.10
++--- org.grails.plugins:resources:1.2.1
++--- org.codehaus.groovy.modules.http-builder:http-builder:0.7.1
+|    \--- net.sf.json-lib:json-lib:2.3
+|         \--- net.sf.ezmorph:ezmorph:1.0.6
+|    \--- net.sourceforge.nekohtml:nekohtml:1.9.16
+|    \--- xml-resolver:xml-resolver:1.2
++--- org.grails.plugins:mail:1.0
+|    \--- javax.mail:mail:1.4.3
++--- com.h2database:h2:1.3.176
++--- org.mapdb:mapdb:0.9.10
++--- com.google.guava:guava:16.0-dev-20140115-68c8348
++--- org.gmock:gmock:0.8.3
++--- org.grails.plugins:sendfile:0.2
+
+
+test - Dependencies needed for test compilation and execution but not at runtime (total: 212)
++--- javax.servlet:javax.servlet-api:3.0.1
++--- org.codehaus.groovy:groovy-all:2.1.9
++--- org.grails:grails-plugin-rest:2.3.11
+|    \--- org.slf4j:jcl-over-slf4j:1.7.5
+|    \--- org.slf4j:slf4j-api:1.7.5
+|    \--- org.grails:grails-plugin-datasource:2.3.11
+|         \--- org.springframework:spring-jdbc:3.2.9.RELEASE
+|         \--- org.apache.tomcat.embed:tomcat-embed-logging-log4j:7.0.50
+|         \--- org.apache.tomcat:tomcat-jdbc:7.0.50
+|              \--- org.apache.tomcat:tomcat-juli:7.0.50
+|         \--- org.springframework:spring-context:3.2.9.RELEASE
+|              \--- org.springframework:spring-aop:3.2.9.RELEASE
+|              \--- org.springframework:spring-expression:3.2.9.RELEASE
+|    \--- org.grails:grails-web:2.3.11
+|         \--- org.grails:grails-async:2.3.11
+|              \--- org.codehaus.gpars:gpars:1.1.0
+|                   \--- org.multiverse:multiverse-core:0.7.0
+|                   \--- org.codehaus.jsr166-mirror:jsr166y:1.7.0
+|         \--- taglibs:standard:1.1.2
+|         \--- org.aspectj:aspectjweaver:1.7.4
+|         \--- org.springframework:spring-webmvc:3.2.9.RELEASE
+|         \--- org.grails:grails-databinding:2.3.11
+|         \--- commons-fileupload:commons-fileupload:1.3.1
+|         \--- opensymphony:sitemesh:2.4
+|         \--- org.springframework:spring-aspects:3.2.9.RELEASE
+|         \--- org.aspectj:aspectjrt:1.7.4
+|         \--- org.springframework:spring-context-support:3.2.9.RELEASE
+|         \--- xpp3:xpp3_min:1.1.4c
+|         \--- javax.servlet:jstl:1.1.2
+|         \--- commons-el:commons-el:1.0
+|         \--- commons-beanutils:commons-beanutils:1.8.3
+|         \--- org.objenesis:objenesis:1.4
+|         \--- org.grails:grails-spring:2.3.11
+|    \--- com.google.code.gson:gson:2.2.4
+|    \--- org.grails:grails-plugin-controllers:2.3.11
+|         \--- org.grails:grails-plugin-validation:2.3.11
++--- org.grails:grails-plugin-databinding:2.3.11
+|    \--- org.grails:grails-core:2.3.11
+|         \--- xalan:serializer:2.7.1
+|         \--- oro:oro:2.0.8
+|         \--- org.springframework:spring-web:3.2.9.RELEASE
+|         \--- aopalliance:aopalliance:1.0
+|         \--- asm:asm:3.3.1
+|         \--- commons-validator:commons-validator:1.3.1
+|         \--- org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final
+|         \--- cglib:cglib:2.2.2
+|         \--- org.grails:grails-bootstrap:2.3.11
+|         \--- org.springframework:spring-core:3.2.9.RELEASE
+|         \--- org.springframework:spring-beans:3.2.9.RELEASE
++--- org.grails:grails-plugin-i18n:2.3.11
+|    \--- commons-lang:commons-lang:2.6
++--- org.grails:grails-plugin-filters:2.3.11
++--- org.grails:grails-plugin-gsp:2.3.11
+|    \--- org.grails:grails-logging:2.3.11
+|    \--- org.grails:grails-plugin-codecs:2.3.11
+|         \--- commons-codec:commons-codec:1.6
++--- org.grails:grails-plugin-log4j:2.3.11
+|    \--- org.slf4j:jul-to-slf4j:1.7.5
++--- org.grails:grails-plugin-services:2.3.11
+|    \--- org.springframework:spring-tx:3.2.9.RELEASE
++--- org.grails:grails-plugin-servlets:2.3.11
++--- org.grails:grails-plugin-url-mappings:2.3.11
+|    \--- commons-io:commons-io:2.2
+|    \--- com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.3.1
++--- org.grails:grails-plugin-testing:2.3.11
+|    \--- org.grails:grails-plugin-domain-class:2.3.11
+|    \--- org.grails:grails-plugin-mimetypes:2.3.11
+|    \--- org.grails:grails-plugin-converters:2.3.11
+|    \--- org.grails:grails-test:2.3.11
+|    \--- org.springframework:spring-test:3.2.9.RELEASE
++--- org.spockframework:spock-core:0.7-groovy-2.0
++--- junit:junit:4.11
++--- log4j:log4j:1.2.17
++--- org.grails:grails-resources:2.3.11
++--- com.oracle:ojdbc7:12.1.0.1
++--- org.transmartproject:transmart-core-api:1.2.2-20150610.094111-15
++--- antlr:antlr:2.7.7
++--- net.sf.opencsv:opencsv:2.3
++--- org.apache.lucene:lucene-core:2.4.0
++--- org.apache.lucene:lucene-demos:2.4.0
++--- org.apache.lucene:lucene-highlighter:2.4.0
++--- commons-net:commons-net:3.3
++--- org.apache.commons:commons-math:2.2
++--- org.rosuda:Rserve:1.7.3
+|    \--- org.rosuda:REngine:1.7.3
++--- net.sf.ehcache:ehcache:2.9.0
++--- javax.servlet:servlet-api:2.5
++--- axis:axis:1.4
+|    \--- org.apache.axis:axis-jaxrpc:1.4
+|    \--- org.apache.axis:axis-saaj:1.4
+|    \--- axis:axis-wsdl4j:1.5.1
+|    \--- commons-logging:commons-logging:1.0.4
+|    \--- commons-discovery:commons-discovery:0.2
++--- org.springframework.security.extensions:spring-security-saml2-core:1.0.0.RELEASE
+|    \--- org.opensaml:opensaml:2.6.1
+|         \--- org.opensaml:openws:1.5.1
+|              \--- org.opensaml:xmltooling:1.4.1
+|                   \--- org.bouncycastle:bcprov-jdk15:1.46
+|                   \--- ca.juliusdavies:not-yet-commons-ssl:0.3.9
+|              \--- org.apache.santuario:xmlsec:1.5.6
+|         \--- org.apache.velocity:velocity:1.7
+|         \--- org.owasp.esapi:esapi:2.0.1
+|         \--- joda-time:joda-time:2.2
+|         \--- xalan:xalan:2.7.1
+|    \--- xml-apis:xml-apis:1.4.01
++--- org.springframework.security:spring-security-config:3.2.3.RELEASE
++--- org.springframework.security:spring-security-web:3.2.3.RELEASE
++--- org.grails.plugins:hibernate:3.6.10.16
+|    \--- org.hibernate:hibernate-ehcache:3.6.10.Final
+|    \--- net.sf.ehcache:ehcache-core:2.4.8
+|    \--- org.grails:grails-datastore-core:3.1.1.RELEASE
+|         \--- javax.transaction:jta:1.1
+|    \--- org.grails:grails-datastore-gorm:3.1.1.RELEASE
+|    \--- org.grails:grails-datastore-gorm-hibernate:3.1.1.RELEASE
+|         \--- org.grails:grails-datastore-gorm-hibernate-core:3.1.1.RELEASE
+|              \--- org.grails:grails-datastore-gorm-plugin-support:3.1.1.RELEASE
+|              \--- org.springframework:spring-orm:3.2.8.RELEASE
+|    \--- org.grails:grails-datastore-simple:3.1.1.RELEASE
+|    \--- commons-collections:commons-collections:3.2.1
+|    \--- org.hibernate:hibernate-core:3.6.10.Final
+|    \--- javax.validation:validation-api:1.0.0.GA
+|    \--- org.hibernate:hibernate-validator:4.1.0.Final
+|    \--- org.hibernate:hibernate-entitymanager:3.6.10.Final
+|    \--- org.hibernate:hibernate-commons-annotations:3.2.0.Final
++--- org.grails.plugins:cache-ehcache:1.0.5
+|    \--- org.grails.plugins:cache:1.1.8
++--- org.grails.plugins:quartz:1.0-RC2
+|    \--- org.quartz-scheduler:quartz:1.8.4
++--- org.grails.plugins:spring-security-ldap:2.0-RC2
+|    \--- org.springframework.security:spring-security-ldap:3.2.0.RC1
+|    \--- org.springframework.ldap:spring-ldap-core:1.3.2.RELEASE
++--- org.grails.plugins:spring-security-core:2.0-RC5
+|    \--- org.springframework.security:spring-security-core:3.2.7.RELEASE
+|    \--- org.grails.plugins:webxml:1.4.1
++--- org.grails.plugins:spring-security-oauth2-provider:2.0-RC4
+|    \--- org.springframework.security.oauth:spring-security-oauth2:2.0.6.RELEASE
+|    \--- com.fasterxml.jackson.core:jackson-databind:2.4.1.3
+|         \--- com.fasterxml.jackson.core:jackson-annotations:2.4.0
+|         \--- com.fasterxml.jackson.core:jackson-core:2.4.1.1
++--- org.grails.plugins:prototype:1.0
++--- org.grails.plugins:jquery:1.7.1
++--- org.grails.plugins:codenarc:0.21
+|    \--- org.codenarc:CodeNarc:0.21
+|         \--- org.gmetrics:GMetrics:0.5
++--- org.grails.plugins:rdc-rmodules:1.2.2-20150708.101209-71
++--- org.grails.plugins:transmart-core:1.2.2-20150706.115545-50
++--- org.grails.plugins:transmart-core-db-tests:1.2.2-20150706.115518-62
++--- org.grails.plugins:transmart-gwas:1.2.2-20150706.120152-93
++--- org.grails.plugins:transmart-java:1.2.2-20150608.184929-21
++--- org.grails.plugins:biomart-domain:1.2.2-20150608.185004-23
++--- org.grails.plugins:search-domain:1.2.2-20150608.185043-22
++--- org.grails.plugins:folder-management:1.2.2-20150706.120112-75
++--- org.grails.plugins:transmart-legacy-db:1.2.2-20150224.150955-6
++--- org.grails.plugins:dalliance-plugin:0.2-20150413.153105-23
++--- org.grails.plugins:transmart-mydas:0.1-20150115.132122-25
++--- org.grails.plugins:transmart-rest-api:1.2.2-20150720.141324-46
++--- org.grails.plugins:blend4j-plugin:1.2.2-20150724.145303-134
++--- org.grails.plugins:transmart-metacore-plugin:1.2.2-20150608.185947-6
++--- org.postgresql:postgresql:9.3-1100-jdbc41
++--- com.github.jmchilton.blend4j:blend4j:0.1.2
+|    \--- com.sun.jersey:jersey-client:1.17.1
+|    \--- com.sun.jersey:jersey-json:1.17.1
+|         \--- org.codehaus.jettison:jettison:1.1
+|         \--- com.sun.xml.bind:jaxb-impl:2.2.3-1
+|         \--- org.codehaus.jackson:jackson-xc:1.9.2
+|    \--- com.sun.jersey:jersey-core:1.17.1
+|    \--- com.sun.jersey.contribs:jersey-multipart:1.17.1
+|         \--- org.jvnet:mimepull:1.6
+|    \--- org.codehaus.jackson:jackson-core-asl:1.9.12
+|    \--- org.codehaus.jackson:jackson-mapper-asl:1.9.12
+|    \--- org.codehaus.jackson:jackson-jaxrs:1.9.12
++--- org.javassist:javassist:3.16.1-GA
++--- com.google.protobuf:protobuf-java:2.5.0
++--- com.oracle:ojdbc6:11.2.0.3.0
++--- org.grails.plugins:functional-test:2.0.0
+|    \--- net.sourceforge.htmlunit:htmlunit:2.10
+|         \--- org.apache.commons:commons-lang3:3.1
+|         \--- org.apache.httpcomponents:httpmime:4.2.1
+|         \--- xerces:xercesImpl:2.9.1
+|         \--- net.sourceforge.cssparser:cssparser:0.9.7
+|              \--- org.w3c.css:sac:1.3
+|    \--- net.sourceforge.htmlunit:htmlunit-core-js:2.10
+|    \--- org.apache.httpcomponents:httpclient:4.2.3
+|         \--- org.apache.httpcomponents:httpcore:4.2.2
++--- org.grails.plugins:db-reverse-engineer:0.5
+|    \--- dom4j:dom4j:1.6.1
+|    \--- freemarker:freemarker:2.3.8
+|    \--- org.hibernate:hibernate-tools:3.6.0.CR1
+|    \--- org.hibernate:jtidy:r8-20060801
++--- org.hamcrest:hamcrest-library:1.3
++--- org.hamcrest:hamcrest-core:1.3
++--- uk.ac.ebi.mydas:mydas:1.7.0.hyve-20130809.111415-4
+|    \--- uk.ac.ebi.das:jdas:1.0.4
+|         \--- commons-httpclient:commons-httpclient:3.1
+|    \--- xpp3:xpp3:1.1.3.4.O
+|    \--- javax.xml.bind:jaxb-api:2.1
+|         \--- javax.xml.stream:stax-api:1.0-2
+|         \--- javax.activation:activation:1.1
++--- hsqldb:hsqldb:1.8.0.10
++--- org.grails.plugins:resources:1.2.1
++--- org.codehaus.groovy.modules.http-builder:http-builder:0.7.1
+|    \--- net.sf.json-lib:json-lib:2.3
+|         \--- net.sf.ezmorph:ezmorph:1.0.6
+|    \--- net.sourceforge.nekohtml:nekohtml:1.9.16
+|    \--- xml-resolver:xml-resolver:1.2
++--- org.grails.plugins:mail:1.0
+|    \--- javax.mail:mail:1.4.3
++--- com.h2database:h2:1.3.176
++--- org.mapdb:mapdb:0.9.10
++--- com.google.guava:guava:16.0-dev-20140115-68c8348
++--- org.gmock:gmock:0.8.3
++--- org.grails.plugins:sendfile:0.2
+
