@@ -80,7 +80,8 @@ class DataExportController {
 
         def username = springSecurityService.getPrincipal().username
 
-        def msg = "User: ${username}, IP: ${request.remoteAddr}, Details: ${params}"
+        def msg = "${username} (IP: ${request.remoteAddr}) requested export of data. " +
+                "Http request parameters: ${params}"
         log.info(msg)
         new AccessLog(
                 username: username,
