@@ -213,6 +213,8 @@ class ChartService {
                     result.commons.testmessage = 'No χ² test calculated: these are the same subsets'
                 else if (result[1].conceptData.size() != result[2].conceptData.size())
                     result.commons.testmessage = 'No χ² test calculated: subsets have different sizes'
+                else if (result[1].conceptData.size() < 2)
+                    result.commons.testmessage = 'No χ² test calculated: insufficient dimension'
                 else {
 
                     def long [][] counts = [result[1].conceptData.values(), result[2].conceptData.values()]
