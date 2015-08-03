@@ -212,6 +212,10 @@
 .panelBoxListItem span.concept-text {
     padding-left: 5px;
     line-height: 18px;
+    width: 90%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .panelBoxListItem span.concept-text em {
