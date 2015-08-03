@@ -3,7 +3,6 @@ package com.recomdata.transmart.data.export
 import au.com.bytecode.opencsv.CSVWriter
 import com.google.common.collect.Iterators
 import com.google.common.collect.PeekingIterator
-import org.transmartproject.core.concept.ConceptFullName
 import org.transmartproject.core.concept.ConceptKey
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.clinical.ClinicalVariableColumn
@@ -46,17 +45,17 @@ class ClinicalExportService {
         QueryResult queryResult = queriesResourceService.getQueryResultFromId(resultInstanceId)
         List<ComposedVariable> variables
         if (conceptKeys) {
-            variables = getVariables(conceptKeys)
+            variables = createClinicalVariablesForConceptKeys(conceptKeys)
         } else {
             Set<Study> studies = getQueriedStudies(queryResult)
-            variables = getAllVariablesFor(studies)
+            variables = createClinicalVariablesForStudies(studies)
         }
 
         def files = []
 
         files << exportClinicalDataToFile(queryResult, variables, studyDir, jobName)
         if (exportMetaData) {
-            def terms = getOntologyTerms(variables)
+            def terms = getRelatedOntologyTerms(variables)
             def tagsFile = exportAllTags(terms, studyDir)
             if (tagsFile) {
                 files << tagsFile
@@ -136,15 +135,13 @@ class ClinicalExportService {
         }
     }
 
-    private Set<OntologyTerm> getOntologyTerms(List<ComposedVariable> variables) {
-        variables.collectMany { ComposedVariable variable ->
-            variable.innerClinicalVariables.collect {
-                conceptsResourceService.getByKey(it.key.toString())
-            }
+    private Set<OntologyTerm> getRelatedOntologyTerms(List<ComposedVariable> variables) {
+        variables.collect { ComposedVariable variable ->
+            conceptsResourceService.getByKey(variable.key.toString())
         } as Set
     }
 
-    private Collection<ComposedVariable> getVariables(Collection<String> conceptKeys) {
+    private Collection<ComposedVariable> createClinicalVariablesForConceptKeys(Collection<String> conceptKeys) {
         conceptKeys.collectAll {
             def conceptKey = new ConceptKey(it)
             clinicalDataResourceService.createClinicalVariable(
@@ -153,7 +150,7 @@ class ClinicalExportService {
         }
     }
 
-    private Collection<ComposedVariable> getAllVariablesFor(Set<Study> queriedStudies) {
+    private Collection<ComposedVariable> createClinicalVariablesForStudies(Set<Study> queriedStudies) {
         queriedStudies.collect { Study study ->
             clinicalDataResourceService.createClinicalVariable(
                     NORMALIZED_LEAFS_VARIABLE,
