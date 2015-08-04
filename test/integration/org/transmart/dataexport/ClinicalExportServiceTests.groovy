@@ -202,6 +202,10 @@ class ClinicalExportServiceTests {
         def metaTable = parseSepValTable(metaFile)
         assertThat metaTable, contains(
                 contains('Variable', 'Attribute', 'Description'),
+                contains('\\foo\\study2\\', '3 name 2', '3 description 2'),
+                contains('\\foo\\study2\\', '3 name 1', '3 description 1'),
+                contains('\\foo\\study2\\long path\\', '6 name 2', '6 description 2'),
+                contains('\\foo\\study2\\long path\\', '6 name 1', '6 description 1'),
                 contains('\\foo\\study2\\long path\\with%some$characters_\\', '7 name 2', '7 description 2'),
                 contains('\\foo\\study2\\long path\\with%some$characters_\\', '7 name 1', '7 description 1'),
                 contains('\\foo\\study2\\sex\\', '8 name 2', '8 description 2'),
