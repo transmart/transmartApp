@@ -51,6 +51,6 @@ class ActiveDirectoryLdapAuthenticationExtension {
                 return null;
             }
         }
-        return point.proceed([auth])
+        return point.proceed(auth)
     }
 }
