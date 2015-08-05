@@ -33,6 +33,7 @@ import org.jfree.data.general.PieDataset
 import org.jfree.data.statistics.*
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
+import org.transmartproject.core.users.User
 
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream
@@ -50,6 +51,8 @@ class ChartController {
 
     def i2b2HelperService
     def springSecurityService
+    def accessLogService
+    User currentUserBean
 
 
     def displayChart = {
@@ -664,8 +667,6 @@ class ChartController {
 
     def reportGridTableExport() {
 
-        def username = springSecurityService.principal.username
-
         ExportTableNew gridTable = request.session.gridtable
 
         def exportedVariablesCsv = gridTable.columnMap.entrySet()
@@ -674,8 +675,10 @@ class ChartController {
         def exportedSubjectsCsv = gridTable.rows
                 .collectAll { it['subject'] }.join(', ')
 
-        log.info( "${username} (IP: ${request.remoteAddr}) just exported variables (${exportedVariablesCsv})" +
-                " measurements for the folowing subject ids: ${exportedSubjectsCsv}")
+        accessLogService.report(currentUserBean, 'Grid View Data Export',
+                eventMessage: "User (IP: ${request.remoteAddr})just exported variables (${exportedVariablesCsv})" +
+                        " measurements for the folowing subject ids: ${exportedSubjectsCsv}",
+                requestURL: request.forwardURI)
     }
 
     def clearGrid = {
