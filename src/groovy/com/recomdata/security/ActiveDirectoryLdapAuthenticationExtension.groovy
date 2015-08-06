@@ -40,7 +40,7 @@ class ActiveDirectoryLdapAuthenticationExtension {
         return res
     }
 
-    @Around("execution(* org.springframework.security.ldap.authentication.ad.AbstractLdapAuthenticationProvider+.authenticate(..))")
+    @Around("execution(* org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider+.authenticate(..))")
     def authenticate(ProceedingJoinPoint point) {
         Authentication auth = point.args[0]
         if (point.target instanceof ActiveDirectoryLdapAuthenticationProvider) {
@@ -51,6 +51,6 @@ class ActiveDirectoryLdapAuthenticationExtension {
                 return null;
             }
         }
-        return point.proceed([auth])
+        return point.proceed(auth)
     }
 }
