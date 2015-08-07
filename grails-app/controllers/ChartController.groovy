@@ -679,6 +679,8 @@ class ChartController {
                 eventMessage: "User (IP: ${request.remoteAddr})just exported variables (${exportedVariablesCsv})" +
                         " measurements for the folowing subject ids: ${exportedSubjectsCsv}",
                 requestURL: request.forwardURI)
+
+        render 'ok'
     }
 
     def clearGrid = {
