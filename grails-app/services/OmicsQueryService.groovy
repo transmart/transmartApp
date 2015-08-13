@@ -16,64 +16,10 @@ class OmicsQueryService {
     def dataSource
     def i2b2HelperService
 
-    def getConceptDistributionDataForHighDimensionConcept(String concept_cd, omics_params) {
-        log.info("Getting concept distribution data for high dimension concept code: $concept_cd and omics params: $omics_params");
-        ArrayList<Double> values = new ArrayList<Double>();
-        Sql sql = new Sql(dataSource);
-        String sqlt = ""
-        if (omics_params.omics_value_type.equals('GENE_EXPRESSION')) {
-            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
-                                (
-                                    select * from deapp.de_subject_microarray_data
-                                    where probeset_id in
-                                    (
-                                        select probeset_id from deapp.de_mrna_annotation
-                                        where gene_symbol='$omics_params.omics_selector'
-                                    )"""
-        }
-        else if (omics_params.omics_value_type.equals("RNASEQ_RCNT")) {
-            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
-                                (
-                                    select * from deapp.de_subject_rnaseq_data
-                                    where region_id in
-                                    (
-                                        select region_id from deapp.de_chromosomal_region
-                                        where gene_symbol='$omics_params.omics_selector'
-                                    ) """
-        }
-        else {
-            log.error "Concept distribution not yet supported for omics_params: $omics_params"
-            return values
-        }
-
-        sqlt += """and assay_id in
-                                    (
-                                        select assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'
-                                    )
-                                ) a
-                                inner join
-                                (
-                                  select patient_id, assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'
-                                ) b
-                                on a.assay_id = b.assay_id
-                                group by b.patient_id"""
-        sql.eachRow(sqlt, { row ->
-            if (row.score != null) {
-                values.add(row.score);
-            }
-        })
-        return values;
-    }
-
-
-    def getConceptDistributionDataForHighDimensionConceptFromCode(String concept_cd, String result_instance_id, omics_params) {
+    def getHighDimensionalConceptData(String concept_cd, String result_instance_id, omics_params) {
         log.info("Getting concept distribution data for high dimension concept code: $concept_cd and result_instance_id: " +
                 "$result_instance_id and omics_params: $omics_params")
-        ArrayList<Double> values = new ArrayList<Double>();
-        if (result_instance_id.trim() == "") {
-            log.info("getConceptDistributionDataForHighDimensionConceptFromCode called with no result_istance_id")
-            return getConceptDistributionDataForHighDimensionConcept(concept_cd, omics_params)
-        }
+        List values = new ArrayList();
         String sqlt = ""
         Sql sql = new Sql(dataSource)
         if (omics_params.omics_value_type.equals('GENE_EXPRESSION')) {
@@ -101,29 +47,64 @@ class OmicsQueryService {
             return values
         }
         sqlt += """and assay_id in
-                                    (
-                                        select assay_id from deapp.de_subject_sample_mapping where patient_id in
-                                        (
-                                          select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id
-                                        )
-                                        and concept_code='$concept_cd'
-                                    )
-                                ) a
-                                inner join
-                                (
-                                  select patient_id, assay_id from deapp.de_subject_sample_mapping where patient_id in
+                                    ("""
+        if (result_instance_id == "") {
+            sqlt += "select assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'"
+        }
+        else {
+            sqlt += """select assay_id from deapp.de_subject_sample_mapping where patient_id in
+                        (
+                          select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id
+                        )
+                        and concept_code='$concept_cd'"""
+        }
+        sqlt += """)
+                ) a
+                inner join
+                ("""
+        if (result_instance_id == "") {
+            sqlt += "select patient_id, assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'"
+        }
+        else {
+            sqlt += """select patient_id, assay_id from deapp.de_subject_sample_mapping where patient_id in
                                   (
                                     select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id
                                   )
-                                  and concept_code='$concept_cd'
-                                ) b
-                                on a.assay_id = b.assay_id
-                                group by b.patient_id"""
+                                  and concept_code='$concept_cd'"""
+        }
+        sqlt += """) b
+                   on a.assay_id = b.assay_id
+                   group by b.patient_id"""
         sql.eachRow(sqlt, { row ->
+            // can't add the rows directly, as they are not available anymore after the resultset is closed
+            def thisrow = ["patient_id": row.patient_id, "score": row.score]
+            values.add(thisrow)
+        })
+        return values;
+    }
+
+    def getConceptDistributionDataForHighDimensionConcept(String concept_cd, omics_params) {
+        def rows = getHighDimensionalConceptData(concept_cd, "", omics_params)
+        ArrayList<Double> values = new ArrayList<Double>()
+
+        rows.each { row ->
             if (row.score != null) {
                 values.add(row.score);
             }
-        })
+        }
+        return values;
+    }
+
+
+    def getConceptDistributionDataForHighDimensionConceptFromCode(String concept_cd, String result_instance_id, omics_params) {
+        def rows = getHighDimensionalConceptData(concept_cd, result_instance_id, omics_params)
+        ArrayList<Double> values = new ArrayList<Double>()
+
+        rows.each { row ->
+            if (row.score != null) {
+                values.add(row.score);
+            }
+        }
         return values;
     }
 
@@ -270,83 +251,62 @@ class OmicsQueryService {
         checkQueryResultAccess result_instance_id
 
         if (omics_constraint.omics_value_type == 'GENE_EXPRESSION') {
-            if (! ['raw_intensity','log_intensity','zscore'].contains(omics_constraint.omics_projection_type.toLowerCase())) {
-                log.error "Unsupported projection type: " + omics_constraint.omics_projection_type
+            if (!['raw_intensity', 'log_intensity', 'zscore'].contains(omics_constraint.omics_projection_type.toLowerCase())) {
+                log.error "Unsupported projection type for Gene Expression: " + omics_constraint.omics_projection_type
                 return tablein
             }
-            def concept_key = omics_constraint.concept_key
-            def gene_symbol = omics_constraint.omics_selector
-            String columnid = (concept_key + gene_symbol).encodeAsSHA1()
-            String columnname = gene_symbol
-
-            /*add the column to the table if its not there*/
-            if (tablein.getColumn("subject") == null) {
-                tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
-            }
-            if (tablein.getColumn(columnid) == null) {
-                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number"));
-            }
-
-            /* get the data, we assume expression values will always be numeric */
-            String concept_cd = i2b2HelperService.getConceptCodeFromKey(concept_key);
-            Sql sql = new Sql(dataSource)
-
-            log.info("Getting concept distribution data for high dimension concept code:" + concept_cd + " and result_instance_id: " +
-                    result_instance_id + " and gene_symbol: " + gene_symbol)
-            ArrayList<Double> values = new ArrayList<Double>();
-
-            String sqlt = """select b.patient_id, avg($omics_constraint.omics_projection_type) as score from
-                                (
-                                select * from deapp.de_subject_microarray_data
-                                where probeset_id in
-                                (
-                                select probeset_id from deapp.de_mrna_annotation where gpl_id=
-                                (
-                                  select gpl_id from deapp.de_subject_sample_mapping where patient_id in
-                                  (select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id)
-                                  limit 1
-                                )
-                                and gene_symbol='$gene_symbol'
-                                )
-                                ) a
-
-                                inner join
-                                (
-                                  select patient_id, assay_id from deapp.de_subject_sample_mapping where patient_id in
-                                  (select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id)
-                                  and concept_code=
-                                  (
-                                    select concept_cd from i2b2demodata.concept_dimension where concept_path='$concept_key'
-                                  )
-                                ) b
-                                on a.assay_id = b.assay_id
-                                group by b.patient_id"""
-
-            sql.eachRow(sqlt, { row ->
-                /*If I already have this subject mark it in the subset column as belonging to both subsets*/
-                String subject = row.patient_id
-                Double value = row.score
-                if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                    tablein.getRow(subject).put(columnid, value.toString());
-                } else
-                /*fill the row*/ {
-                    ExportRowNew newrow = new ExportRowNew();
-                    newrow.put("subject", subject);
-                    newrow.put(columnid, value.toString());
-                    tablein.putRow(subject, newrow);
-                }
-            })
-
-            //pad all the empty values for this column
-            for (ExportRowNew row : tablein.getRows()) {
-                if (!row.containsColumn(columnid)) {
-                    row.put(columnid, "NULL");
-                }
+        }
+        else if (omics_constraint.omics_value_type == 'RNASEQ_RCNT') {
+            if (!['readcount', 'log_readcount'].contains(omics_constraint.omics_projection_type.toLowerCase())) {
+                log.error "Unsupported projection type for RNASeq: " + omics_constraint.omics_projection_type
+                return tablein
             }
         }
         else {
-            log.error "Omics data type " + omics_constraint.omics_value_type + " not yet implemented."
+            log.error "Omics data type " + omics_constraint.omics_value_type + " invalid or not yet implemented."
+            return tablein
         }
+        def concept_key = omics_constraint.concept_key
+        def gene_symbol = omics_constraint.omics_selector
+        String columnid = (concept_key + gene_symbol + omics_constraint.omics_projection_type).encodeAsSHA1()
+        String columnname = gene_symbol
+
+        /*add the column to the table if its not there*/
+        if (tablein.getColumn("subject") == null) {
+            tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
+        }
+        if (tablein.getColumn(columnid) == null) {
+            tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number"));
+        }
+
+        String concept_cd = i2b2HelperService.getConceptCodeFromKey(concept_key);
+
+        def values = getHighDimensionalConceptData(concept_cd, result_instance_id, omics_constraint)
+
+
+
+        values.each { row ->
+            /*If I already have this subject mark it in the subset column as belonging to both subsets*/
+            String subject = row.patient_id
+            Double value = row.score
+            if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+                tablein.getRow(subject).put(columnid, value.toString());
+            } else
+            /*fill the row*/ {
+                ExportRowNew newrow = new ExportRowNew();
+                newrow.put("subject", subject);
+                newrow.put(columnid, value.toString());
+                tablein.putRow(subject, newrow);
+            }
+        }
+
+        //pad all the empty values for this column
+        for (ExportRowNew row : tablein.getRows()) {
+            if (!row.containsColumn(columnid)) {
+                row.put(columnid, "NULL");
+            }
+        }
+
         return tablein;
     }
 

@@ -2,24 +2,37 @@ import org.apache.commons.math.stat.inference.TestUtils
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartRenderingInfo
 import org.jfree.chart.JFreeChart
+import org.jfree.chart.axis.CategoryAxis
+import org.jfree.chart.axis.NumberAxis
+import org.jfree.chart.axis.ValueAxis
 import org.jfree.chart.entity.StandardEntityCollection
+import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator
 import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.plot.XYPlot
 import org.jfree.chart.renderer.category.BarRenderer
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer
+import org.jfree.chart.renderer.category.CategoryItemRendererState
+import org.jfree.chart.renderer.category.ScatterRenderer
 import org.jfree.chart.renderer.category.StandardBarPainter
 import org.jfree.chart.renderer.xy.StandardXYBarPainter
 import org.jfree.chart.renderer.xy.XYBarRenderer
+import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.statistics.BoxAndWhiskerCalculator
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
+import org.jfree.data.statistics.DefaultMultiValueCategoryDataset
 import org.jfree.data.statistics.HistogramDataset
+import org.jfree.data.statistics.MultiValueCategoryDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jfree.ui.RectangleInsets
+import org.jfree.util.ShapeUtilities
 
 import java.awt.*
+import java.awt.geom.Ellipse2D
+import java.awt.geom.Rectangle2D
 
 /**
  * Created by Florian Guitton <f.guitton@imperial.ac.uk> on 17/12/2014.
@@ -127,7 +140,7 @@ class ChartService {
         omicsQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).findAll() {
             it.concept_key.indexOf("SECURITY") <= -1
         }.each {
-            concepts[it.concept_key] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
+            concepts[it.concept_key + it.omics_selector + " - " + it.omics_projection_type] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
         }
         concepts
     }
@@ -167,7 +180,7 @@ class ChartService {
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForValueConceptFromCode(result.commons.conceptCode, p.instance).toList()
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
-                conceptPlotHandle["Series $n"] = p.conceptStats
+                conceptPlotHandle["Subset $n"] = p.conceptStats
             }
 
             // Lets build our concept diagrams now that we have all the points in
@@ -214,12 +227,12 @@ class ChartService {
                 p.conceptData = omicsQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.omics_params).toList()
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
-                conceptPlotHandle["Series $n"] = p.conceptStats
+                conceptPlotHandle["Subset $n"] = p.conceptStats
             }
 
             // Lets build our concept diagrams now that we have all the points in
             result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize, xlabel: args.omics_params.omics_projection_type, ylabel: "")
-            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle, size: chartSize)
+            result.commons.conceptPlot = getSVGChart(type: 'boxplot-and-points', data: conceptHistogramHandle, boxplotdata: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible
             if (result[2].exists) {
@@ -300,6 +313,7 @@ class ChartService {
         // Retrieving function parameters
         def type = args.type ?: null
         def data = args.data ?: [:]
+        def boxplotdata = args.boxplotdata ?: [:]
         def size = args.size ?: [:]
         def title = args.title ?: ""
         def xlabel = args.xlabel ?: ""
@@ -384,6 +398,38 @@ class ChartService {
 
                 break;
 
+            case 'boxplot-and-points':
+
+                set = new DefaultBoxAndWhiskerCategoryDataset();
+                def set2 = new DefaultMultiValueCategoryDataset()
+                String rowname = new String("Row 0")
+                boxplotdata.each { k, v ->
+                    if (k) set.add(v, rowname, k)
+                }
+                data.each { k, v ->
+                    if (k) set2.add(v, rowname, k)
+                }
+
+                final CategoryAxis xAxis = new CategoryAxis(xlabel);
+                final NumberAxis yAxis = new NumberAxis(ylabel);
+                yAxis.setAutoRangeIncludesZero(false);
+                final BoxAndWhiskerRenderer boxAndWhiskerRenderer = new BoxAndWhiskerRenderer();
+                boxAndWhiskerRenderer.setBaseToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
+                final CategoryPlot catplot = new CategoryPlot(set, xAxis, yAxis, boxAndWhiskerRenderer);
+
+                // add the points
+                catplot.setDataset(1, set2);
+                def pointsWithJitterRenderer = createScatterWithJitterRenderer(20);
+                pointsWithJitterRenderer.setSeriesShape(0, createScatterShape(data));
+                catplot.setRenderer(1, pointsWithJitterRenderer);
+
+                chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, catplot, false);
+
+                ChartFactory.chartTheme.apply(chart);
+                chart.setChartParameters();
+                chart.plot.renderer.maximumBarWidth = 0.09;
+                break;
+
             case 'pie':
 
                 set = new DefaultPieDataset();
@@ -436,5 +482,104 @@ class ChartService {
         result = (result =~ /<!DOCTYPE(.*?)>/).replaceAll("")
         result = (result =~ /xmlns(.*?)="(.*?)"(\s*)/).replaceAll("")
         result
+    }
+
+    /**
+     * Create a Shape object for a circle with radius depending on the amount of data points
+     * @param data Map where the values are lists of data points
+     * @return the Shape object
+     */
+    def createScatterShape(data) {
+        int amount = 0;
+        data.each { k, v ->
+            amount = v.size() > amount ? v.size() : amount
+        }
+        // radius is at least 3 (at 300 or more data points) and at most 6 (0 data points)
+        double radius = Math.max(3.0, -0.01 * amount + 6.0);
+        return new Ellipse2D.Double(0.0,0.0,radius,radius);
+    }
+
+    /**
+     * Create a renderer for a scatterplot with jitter on the category axis
+     * @param jitter The amount of jitter. Category axis values for points will be perturbed by (Math.rand() - 0.5) * jitter
+     * @return a Renderer object
+     */
+    def createScatterWithJitterRenderer(double jitter) {
+        return new ScatterRenderer() {
+            @Override
+            public void drawItem(Graphics2D g2, CategoryItemRendererState state,
+                                 Rectangle2D dataArea, CategoryPlot plot, CategoryAxis domainAxis,
+                                 ValueAxis rangeAxis, CategoryDataset dataset, int row, int column,
+                                 int pass) {
+
+                // do nothing if item is not visible
+                if (!getItemVisible(row, column)) {
+                    return;
+                }
+                int visibleRow = state.getVisibleSeriesIndex(row);
+                if (visibleRow < 0) {
+                    return;
+                }
+                int visibleRowCount = state.getVisibleSeriesCount();
+
+                PlotOrientation orientation = plot.getOrientation();
+
+                MultiValueCategoryDataset d = (MultiValueCategoryDataset) dataset;
+                Comparable rowKey = d.getRowKey(row);
+                Comparable columnKey = d.getColumnKey(column);
+                java.util.List values = d.getValues(rowKey, columnKey);
+                if (values == null) {
+                    return;
+                }
+                int valueCount = values.size();
+                for (int i = 0; i < valueCount; i++) {
+                    // current data point...
+                    double x1;
+                    if (this.getUseSeriesOffset()) {
+                        x1 = domainAxis.getCategorySeriesMiddle(column,
+                                dataset.getColumnCount(), visibleRow, visibleRowCount,
+                                this.getItemMargin(), dataArea, plot.getDomainAxisEdge());
+                    }
+                    else {
+                        x1 = domainAxis.getCategoryMiddle(column, getColumnCount(),
+                                dataArea, plot.getDomainAxisEdge());
+                    }
+                    // add the jitter here
+                    x1 += (Math.random() - 0.5) * jitter;
+                    Number n = (Number) values.get(i);
+                    double value = n.doubleValue();
+                    double y1 = rangeAxis.valueToJava2D(value, dataArea,
+                            plot.getRangeAxisEdge());
+
+                    Shape shape = getItemShape(row, column);
+                    if (orientation == PlotOrientation.HORIZONTAL) {
+                        shape = ShapeUtilities.createTranslatedShape(shape, y1, x1);
+                    }
+                    else if (orientation == PlotOrientation.VERTICAL) {
+                        shape = ShapeUtilities.createTranslatedShape(shape, x1, y1);
+                    }
+                    if (getItemShapeFilled(row, column)) {
+                        if (this.getUseFillPaint()) {
+                            g2.setPaint(getItemFillPaint(row, column));
+                        }
+                        else {
+                            g2.setPaint(getItemPaint(row, column));
+                        }
+                        g2.fill(shape);
+                    }
+                    if (this.getDrawOutlines()) {
+                        if (this.getUseOutlinePaint()) {
+                            g2.setPaint(getItemOutlinePaint(row, column));
+                        }
+                        else {
+                            g2.setPaint(getItemPaint(row, column));
+                        }
+                        g2.setStroke(getItemOutlineStroke(row, column));
+                        g2.draw(shape);
+                    }
+                }
+
+            }
+        }
     }
 }

@@ -5136,10 +5136,12 @@ class I2b2HelperService {
                         String operator = "";
                         String constraints = "";
 
+                        pw.write(textContent);
+
                         if (valueinfo != null) {
                             operator = ((Node) xpath.evaluate("value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
                             constraints = ((Node) xpath.evaluate("value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
-                            pw.write(textContent + " " + operator + " " + constraints)
+                            pw.write(" " + operator + " " + constraints)
                         }
 
                         valueinfo = (Node) xpath.evaluate("constrain_by_omics_value", item, XPathConstants.NODE)
@@ -5154,7 +5156,7 @@ class I2b2HelperService {
                             constraints = ((Node) xpath.evaluate("omics_value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
                             selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
                             projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
-                            pw.write(textContent + selector)
+                            pw.write(selector)
                             if (value_type.equals("GENE_EXPRESSION") || value_type.equals("RNASEQ_RCNT")) {
                                 pw.write(" - " + projection + " " + operator + " ")
                                 if (operator.equals("BETWEEN")) {
