@@ -676,8 +676,8 @@ class ChartController {
                 .collectAll { it['subject'] }.join(', ')
 
         accessLogService.report(currentUserBean, 'Grid View Data Export',
-                eventMessage: "User (IP: ${request.remoteAddr})just exported variables (${exportedVariablesCsv})" +
-                        " measurements for the folowing subject ids: ${exportedSubjectsCsv}",
+                eventMessage: "User (IP: ${request.getHeaders('X-FORWARDED-FOR') ?: request.remoteAddr}) just exported" +
+                        " variables (${exportedVariablesCsv}) measurements for the folowing subject ids: ${exportedSubjectsCsv}",
                 requestURL: request.forwardURI)
 
         render 'ok'
