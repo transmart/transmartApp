@@ -10,7 +10,7 @@ class AuditLogFilters {
     def filters = {
         dataExport(controller: 'dataExport', action:'runDataExport') {
             after = { model ->
-                def ip = request.getHeaders('X-FORWARDED-FOR') ?: request.remoteAddr
+                def ip = request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr
                 accessLogService.report(currentUserBean, 'Data Export',
                     eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}",
                     requestURL: "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}")
