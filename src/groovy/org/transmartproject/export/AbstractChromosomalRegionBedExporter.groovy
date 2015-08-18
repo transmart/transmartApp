@@ -3,8 +3,8 @@ package org.transmartproject.export
 import groovy.util.logging.Log4j
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.chromoregion.RegionRow
 import org.transmartproject.core.dataquery.highdim.projections.Projection
-import org.transmartproject.db.dataquery.highdim.chromoregion.RegionRowImpl
 
 @Log4j
 abstract class AbstractChromosomalRegionBedExporter implements HighDimExporter {
@@ -43,7 +43,7 @@ abstract class AbstractChromosomalRegionBedExporter implements HighDimExporter {
         Map<Object, Writer> streamsPerSample = [:]
 
         try {
-            for (RegionRowImpl datarow : tabularResult) {
+            for (RegionRow datarow : tabularResult) {
                 if (isCancelled && isCancelled()) {
                     return
                 }
@@ -93,6 +93,6 @@ abstract class AbstractChromosomalRegionBedExporter implements HighDimExporter {
         log.info("Exporting data took ${System.currentTimeMillis() - startTime} ms")
     }
 
-    protected abstract calculateRow(RegionRowImpl datarow, AssayColumn assay)
+    protected abstract calculateRow(RegionRow datarow, AssayColumn assay)
 
 }
