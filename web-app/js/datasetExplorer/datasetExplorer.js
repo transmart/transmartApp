@@ -2811,6 +2811,7 @@ function storeLoaded(jsonStore, rows, paramsObject) {
                         click: function () {
                             window.location = 'data:application/vnd.ms-excel;base64,' +
                             Base64.encode(grid.getExcelXml());
+                            jQuery.post(pageInfo.basePath + '/chart/reportGridTableExport', paramsObject.params);
                         }
                     }
                 });

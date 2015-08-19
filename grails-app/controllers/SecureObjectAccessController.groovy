@@ -1,10 +1,12 @@
 import command.SecureObjectAccessCommand
 import org.transmart.searchapp.*
+import org.transmartproject.core.users.User
 
 class SecureObjectAccessController {
 
     def accessLogService
     def springSecurityService
+    User currentUserBean
 
 
     def index = {
@@ -126,7 +128,6 @@ class SecureObjectAccessController {
 
         SecureObjectAccessCommand fl ->
             def secureObjInstance
-            def user = springSecurityService.getPrincipal()
             def msg = new StringBuilder(" Grant new access permission: ");
 
             if (params.secureobjectid != null) {
@@ -145,10 +146,16 @@ class SecureObjectAccessController {
 
                 groupsToAdd.each { r ->
                     addAccess(r, secureObjInstance, access);
-                    msg.append("<User:").append(r.name).append(", Permission:").append(access.accessLevelName).append(", Study:").append(secureObjInstance.bioDataUniqueId).append(">");
+                    msg
+                            .append("<User:")
+                            .append(r.name)
+                            .append(", Permission:")
+                            .append(access.accessLevelName)
+                            .append(", Study:")
+                            .append(secureObjInstance.bioDataUniqueId).append(">")
                 };
             }
-            accessLogService.adminLog(user, msg.toString())
+            accessLogService.report(currentUserBean, 'ADMIN', eventMessage:  msg.toString())
             def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
             def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);
 
@@ -161,7 +168,6 @@ class SecureObjectAccessController {
 
         SecureObjectAccessCommand fl ->
             def secureObjInstance
-            def user = springSecurityService.getPrincipal()
             def msg = new StringBuilder(" Revoke access permission: ");
 
             if (params.secureobjectid != null) {
@@ -180,12 +186,17 @@ class SecureObjectAccessController {
 
                 groupsToRemove.each { r ->
                     r.delete(flush: true);
-                    msg.append("<User:").append(r.principal.name).append(", Permission:").append(r.accessLevel.accessLevelName).append(", Study:").append(r.secureObject.bioDataUniqueId).append(">");
+                    msg.append("<User:")
+                            .append(r.principal.name)
+                            .append(", Permission:")
+                            .append(r.accessLevel.accessLevelName)
+                            .append(", Study:")
+                            .append(r.secureObject.bioDataUniqueId).append(">")
 
                 };
             }
 
-            accessLogService.adminLog(user, msg.toString())
+            accessLogService.report(currentUserBean, 'ADMIN', eventMessage:  msg.toString())
 
             def secureObjectAccessList = getSecureObjAccessList(secureObjInstance, access);
             def userwithoutaccess = getPrincipalsWithoutAccess(secureObjInstance, access, searchtext);

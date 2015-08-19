@@ -17,22 +17,12 @@ public class ExportColumn {
     private String label;
     private String pattern;
     private String type;
-    private Integer width;
 
     public ExportColumn(String id, String label, String pattern, String type) {
         this.id = id;
         this.label = label;
         this.pattern = pattern;
         this.type = type;
-        this.width = -1;
-    }
-
-    public ExportColumn(String id, String label, String pattern, String type, Integer width) {
-        this.id = id;
-        this.label = label;
-        this.pattern = pattern;
-        this.type = type;
-        this.width = width;
     }
 
     public JSONObject toJSONObject() throws JSONException {
@@ -40,7 +30,6 @@ public class ExportColumn {
         json.put("name", id);
         json.put("header", label);
         json.put("sortable", true);
-        json.put("width", 50);
         return json;
     }
 
@@ -57,15 +46,6 @@ public class ExportColumn {
 
             json.put("sType", typeOut);
         }
-        /*
-        if (width > 0)
-		{
-			json.put("sWidth", width.toString() + "px");
-		}
-		else
-		{
-			json.put("sWidth", "100px");
-		}*/
 
         return json;
     }
@@ -102,11 +82,4 @@ public class ExportColumn {
         this.type = type;
     }
 
-    public Integer getWidth() {
-        return width;
-    }
-
-    public void setWidth(Integer height) {
-        this.width = width;
-    }
 }

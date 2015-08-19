@@ -1,29 +1,15 @@
 import com.recomdata.export.ExportTableNew
-import com.recomdata.statistics.StatHelper
 import grails.converters.JSON
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.ChartRenderingInfo
-import org.jfree.chart.ChartUtilities
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.axis.NumberAxis
-import org.jfree.chart.entity.StandardEntityCollection
-import org.jfree.chart.plot.PlotOrientation
-import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.renderer.xy.StandardXYBarPainter
-import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.chart.servlet.ChartDeleter
 import org.jfree.chart.servlet.ServletUtilities
-import org.jfree.data.statistics.HistogramDataset
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
+import org.transmartproject.core.users.User
 
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream
 import javax.servlet.http.HttpSession
-import java.awt.*
-import java.util.List
 
-//import edu.mit.wi.haploview.*;
 class ChartController {
 
     def index = {}
@@ -31,6 +17,8 @@ class ChartController {
     def i2b2HelperService
     def springSecurityService
     def chartService
+    def accessLogService
+    User currentUserBean
 
 
     def displayChart = {
@@ -257,6 +245,26 @@ class ChartController {
         pw.flush();
 
         request.getSession().setAttribute("gridtable", table);
+    }
+
+    def reportGridTableExport() {
+
+        ExportTableNew gridTable = request.session.gridtable
+
+        def exportedVariablesCsv = gridTable.columnMap.entrySet()
+                .collectAll { "${it.value.label} (id = ${it.key})" }.join(', ')
+
+        def trialsCsv = gridTable.rows
+                .collectAll { it['TRIAL'] }.unique().join(', ')
+
+        accessLogService.report(currentUserBean, 'Grid View Data Export',
+                eventMessage: "User (IP: ${request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr}) just exported" +
+                        " data for tieal(s) (${trialsCsv}): variables (${exportedVariablesCsv}) measurements for the" +
+                        " folowing patients set(s): " +
+                        [params.result_instance_id1, params.result_instance_id2].findAll().join(', '),
+                requestURL: request.forwardURI)
+
+        render 'ok'
     }
 
     def clearGrid = {
