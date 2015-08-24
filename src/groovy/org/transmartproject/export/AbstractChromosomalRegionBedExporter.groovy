@@ -52,6 +52,10 @@ abstract class AbstractChromosomalRegionBedExporter implements HighDimExporter {
                     if (isCancelled && isCancelled()) {
                         return
                     }
+                    if (!datarow[assay]) {
+                        log.warn("(datrow.id=${datarow.id}, assay.id=${assay.id}) No cell data.")
+                        continue
+                    }
                     List row = calculateRow(datarow, assay)
                     if (row[0..2].any { !it }) {
                         log.warn("(datrow.id=${datarow.id}, assay.id=${assay.id}) Row has not required values: ${row}. Skip it.")
