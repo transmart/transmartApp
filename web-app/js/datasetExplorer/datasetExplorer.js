@@ -2017,7 +2017,7 @@ function buildAnalysis(nodein) {
         return;
     }
 
-    if (node.attributes.iconCls == "hleaficon") {
+    if (node.attributes.oktousevalues == "H") {
         highDimensionalConceptDropped(node, false);
         return;
     }

@@ -330,7 +330,7 @@ function conceptRightClick(event)
 {
     var conceptnode=this.dom;
     selectConcept(conceptnode, true);
-    var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
+    var conceptid=this.dom.attributes.conceptid.nodeValue;
     var comment=this.dom.attributes.conceptcomment.nodeValue;
 
     if (!this.contextMenuConcepts) {
@@ -371,7 +371,7 @@ function conceptRightClick(event)
     o.hide();
     if(this.dom.attributes.oktousevalues.nodeValue=='Y')
         m.show();
-    else if (this.dom.attributes.setnodetype.nodeValue == 'hleaficon')
+    else if (this.dom.attributes.oktousevalues.nodeValue == 'H')
         o.show();
     return false;
 }
@@ -1802,6 +1802,7 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
     if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
         iconCls = 'hleaficon';
         tcls = 'hleafclass';
+        oktousevalues = 'H';
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';

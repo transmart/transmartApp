@@ -57,7 +57,7 @@ grails.project.dependency.resolution = {
     dependencies {
         // you can remove whichever you're not using
         runtime 'org.postgresql:postgresql:9.3-1100-jdbc4'
-        //runtime 'com.oracle:ojdbc7:12.1.0.1'
+        runtime 'com.oracle:ojdbc7:12.1.0.1'
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 

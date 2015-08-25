@@ -117,7 +117,7 @@ function setupQueryPanelClone(clone) {
                 STATE.Target = this.el;
                 showSetValueDialog();
             }
-            else if (data.node.attributes.iconCls == "hleaficon") {
+            else if (data.node.attributes.oktousevalues == "H") {
                 STATE.Dragging = true;
                 STATE.Target = this.el;
                 highDimensionalConceptDropped(data.node, true);
