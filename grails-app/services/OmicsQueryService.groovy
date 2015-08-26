@@ -5,6 +5,7 @@ import groovy.sql.Sql
 import org.transmartproject.core.dataquery.Patient
 import org.transmartproject.core.dataquery.assay.Assay
 import org.transmartproject.core.exceptions.InvalidRequestException
+import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
@@ -19,63 +20,60 @@ class OmicsQueryService {
     def getHighDimensionalConceptData(String concept_cd, String result_instance_id, omics_params) {
         log.info("Getting concept distribution data for high dimension concept code: $concept_cd and result_instance_id: " +
                 "$result_instance_id and omics_params: $omics_params")
-        List values = new ArrayList();
+        List values = new ArrayList()
+
+        String projection_type = omics_params.omics_projection_type
+        try {
+            ConstraintByOmicsValue.ProjectionType.valueOf(projection_type)
+        }
+        catch (IllegalArgumentException e) {
+            log.error("An unknown projection type was passed to getHighDimensionalConceptData: $projection_type")
+            return values
+        }
+
+        def sql_params = [omics_selector: omics_params.omics_selector,
+                          concept_cd: concept_cd,
+                          result_instance_id: result_instance_id]
         String sqlt = ""
+        String datatbl = "", annotationtbl = "", idcol = "", selectorcol = ""
         Sql sql = new Sql(dataSource)
         if (omics_params.omics_value_type.equals('GENE_EXPRESSION')) {
-            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
-                                (
-                                    select * from deapp.de_subject_microarray_data
-                                    where probeset_id in
-                                    (
-                                        select probeset_id from deapp.de_mrna_annotation
-                                        where gene_symbol='$omics_params.omics_selector'
-                                    )"""
+            datatbl = "deapp.de_subject_microarray_data"
+            annotationtbl = "deapp.de_mrna_annotation"
+            idcol = "probeset_id"
+            selectorcol = "gene_symbol"
         }
         else if (omics_params.omics_value_type.equals("RNASEQ_RCNT")) {
-            sqlt = """select b.patient_id, avg($omics_params.omics_projection_type) as score from
-                                (
-                                    select * from deapp.de_subject_rnaseq_data
-                                    where region_id in
-                                    (
-                                        select region_id from deapp.de_chromosomal_region
-                                        where gene_symbol='$omics_params.omics_selector'
-                                    )"""
+            datatbl = "deapp.de_subject_rnaseq_data"
+            annotationtbl = "deapp.de_chromosomal_region"
+            idcol = "region_id"
+            selectorcol = "gene_symbol"
         }
         else {
             log.error "Concept distribution not yet supported for omics_params: $omics_params"
             return values
         }
-        sqlt += """and assay_id in
-                                    ("""
-        if (result_instance_id == "") {
-            sqlt += "select assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'"
+
+        String assay_id_subquery = "SELECT assay_id FROM deapp.de_subject_sample_mapping WHERE concept_code=:concept_cd"
+        String ssm_subquery = "SELECT patient_id, assay_id FROM deapp.de_subject_sample_mapping WHERE concept_code=:concept_cd"
+        if (result_instance_id != "") {
+            assay_id_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
+            ssm_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
         }
-        else {
-            sqlt += """select assay_id from deapp.de_subject_sample_mapping where patient_id in
-                        (
-                          select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id
-                        )
-                        and concept_code='$concept_cd'"""
-        }
-        sqlt += """)
-                ) a
-                inner join
-                ("""
-        if (result_instance_id == "") {
-            sqlt += "select patient_id, assay_id from deapp.de_subject_sample_mapping where concept_code='$concept_cd'"
-        }
-        else {
-            sqlt += """select patient_id, assay_id from deapp.de_subject_sample_mapping where patient_id in
-                                  (
-                                    select patient_num from i2b2demodata.qt_patient_set_collection where result_instance_id=$result_instance_id
-                                  )
-                                  and concept_code='$concept_cd'"""
-        }
-        sqlt += """) b
-                   on a.assay_id = b.assay_id
-                   group by b.patient_id"""
-        sql.eachRow(sqlt, { row ->
+
+        sqlt = """SELECT b.patient_id, AVG($projection_type) AS score FROM
+                  (
+                    SELECT * FROM $datatbl WHERE $idcol IN (SELECT $idcol FROM $annotationtbl WHERE $selectorcol=:omics_selector)
+                    AND assay_id IN ($assay_id_subquery)
+                  ) a
+                  INNER JOIN
+                  (
+                    $ssm_subquery
+                  ) b
+                  ON a.assay_id = b.assay_id
+                  GROUP BY b.patient_id"""
+        log.info(sqlt)
+        sql.eachRow(sqlt, sql_params, { row ->
             // can't add the rows directly, as they are not available anymore after the resultset is closed
             def thisrow = ["patient_id": row.patient_id, "score": row.score]
             values.add(thisrow)
@@ -133,7 +131,7 @@ class OmicsQueryService {
      * @return
      */
     def getSearchResults(String searchString, String gplid) {
-        def markersqlt = "select  marker_type from deapp.de_gpl_info where lower(platform)=?"
+        def markersqlt = "SELECT  marker_type FROM deapp.de_gpl_info WHERE  LOWER(platform)=?"
         Sql markersql = new Sql(dataSource)
         List<String> markertypes = new ArrayList<String>()
         markersql.eachRow(markersqlt, [gplid.toLowerCase()], { row ->
@@ -152,32 +150,32 @@ class OmicsQueryService {
         String sqlt = ""
 
         if (markertype.equals("Gene Expression")) {
-            sqlt = """select distinct gene_symbol as result, gpl_id
-                      from deapp.de_mrna_annotation
-                      where lower(gpl_id)=?
-                      and lower(gene_symbol) like ?
-                      order by gene_symbol"""
+            sqlt = """SELECT DISTINCT gene_symbol AS result, gpl_id
+                      FROM deapp.de_mrna_annotation
+                      WHERE LOWER(gpl_id)=?
+                      AND LOWER(gene_symbol) LIKE ?
+                      ORDER BY gene_symbol"""
         }
         else if (markertype.equals("RNASEQ_RCNT") || markertype.equals("Chromosomal")) {
-            sqlt = """select distinct gene_symbol as result, gpl_id
-                      from deapp.de_chromosomal_region
-                      where lower(gpl_id)=?
-                      and lower(gene_symbol) like ?
-                      order by gene_symbol"""
+            sqlt = """SELECT DISTINCT gene_symbol AS result, gpl_id
+                      FROM deapp.de_chromosomal_region
+                      WHERE LOWER(gpl_id)=?
+                      AND LOWER(gene_symbol) LIKE ?
+                      ORDER BY gene_symbol"""
         }
         else if (markertype.equals("PROTEOMICS")) {
-            sqlt = """select distinct uniprot_id as result, gpl_id
-                      from deapp.de_protein_annotation
-                      where lower(gpl_id)=?
-                      and lower(uniprot_id) like ?
-                      order by uniprot_id"""
+            sqlt = """SELECT DISTINCT uniprot_id AS result, gpl_id
+                      FROM deapp.de_protein_annotation
+                      WHERE LOWER(gpl_id)=?
+                      AND LOWER(uniprot_id) LIKE ?
+                      ORDER BY uniprot_id"""
         }
         else if (markertype.equals("MIRNA_QPCR")) {
-            sqlt = """select distinct mirna_id as result, gpl_id
-                      from deapp.de_qpcr_mirna_annotation
-                      where lower(gpl_id)=?
-                      and lower(mirna_id) like ?
-                      order by mirna_id"""
+            sqlt = """SELECT DISTINCT mirna_id AS result, gpl_id
+                      FROM deapp.de_qpcr_mirna_annotation
+                      WHERE LOWER(gpl_id)=?
+                      AND LOWER(mirna_id) LIKE ?
+                      ORDER BY mirna_id"""
         }
         else {
             log.error "Unsupported platform type queried: $markertype"
@@ -279,11 +277,7 @@ class OmicsQueryService {
             tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number"));
         }
 
-        String concept_cd = i2b2HelperService.getConceptCodeFromKey(concept_key);
-
-        def values = getHighDimensionalConceptData(concept_cd, result_instance_id, omics_constraint)
-
-
+        def values = getHighDimensionalConceptData(i2b2HelperService.getConceptCodeFromKey(concept_key), result_instance_id, omics_constraint)
 
         values.each { row ->
             /*If I already have this subject mark it in the subset column as belonging to both subsets*/
@@ -313,13 +307,11 @@ class OmicsQueryService {
     // returns a map describing the platform for the given concept_key
     def getPlatform(String concept_key) {
         def concept_code = i2b2HelperService.getConceptCodeFromKey(concept_key)
-        String sqlt = """SELECT * FROM deapp.de_gpl_info WHERE platform = (
-                              SELECT gpl_id FROM deapp.de_subject_sample_mapping WHERE concept_code=$concept_code limit 1
-                          )"""
+        String sqlt = "SELECT * FROM deapp.de_gpl_info WHERE platform = (SELECT gpl_id FROM deapp.de_subject_sample_mapping WHERE concept_code=? LIMIT 1)"
         log.info sqlt
         def sql = new Sql(dataSource)
         def result = [:]
-        def row = sql.firstRow(sqlt)
+        def row = sql.firstRow(sqlt, concept_code)
         log.info row
         if (row) {
             // transform to a regular map

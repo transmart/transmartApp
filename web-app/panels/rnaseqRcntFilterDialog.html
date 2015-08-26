@@ -159,7 +159,7 @@
             value: jQuery("#rnaseq-rcnt-amount-min").val() + ":" + jQuery("#rnaseq-rcnt-amount-max").val(),
             operator: "BETWEEN",
             type: "RNASEQ_RCNT",
-            projection_type: "READCOUNT",
+            projection_type: jQuery("input[name=rnaseq-rcnt-projection]:checked").val(),
             platform: jQuery("#rnaseq-rcnt-filter-gplid").html(),
             hist_div: jQuery("#rnaseq-rcnt-filter-histogram"),
             window: rnaseqrcntfilterwin,
@@ -195,11 +195,37 @@
         jQuery( "#rnaseq-rcnt-amount-max" ).val(0);
         document.getElementById("rnaseq-rcnt-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
     }
+
+    function rnaseqRcntProjectionChanged() {
+        if (jQuery("#rnaseq-rcnt-searchbox").val() != "") {
+            // get relative position of handles
+            var slider = jQuery("#rnaseq-rcnt-range");
+            var low = slider.slider('values', 0);
+            var high = slider.slider('values', 1);
+            var min = slider.slider('option','min');
+            var max = slider.slider('option','max');
+
+            rnaseqRcntSliderLowHandleRatio = (low - min) / (max - min);
+            rnaseqRcntSliderHighHandleRatio = (high - min) / (max - min);
+            showConceptDistributionHistogramForOmicsFilterComplete(null, getRnaseqRcntFilterParams());
+            showConceptDistributionHistogramForOmicsFilter(getRnaseqRcntFilterParams());
+        }
+    }
 </script>
 <div style="..." id="rnaseq-rcnt-filter-main">
+
+    <table style="-webkit-border-horizontal-spacing: 10px">
+        <tr><td>Platform: <span id="rnaseq-rcnt-filter-gplid"></span></td>
+            <td rowspan="2">
+                <div><input type="radio" name="rnaseq-rcnt-projection" value="NORMALIZED_READCOUNT" onclick="rnaseqRcntProjectionChanged()" checked>Normalized</div>
+                <div><input type="radio" name="rnaseq-rcnt-projection" value="LOG_NORMALIZED_READCOUNT" onclick="rnaseqRcntProjectionChanged()">Log Normalized</div>
+                <div><input type="radio" name="rnaseq-rcnt-projection" value="ZSCORE" onclick="rnaseqRcntProjectionChanged()">Z-Score</div>
+            </td></tr>
+        <tr><td><label for="rnaseq-rcnt-searchbox">Gene: </label><input type="text" id="rnaseq-rcnt-searchbox" size="5"/></td></tr>
+
+    </table>
+
     <table>
-        <tr><td colspan="3">Platform: <span id="rnaseq-rcnt-filter-gplid"></span></td></tr>
-        <tr><td colspan="3"><label for="rnaseq-rcnt-searchbox">Gene: </label><input type="text" id="rnaseq-rcnt-searchbox" size="5"/></td></tr>
         <tr id="rnaseq-rcnt-slider-row1"><td colspan="3">Number of subjects selected: <span id="rnaseq-rcnt-filter-subjectcount">0</span></td></tr>
         <tr id="rnaseq-rcnt-slider-row2"><td colspan="3">Select the range for expression values:</td></tr>
         <tr id="rnaseq-rcnt-slider-row3" style="display: none;"><td><input type="text" size="2" id="rnaseq-rcnt-amount-min" style="color:#548cff; font-weight:bold;"></td>

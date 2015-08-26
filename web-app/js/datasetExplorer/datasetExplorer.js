@@ -1054,16 +1054,6 @@ Ext.onReady(function () {
             }
         );
 
-        rnaseqrcntfilterchartsPanel1 = new Ext.Panel(
-            {
-                id: 'rnaseqrcntfilterchartsPanel1',
-                region: 'east',
-                width: 250,
-                height: 175,
-                split: false
-            }
-        );
-
         if (!this.rnaseqrcntfilterwin) {
             rnaseqrcntfilterwin = new Ext.Window(
                 {
@@ -1096,6 +1086,58 @@ Ext.onReady(function () {
                 });
             rnaseqrcntfilterwin.show();
             rnaseqrcntfilterwin.hide();
+        }
+
+        // load gene selection dialog (shown when dragging an omics node to the summary stats panel)
+        rnaseqRcntSelectionPanel = new Ext.Panel(
+            {
+                id: 'rnaseqRcntSelectionPanel',
+                region: 'center',
+                height: 80,
+                width: 250,
+                split: false,
+                autoLoad: {
+                    url: pageInfo.basePath + '/panels/selectRnaseqRcntDialog.html',
+                    scripts: true,
+                    nocache: true,
+                    discardUrl: true,
+                    method: 'POST'
+                }
+            }
+        );
+
+        if (!this.rnaseqRcntSelectionwin) {
+            rnaseqRcntSelectionwin = new Ext.Window(
+                {
+                    id: 'rnaseqRcntSelectionWindow',
+                    title: 'Select Gene',
+                    layout: 'border',
+                    width: 270,
+                    height: 120,
+                    closable: false,
+                    plain: true,
+                    modal: true,
+                    border: false,
+                    items: [rnaseqRcntSelectionPanel],
+                    buttons: [
+                        {
+                            text: 'OK',
+                            handler: function () {
+                                applyRnaseqRcntSelectionDialog(true);
+                            }
+                        }
+                        ,
+                        {
+                            text: 'Cancel',
+                            handler: function () {
+                                applyRnaseqRcntSelectionDialog(false);
+                            }
+                        }
+                    ],
+                    tools: []
+                });
+            rnaseqRcntSelectionwin.show();
+            rnaseqRcntSelectionwin.hide();
         }
 
 

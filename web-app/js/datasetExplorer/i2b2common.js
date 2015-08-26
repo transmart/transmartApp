@@ -339,7 +339,7 @@ function conceptRightClick(event)
         items: [{
             text: 'Delete', handler: function() {
                 selectedDiv.removeChild(selectedConcept);
-                removeUselessPanels()
+                removeUselessPanels();
                 invalidateSubset(getSubsetFromPanel(selectedDiv));
             }
         },{

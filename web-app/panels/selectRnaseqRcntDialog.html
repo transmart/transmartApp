@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Gene Selection Dialog</title>
+    <style>
+        .ui-autocomplete {
+            max-height: 100px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+            /* add padding to account for vertical scrollbar */
+            padding-right: 20px;
+        }
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+
+    jQuery(document).ready(function() {
+                addRnaseqRcntSelectionSearchAutocomplete();
+            }
+    );
+
+    function addRnaseqRcntSelectionSearchAutocomplete() {
+
+        jQuery("#rnaseq-rcnt-selection-searchbox").css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
+        jQuery("#rnaseq-rcnt-selection-searchbox").autocomplete({
+            position:{my:"left top",at:"left bottom",collision:"none"},
+            appendTo:"#rnaseqRcntSelectionWindow",
+            source: '', // showOmicsFilterDialog() will set this
+            minLength:1,
+            select: function(event, ui) {
+                jQuery("rnaseq-rcnt-selection-searchbox").val(ui.item.label);
+            },
+            focus: function(event, ui) {
+                jQuery("rnaseq-rcnt-selection-searchbox").val(ui.item.label);
+            },
+            close: function(event, ui) {
+                if (ui.item) {
+                    jQuery("rnaseq-rcnt-selection-searchbox").val(ui.item.label);
+                }
+            }
+        }).data("uiAutocomplete")._renderItem = function( ul, item ) {
+            var resulta = '<a><span class="category-gene"><b>' + item.label + '</b>';
+            if (item.synonyms != null) {
+                resulta += (item.synonyms + '</a>');
+            }
+            else {
+                resulta += '</a>';
+            }
+
+            return jQuery('<li></li>')
+                    .data("item.autocomplete", item )
+                    .append(resulta)
+                    .appendTo(ul);
+        };
+    }
+
+</script>
+<div id="rnaseq-rcnt-selection-main">
+    <table style="-webkit-border-horizontal-spacing: 10px">
+        <tr><td>Select a gene for analysis</td><td rowspan="2">
+            <div><input type="radio" name="rnaseq-rcnt-selection-projection" value="NORMALIZED_READCOUNT" checked>Normalized</div>
+            <div><input type="radio" name="rnaseq-rcnt-selection-projection" value="LOG_NORMALIZED_READCOUNT">Log Normalized</div>
+            <div><input type="radio" name="rnaseq-rcnt-selection-projection" value="ZSCORE">Z-Score</div></td> </tr>
+        <tr><td><label for="rnaseq-rcnt-selection-searchbox">Gene: </label><input type="text" id="rnaseq-rcnt-selection-searchbox" size="4"/></td></tr>
+    </table>
+    <input type="hidden" id="rnaseq-rcnt-selection-concept-key"/>
+</div>
+</body>
+</html>

@@ -54,7 +54,7 @@ function showOmicsSelectionDialog(result, request) {
                 showGeneSelectionDialog(platform);
                 break;
             case 'RNASEQ_RCNT':
-                // showRnaseqRcntSelectionDialog(platform);
+                showRnaseqRcntSelectionDialog(platform);
                 break;
             default:
                 alert("Support for " + platform.marker_type + " is not yet implemented!");
@@ -247,6 +247,18 @@ function showGeneSelectionDialog(platform) {
     geneselectionwin.show(viewport);
 }
 
+function showRnaseqRcntSelectionDialog(platform) {
+    jQuery("#rnaseq-rcnt-selection-searchbox").val("");
+    jQuery("#rnaseq-rcnt-selection-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.platform));
+    jQuery("#rnaseq-rcnt-selection-concept-key").val(platform.concept_key);
+
+    var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5;
+    var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2;
+
+    rnaseqRcntSelectionwin.setPosition(left, top);
+    rnaseqRcntSelectionwin.show(viewport);
+}
+
 function applyGeneSelectionDialog(validation) {
 
     var gene_symbol = document.getElementById("gene-selection-searchbox").value;
@@ -292,6 +304,53 @@ function applyGeneSelectionDialog(validation) {
     }
 
     geneselectionwin.hide();
+}
+
+function applyRnaseqRcntSelectionDialog(validation) {
+
+    var gene_symbol = document.getElementById("rnaseq-rcnt-selection-searchbox").value;
+    var concept_key = document.getElementById("rnaseq-rcnt-selection-concept-key").value;
+    if (validation && gene_symbol == "") {
+        alert("You must choose a gene.");
+        return;
+    }
+
+    if (validation) {
+        resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+        var omics_params = {omics_selector: gene_symbol,
+            omics_value_type: 'RNASEQ_RCNT',
+            omics_projection_type: jQuery("input[name=rnaseq-rcnt-selection-projection]:checked").val()};
+        Ext.Ajax.request(
+            {
+                url : pageInfo.basePath+"/chart/analysis",
+                method : 'POST',
+                timeout: '600000',
+                params :  Ext.urlEncode(
+                    {
+                        charttype : "analysis",
+                        concept_key : concept_key,
+                        omics_selector : omics_params.omics_selector,
+                        omics_value_type: omics_params.omics_value_type,
+                        omics_projection_type: omics_params.omics_projection_type,
+                        result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                        result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                    }
+                ), // or a URL encoded string
+                success: function (result, request) {
+                    buildAnalysisComplete(result);
+                    resultsTabPanel.body.unmask();
+                },
+                failure: function (result, request) {
+                    alert("A problem arose while trying to retrieve the results")
+                    resultsTabPanel.body.unmask();
+                }
+            }
+        );
+
+        getAnalysisGridData(concept_key, omics_params);
+    }
+
+    rnaseqRcntSelectionwin.hide();
 }
 
 function showConceptDistributionHistogramForOmicsFilter(filter_params)
