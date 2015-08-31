@@ -22,7 +22,7 @@ class OmicsQueryService {
                 "$result_instance_id and omics_params: $omics_params")
         List values = new ArrayList()
 
-        String projection_type = omics_params.omics_projection_type
+        String projection_type = omics_params.omics_projection_type.toUpperCase()
         try {
             ConstraintByOmicsValue.ProjectionType.valueOf(projection_type)
         }
@@ -35,7 +35,7 @@ class OmicsQueryService {
                           concept_cd: concept_cd,
                           result_instance_id: result_instance_id]
         String sqlt = ""
-        def info = getMarkerInfo(omics_params.omics_value_type)
+        def info = ConstraintByOmicsValue.getMarkerInfo(omics_params.omics_value_type)
         if (info == null) {
             log.error "Concept distribution not yet supported for omics_params: $omics_params"
             return values
@@ -51,7 +51,7 @@ class OmicsQueryService {
 
         if (patientIDPopulated(info.data_table)) {
             sqlt = """SELECT patient_id, AVG($omics_params.omics_projection_type) AS score FROM $info.data_table
-                      WHERE $info.id_column IN (SELECT $info.id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
+                      WHERE $info.id_column IN (SELECT $info.annotation_id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
                       AND assay_id IN ($assay_id_subquery)
                       GROUP BY patient_id"""
         }
@@ -59,7 +59,7 @@ class OmicsQueryService {
             // patient id not populated in deapp data table, so we need to join with subject sample mapping table
             sqlt = """SELECT b.patient_id, AVG($omics_params.omics_projection_type) AS score FROM
                       (
-                        SELECT * FROM $info.data_table WHERE $info.id_column IN (SELECT $info.id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
+                        SELECT * FROM $info.data_table WHERE $info.id_column IN (SELECT $info.annotation_id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
                         AND assay_id IN ($assay_id_subquery)
                       ) a
                       INNER JOIN
@@ -117,7 +117,7 @@ class OmicsQueryService {
         }
 
         String markertype = markertypes.get(0)
-        def info = getMarkerInfo(markertype)
+        def info = ConstraintByOmicsValue.getMarkerInfo(markertype)
 
         if (info == null) {
             log.error "Unsupported platform type queried: $markertype"
@@ -196,7 +196,7 @@ class OmicsQueryService {
     def ExportTableNew addHighDimConceptDataToTable(ExportTableNew tablein, omics_constraint, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
-        def info = getMarkerInfo(omics_constraint.omics_value_type)
+        def info = ConstraintByOmicsValue.getMarkerInfo(omics_constraint.omics_value_type)
         if (info == null) {
             log.error "Omics data type " + omics_constraint.omics_value_type + " invalid or not yet implemented."
             return tablein
@@ -259,56 +259,15 @@ class OmicsQueryService {
         def row = sql.firstRow(sqlt, concept_code)
         log.info row
         if (row) {
-            // transform to a regular map
-            row.keySet().each({ result.put(it, row[it]) })
+            result = [gpl_id: row['gpl_id'],
+                      ]
         }
         result
-    }
-
-    def getMarkerInfo(String markerType) {
-        if (markerType.equals('Gene Expression')) {
-            return [data_table: "deapp.de_subject_microarray_data",
-                    annotation_table: "deapp.de_mrna_annotation",
-                    id_column: "probeset_id",
-                    selector_column: "gene_symbol",
-                    allowed_projections: ["raw_intensity", "log_intensity", "zscore"]]
-        }
-        else if (markerType.equals("RNASEQ_RCNT")) {
-            return [data_table: "deapp.de_subject_rnaseq_data",
-                    annotation_table: "deapp.de_chromosomal_region",
-                    id_column: "region_id",
-                    selector_column: "gene_symbol",
-                    allowed_projections: ["normalized_readcount", "log_normalized_readcount", "zscore"]]
-        }
-        else if (markerType.equals("PROTEOMICS")) {
-            return [data_table: "deapp.de_subject_protein_data",
-                    annotation_table: "deapp.de_subject_protein_annotation",
-                    id_column: "protein_annotation_id",
-                    selector_column: "uniprot_name",
-                    allowed_projections: ["intensity", "log_intensity", "zscore"]]
-        }
-        else if (markerType.equals("Chromosomal")) {
-            return [data_table: "deapp.de_subject_protein_data",
-                    annotation_table: "deapp.de_chromosomal_region",
-                    id_column: "region_id",
-                    selector_column: "gene_symbol",
-                    allowed_projections: ["chip","segmented","flag","probloss","probnorm","probgain","probamp"]]
-        }
-        else if (markerType.equals("MIRNA_QPCR")) {
-            return [data_table: "deapp.de_subject_mirna_data",
-                    annotation_table: "deapp.de_qpcr_mirna_annotation",
-                    id_column: "probeset_id",
-                    selector_column: "probeseet_id",
-                    allowed_projections: ["raw_intensity", "log_intensity", "zscore"]]
-        }
-
-        return null
     }
 
     private def patientIDPopulated(String table) {
         def sql = new Sql(dataSource)
         def sqlt = "SELECT COUNT(patient_id) AS count FROM " + table
-        log.info(sqlt)
         def row = sql.firstRow(sqlt)
         row.count > 0
     }

@@ -922,38 +922,22 @@ Ext.onReady(function () {
 
         // preload geneexpr filter dialog
 
-        geneexprfilterpanel = new Ext.Panel(
+        omicsfilterpanel = new Ext.Panel(
             {
-                id: 'genexprfilterPanel',
+                id: 'omicsfilterPanel',
                 region: 'center',
                 height: 80,
                 width: 100,
                 split: false,
-                autoLoad: {
-                    url: pageInfo.basePath + '/panels/geneExprFilterDialog.html',
-                    scripts: true,
-                    nocache: true,
-                    discardUrl: true,
-                    method: 'POST'
-                }
+                html: '<div id="omics-filter-main"></div>'
             }
         );
 
-        geneexprfilterchartsPanel1 = new Ext.Panel(
-            {
-                id: 'geneexprfilterchartsPanel1',
-                region: 'east',
-                width: 250,
-                height: 175,
-                split: false
-            }
-        );
-
-        if (!this.geneexprfilterwin) {
-            geneexprfilterwin = new Ext.Window(
+        if (!this.omicsfilterwin) {
+            omicsfilterwin = new Ext.Window(
                 {
-                    id: 'geneExprFilterWindow',
-                    title: 'Gene expression level filtering',
+                    id: 'omicsFilterWindow',
+                    title: '',
                     layout: 'border',
                     width: 270,
                     height: 350,
@@ -961,185 +945,27 @@ Ext.onReady(function () {
                     plain: true,
                     modal: true,
                     border: false,
-                    items: [geneexprfilterpanel],
+                    items: [omicsfilterpanel],
                     buttons: [
                         {
                             text: 'OK',
                             handler: function () {
-                                applyGeneExprFilterDialog(true);
+                                applyOmicsFilterDialog(true);
                             }
                         }
                         ,
                         {
                             text: 'Cancel',
                             handler: function () {
-                                applyGeneExprFilterDialog(false);
+                                applyOmicsFilterDialog(false);
                             }
                         }
                     ],
                     tools: []
                 });
-            geneexprfilterwin.show();
-            geneexprfilterwin.hide();
+            omicsfilterwin.show();
+            omicsfilterwin.hide();
         }
-
-        // load gene selection dialog (shown when dragging an omics node to the summary stats panel)
-        geneselectionPanel = new Ext.Panel(
-            {
-                id: 'geneselectionPanel',
-                region: 'center',
-                height: 80,
-                width: 490,
-                split: false,
-                autoLoad: {
-                    url: pageInfo.basePath + '/panels/selectGeneDialog.html',
-                    scripts: true,
-                    nocache: true,
-                    discardUrl: true,
-                    method: 'POST'
-                }
-            }
-        );
-
-        if (!this.geneselectionwin) {
-            geneselectionwin = new Ext.Window(
-                {
-                    id: 'geneSelectionWindow',
-                    title: 'Select Gene',
-                    layout: 'border',
-                    width: 500,
-                    height: 120,
-                    closable: false,
-                    plain: true,
-                    modal: true,
-                    border: false,
-                    items: [geneselectionPanel],
-                    buttons: [
-                        {
-                            text: 'OK',
-                            handler: function () {
-                                applyGeneSelectionDialog(true);
-                            }
-                        }
-                        ,
-                        {
-                            text: 'Cancel',
-                            handler: function () {
-                                applyGeneSelectionDialog(false);
-                            }
-                        }
-                    ],
-                    tools: []
-                });
-            geneselectionwin.show();
-            geneselectionwin.hide();
-        }
-
-        // preload rnaseq rcnt filter dialog
-
-        rnaseqrcntfilterpanel = new Ext.Panel(
-            {
-                id: 'rnaseqrcntfilterPanel',
-                region: 'center',
-                height: 80,
-                width: 100,
-                split: false,
-                autoLoad: {
-                    url: pageInfo.basePath + '/panels/rnaseqRcntFilterDialog.html',
-                    scripts: true,
-                    nocache: true,
-                    discardUrl: true,
-                    method: 'POST'
-                }
-            }
-        );
-
-        if (!this.rnaseqrcntfilterwin) {
-            rnaseqrcntfilterwin = new Ext.Window(
-                {
-                    id: 'rnaseqRcntFilterWindow',
-                    title: 'RNASeq read count filtering',
-                    layout: 'border',
-                    width: 270,
-                    height: 350,
-                    closable: false,
-                    plain: true,
-                    modal: true,
-                    border: false,
-                    items: [rnaseqrcntfilterpanel],
-                    buttons: [
-                        {
-                            text: 'OK',
-                            handler: function () {
-                                applyRnaseqRcntFilterDialog(true);
-                            }
-                        }
-                        ,
-                        {
-                            text: 'Cancel',
-                            handler: function () {
-                                applyRnaseqRcntFilterDialog(false);
-                            }
-                        }
-                    ],
-                    tools: []
-                });
-            rnaseqrcntfilterwin.show();
-            rnaseqrcntfilterwin.hide();
-        }
-
-        // load gene selection dialog (shown when dragging an omics node to the summary stats panel)
-        rnaseqRcntSelectionPanel = new Ext.Panel(
-            {
-                id: 'rnaseqRcntSelectionPanel',
-                region: 'center',
-                height: 80,
-                width: 250,
-                split: false,
-                autoLoad: {
-                    url: pageInfo.basePath + '/panels/selectRnaseqRcntDialog.html',
-                    scripts: true,
-                    nocache: true,
-                    discardUrl: true,
-                    method: 'POST'
-                }
-            }
-        );
-
-        if (!this.rnaseqRcntSelectionwin) {
-            rnaseqRcntSelectionwin = new Ext.Window(
-                {
-                    id: 'rnaseqRcntSelectionWindow',
-                    title: 'Select Gene',
-                    layout: 'border',
-                    width: 270,
-                    height: 120,
-                    closable: false,
-                    plain: true,
-                    modal: true,
-                    border: false,
-                    items: [rnaseqRcntSelectionPanel],
-                    buttons: [
-                        {
-                            text: 'OK',
-                            handler: function () {
-                                applyRnaseqRcntSelectionDialog(true);
-                            }
-                        }
-                        ,
-                        {
-                            text: 'Cancel',
-                            handler: function () {
-                                applyRnaseqRcntSelectionDialog(false);
-                            }
-                        }
-                    ],
-                    tools: []
-                });
-            rnaseqRcntSelectionwin.show();
-            rnaseqRcntSelectionwin.hide();
-        }
-
 
         showLoginDialog();
         var h = queryPanel.header;

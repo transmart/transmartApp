@@ -177,13 +177,11 @@ class ChartController {
         pw.flush();
     }
 
-    def conceptDistributionValues = {
+    def conceptDistributionWithValues = {
         // Lets put a bit of 'audit' in here
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Concept Values", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
 
-        // We retrieve the result instance ids from the client
         def concept = params.concept_key ?: null
-        def concepts = [:]
 
         // We retrieve the omics parameters from the client, if they were passed
         def omics_params = [:]
@@ -200,8 +198,7 @@ class ChartController {
         // Collect concept information
         concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
 
-
-        render concept[1].conceptData as JSON
+        render concept as JSON
     }
 
     /**

@@ -140,7 +140,9 @@ class ChartService {
         omicsQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).findAll() {
             it.concept_key.indexOf("SECURITY") <= -1
         }.each {
-            concepts[it.concept_key + it.omics_selector + " - " + it.omics_projection_type] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
+            def key = it.concept_key + it.omics_selector + " - " + it.omics_projection_type
+            if (!concepts.containsKey(key))
+              concepts[key] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
         }
         concepts
     }
