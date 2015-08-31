@@ -35,21 +35,8 @@ class OmicsQueryService {
                           concept_cd: concept_cd,
                           result_instance_id: result_instance_id]
         String sqlt = ""
-        String datatbl = "", annotationtbl = "", idcol = "", selectorcol = ""
-        Sql sql = new Sql(dataSource)
-        if (omics_params.omics_value_type.equals('GENE_EXPRESSION')) {
-            datatbl = "deapp.de_subject_microarray_data"
-            annotationtbl = "deapp.de_mrna_annotation"
-            idcol = "probeset_id"
-            selectorcol = "gene_symbol"
-        }
-        else if (omics_params.omics_value_type.equals("RNASEQ_RCNT")) {
-            datatbl = "deapp.de_subject_rnaseq_data"
-            annotationtbl = "deapp.de_chromosomal_region"
-            idcol = "region_id"
-            selectorcol = "gene_symbol"
-        }
-        else {
+        def info = getMarkerInfo(omics_params.omics_value_type)
+        if (info == null) {
             log.error "Concept distribution not yet supported for omics_params: $omics_params"
             return values
         }
@@ -61,18 +48,29 @@ class OmicsQueryService {
             ssm_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
         }
 
-        sqlt = """SELECT b.patient_id, AVG($projection_type) AS score FROM
-                  (
-                    SELECT * FROM $datatbl WHERE $idcol IN (SELECT $idcol FROM $annotationtbl WHERE $selectorcol=:omics_selector)
-                    AND assay_id IN ($assay_id_subquery)
-                  ) a
-                  INNER JOIN
-                  (
-                    $ssm_subquery
-                  ) b
-                  ON a.assay_id = b.assay_id
-                  GROUP BY b.patient_id"""
+
+        if (patientIDPopulated(info.data_table)) {
+            sqlt = """SELECT patient_id, AVG($omics_params.omics_projection_type) AS score FROM $info.data_table
+                      WHERE $info.id_column IN (SELECT $info.id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
+                      AND assay_id IN ($assay_id_subquery)
+                      GROUP BY patient_id"""
+        }
+        else {
+            // patient id not populated in deapp data table, so we need to join with subject sample mapping table
+            sqlt = """SELECT b.patient_id, AVG($omics_params.omics_projection_type) AS score FROM
+                      (
+                        SELECT * FROM $info.data_table WHERE $info.id_column IN (SELECT $info.id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
+                        AND assay_id IN ($assay_id_subquery)
+                      ) a
+                      INNER JOIN
+                      (
+                        $ssm_subquery
+                      ) b
+                      ON a.assay_id = b.assay_id
+                      GROUP BY b.patient_id"""
+        }
         log.info(sqlt)
+        Sql sql = new Sql(dataSource)
         sql.eachRow(sqlt, sql_params, { row ->
             // can't add the rows directly, as they are not available anymore after the resultset is closed
             def thisrow = ["patient_id": row.patient_id, "score": row.score]
@@ -80,19 +78,6 @@ class OmicsQueryService {
         })
         return values;
     }
-
-    def getConceptDistributionDataForHighDimensionConcept(String concept_cd, omics_params) {
-        def rows = getHighDimensionalConceptData(concept_cd, "", omics_params)
-        ArrayList<Double> values = new ArrayList<Double>()
-
-        rows.each { row ->
-            if (row.score != null) {
-                values.add(row.score);
-            }
-        }
-        return values;
-    }
-
 
     def getConceptDistributionDataForHighDimensionConceptFromCode(String concept_cd, String result_instance_id, omics_params) {
         def rows = getHighDimensionalConceptData(concept_cd, result_instance_id, omics_params)
@@ -104,21 +89,6 @@ class OmicsQueryService {
             }
         }
         return values;
-    }
-
-    def String getGeneSymbolForGeneId(String geneId) {
-        def sqlt = """SELECT DISTINCT gene_symbol
-                      FROM deapp.de_mrna_annotation
-                      WHERE gene_id=CAST(? AS NUMERIC)"""
-        Sql sql = new Sql(dataSource)
-        List<String> results = new ArrayList<String>()
-        sql.eachRow(sqlt, [geneId], { row ->
-            results.add(row.gene_symbol)
-        })
-        if (results.size() > 1) {
-            log.warn "Different gene symbols found for gene-id " + geneId + ", returning the first one."
-        }
-        return results[0]
     }
 
     /**
@@ -147,40 +117,18 @@ class OmicsQueryService {
         }
 
         String markertype = markertypes.get(0)
-        String sqlt = ""
+        def info = getMarkerInfo(markertype)
 
-        if (markertype.equals("Gene Expression")) {
-            sqlt = """SELECT DISTINCT gene_symbol AS result, gpl_id
-                      FROM deapp.de_mrna_annotation
-                      WHERE LOWER(gpl_id)=?
-                      AND LOWER(gene_symbol) LIKE ?
-                      ORDER BY gene_symbol"""
-        }
-        else if (markertype.equals("RNASEQ_RCNT") || markertype.equals("Chromosomal")) {
-            sqlt = """SELECT DISTINCT gene_symbol AS result, gpl_id
-                      FROM deapp.de_chromosomal_region
-                      WHERE LOWER(gpl_id)=?
-                      AND LOWER(gene_symbol) LIKE ?
-                      ORDER BY gene_symbol"""
-        }
-        else if (markertype.equals("PROTEOMICS")) {
-            sqlt = """SELECT DISTINCT uniprot_id AS result, gpl_id
-                      FROM deapp.de_protein_annotation
-                      WHERE LOWER(gpl_id)=?
-                      AND LOWER(uniprot_id) LIKE ?
-                      ORDER BY uniprot_id"""
-        }
-        else if (markertype.equals("MIRNA_QPCR")) {
-            sqlt = """SELECT DISTINCT mirna_id AS result, gpl_id
-                      FROM deapp.de_qpcr_mirna_annotation
-                      WHERE LOWER(gpl_id)=?
-                      AND LOWER(mirna_id) LIKE ?
-                      ORDER BY mirna_id"""
-        }
-        else {
+        if (info == null) {
             log.error "Unsupported platform type queried: $markertype"
             return []
         }
+
+        String sqlt = """SELECT DISTINCT $info.selector_column AS result, gpl_id
+                      FROM $info.annotation_table
+                      WHERE LOWER(gpl_id)=?
+                      AND LOWER($info.selector_column) LIKE ?
+                      ORDER BY $info.selector_column"""
 
         Sql sql = new Sql(dataSource)
         def results = []
@@ -248,22 +196,19 @@ class OmicsQueryService {
     def ExportTableNew addHighDimConceptDataToTable(ExportTableNew tablein, omics_constraint, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
-        if (omics_constraint.omics_value_type == 'GENE_EXPRESSION') {
-            if (!['raw_intensity', 'log_intensity', 'zscore'].contains(omics_constraint.omics_projection_type.toLowerCase())) {
-                log.error "Unsupported projection type for Gene Expression: " + omics_constraint.omics_projection_type
-                return tablein
-            }
-        }
-        else if (omics_constraint.omics_value_type == 'RNASEQ_RCNT') {
-            if (!['readcount', 'log_readcount'].contains(omics_constraint.omics_projection_type.toLowerCase())) {
-                log.error "Unsupported projection type for RNASeq: " + omics_constraint.omics_projection_type
-                return tablein
-            }
-        }
-        else {
+        def info = getMarkerInfo(omics_constraint.omics_value_type)
+        if (info == null) {
             log.error "Omics data type " + omics_constraint.omics_value_type + " invalid or not yet implemented."
             return tablein
         }
+        else {
+            if (!info.allowed_projections.contains(omics_constraint.omics_projection_type.toLowerCase())) {
+                log.error "Unsupported projection type for $omics_constraint.omics_value_type: $omics_constraint.omics_projection_type, " +
+                          "should be one of [" + info.allowed_projections.join(", ") + "]"
+                return tablein
+            }
+        }
+
         def concept_key = omics_constraint.concept_key
         def gene_symbol = omics_constraint.omics_selector
         String columnid = (concept_key + gene_symbol + omics_constraint.omics_projection_type).encodeAsSHA1()
@@ -318,5 +263,53 @@ class OmicsQueryService {
             row.keySet().each({ result.put(it, row[it]) })
         }
         result
+    }
+
+    def getMarkerInfo(String markerType) {
+        if (markerType.equals('Gene Expression')) {
+            return [data_table: "deapp.de_subject_microarray_data",
+                    annotation_table: "deapp.de_mrna_annotation",
+                    id_column: "probeset_id",
+                    selector_column: "gene_symbol",
+                    allowed_projections: ["raw_intensity", "log_intensity", "zscore"]]
+        }
+        else if (markerType.equals("RNASEQ_RCNT")) {
+            return [data_table: "deapp.de_subject_rnaseq_data",
+                    annotation_table: "deapp.de_chromosomal_region",
+                    id_column: "region_id",
+                    selector_column: "gene_symbol",
+                    allowed_projections: ["normalized_readcount", "log_normalized_readcount", "zscore"]]
+        }
+        else if (markerType.equals("PROTEOMICS")) {
+            return [data_table: "deapp.de_subject_protein_data",
+                    annotation_table: "deapp.de_subject_protein_annotation",
+                    id_column: "protein_annotation_id",
+                    selector_column: "uniprot_name",
+                    allowed_projections: ["intensity", "log_intensity", "zscore"]]
+        }
+        else if (markerType.equals("Chromosomal")) {
+            return [data_table: "deapp.de_subject_protein_data",
+                    annotation_table: "deapp.de_chromosomal_region",
+                    id_column: "region_id",
+                    selector_column: "gene_symbol",
+                    allowed_projections: ["chip","segmented","flag","probloss","probnorm","probgain","probamp"]]
+        }
+        else if (markerType.equals("MIRNA_QPCR")) {
+            return [data_table: "deapp.de_subject_mirna_data",
+                    annotation_table: "deapp.de_qpcr_mirna_annotation",
+                    id_column: "probeset_id",
+                    selector_column: "probeseet_id",
+                    allowed_projections: ["raw_intensity", "log_intensity", "zscore"]]
+        }
+
+        return null
+    }
+
+    private def patientIDPopulated(String table) {
+        def sql = new Sql(dataSource)
+        def sqlt = "SELECT COUNT(patient_id) AS count FROM " + table
+        log.info(sqlt)
+        def row = sql.firstRow(sqlt)
+        row.count > 0
     }
 }

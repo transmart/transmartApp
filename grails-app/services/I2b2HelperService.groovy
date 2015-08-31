@@ -45,7 +45,6 @@ class I2b2HelperService {
     def conceptService
     def conceptsResourceService
     def sampleInfoService
-    def omicsQueryService
 
     /**
      * Gets a distribution of information from the patient dimention table for value columns
@@ -5157,7 +5156,7 @@ class I2b2HelperService {
                             selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
                             projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
                             pw.write(selector)
-                            if (value_type.equals("GENE_EXPRESSION") || value_type.equals("RNASEQ_RCNT")) {
+                            if (value_type.equals("Gene Expression") || value_type.equals("RNASEQ_RCNT")) {
                                 pw.write(" - " + projection + " " + operator + " ")
                                 if (operator.equals("BETWEEN")) {
                                     String[] bounds = constraints.split(":")

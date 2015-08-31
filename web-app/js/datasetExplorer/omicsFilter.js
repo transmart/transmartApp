@@ -187,7 +187,7 @@ function getOmicsFilterValueText(params)
     var result = "";
 
     switch (params.type) {
-        case "GENE_EXPRESSION":
+        case "Gene Expression":
             switch (params.operator) {
                 case "BETWEEN":
                     var thresholds = params.value.split(":");
@@ -219,20 +219,10 @@ function getOmicsFilterValueText(params)
             break;
         case "MIRNA_QPCR":
             break;
+        case "VCF":
+            break;
     }
     return "<em>" + result + "</em>";
-}
-
-function showGeneSelectionDialog(platform) {
-    jQuery("#gene-selection-searchbox").val("");
-    jQuery("#gene-selection-searchbox").autocomplete("option", "source", "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + encodeURIComponent(platform.platform));
-    jQuery("#gene-selection-concept-key").val(platform.concept_key);
-
-    var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5;
-    var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2;
-
-    geneselectionwin.setPosition(left, top);
-    geneselectionwin.show(viewport);
 }
 
 function showGeneSelectionDialog(platform) {
@@ -271,7 +261,7 @@ function applyGeneSelectionDialog(validation) {
     if (validation) {
         resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
         var omics_params = {omics_selector: gene_symbol,
-            omics_value_type: 'GENE_EXPRESSION',
+            omics_value_type: 'Gene Expression',
             omics_projection_type: jQuery("input[name=gene-selection-projection]:checked").val()};
         Ext.Ajax.request(
             {

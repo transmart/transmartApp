@@ -161,6 +161,7 @@ class ChartService {
 
         // We retrieve the basics
         result.commons.conceptCode = i2b2HelperService.getConceptCodeFromKey(concept);
+        result.commons.conceptKey = concept.substring(concept.substring(3).indexOf('\\') + 3)
         result.commons.conceptName = i2b2HelperService.getShortNameFromKey(concept);
         result.commons.omics_params = args.omics_params ?: null
 
