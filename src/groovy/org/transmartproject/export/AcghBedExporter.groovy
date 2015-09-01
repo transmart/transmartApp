@@ -3,7 +3,9 @@ package org.transmartproject.export
 import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
 import org.transmartproject.core.dataquery.highdim.acgh.CopyNumberState
+import org.transmartproject.core.dataquery.highdim.chromoregion.RegionRow
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.db.dataquery.highdim.chromoregion.RegionRowImpl
 
@@ -63,7 +65,7 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
     }
 
     @Override
-    protected calculateRow(RegionRowImpl datarow, AssayColumn assay) {
+    protected calculateRow(RegionRow datarow, AssayColumn assay) {
         Map cell = datarow[assay]
         int flag = cell['flag']
 
@@ -72,7 +74,9 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
                 datarow.start,
                 datarow.end,
                 //Name of the BED line
-                datarow.bioMarker ?: datarow.name,
+                datarow instanceof BioMarkerDataRow ?
+                        datarow.bioMarker ?: datarow.name
+                        : datarow.name,
                 //Score
                 flag,
                 //Strand. We do not use strand information
