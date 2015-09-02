@@ -131,7 +131,7 @@ class HighDimExportService {
             throw new RuntimeException("No exporter was found for ${dataTypeResource.dataTypeName} data type" +
                     " and ${format} file format.")
         } else if (exporters.size() > 1) {
-            log.warn("There are more then one exporter for ${dataTypeResource.dataTypeName} data type" +
+            log.warn("There are more than one exporter for ${dataTypeResource.dataTypeName} data type" +
                     " and ${format} file format. Using first one: ${exporters?.getAt(0)}")
         }
 
@@ -141,7 +141,7 @@ class HighDimExportService {
 
         if (log.debugEnabled) {
             log.debug("[job=${jobName} key=${term.key}] " +
-                    "Retrieving the HD data for the term and a patietn set: ${resultInstanceId}.")
+                    "Retrieving the HD data for the term and a patient set: ${resultInstanceId}.")
         }
         TabularResult<AssayColumn, DataRow> tabularResult =
                 dataTypeResource.retrieveData(assayConstraints, [], projection)
