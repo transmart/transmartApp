@@ -765,7 +765,7 @@ class I2b2HelperService {
          */
         String columnid = concept_key.encodeAsSHA1()
         String columnname = getColumnNameFromKey(concept_key).replace(" ", "_")
-        String columntooltip = keyToPath(concept_key).replace(" ", "_").replace(".","_").replace("[","_")
+        String columntooltip = keyToPath(concept_key).replaceAll('[^a-zA-Z0-9_\\-\\\\]+','_')
         if (isLeafConceptKey(concept_key)) {
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
