@@ -2,7 +2,6 @@ package org.transmartproject.export
 
 import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.transmartproject.colorscheme.HsbColorPicker
 import org.transmartproject.core.dataquery.highdim.AssayColumn
 import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
 import org.transmartproject.core.dataquery.highdim.chromoregion.RegionRow
@@ -13,10 +12,12 @@ import javax.annotation.PostConstruct
 @Log4j
 class ProteomicsBedExporter extends AbstractChromosomalRegionBedExporter {
 
-    private static final HIGH_ZSCORE = 3
-    private static final LOW_ZSCORE = -HIGH_ZSCORE
+    static final BigDecimal HIGH_ZSCORE_THRESHOLD = new BigDecimal(1.5)
+    static final BigDecimal LOW_ZSCORE_THRESHOLD = HIGH_ZSCORE_THRESHOLD.negate()
 
-    private final HsbColorPicker colorPicker = new HsbColorPicker(LOW_ZSCORE, HIGH_ZSCORE)
+    static final String LOW_VALUE_RGB = '0,0,205'
+    static final String HIGH_VALUE_RGB = '205,0,0'
+    static final String DEFAULT_RGB = '196,196,196'
 
     @Autowired
     HighDimExporterRegistry highDimExporterRegistry
@@ -39,8 +40,7 @@ class ProteomicsBedExporter extends AbstractChromosomalRegionBedExporter {
     @Override
     protected calculateRow(RegionRow datarow, AssayColumn assay) {
         def assayDataRow = datarow[assay]
-        def intensity = assayDataRow['intensity']
-        def zscore = assayDataRow['zscore']
+        BigDecimal zscore = assayDataRow['zscore']
 
         [
                 datarow.chromosome,
@@ -51,7 +51,7 @@ class ProteomicsBedExporter extends AbstractChromosomalRegionBedExporter {
                         datarow.bioMarker ?: datarow.name
                         : datarow.name,
                 //Score
-                intensity,
+                zscore,
                 //Strand. We do not use strand information
                 '.',
                 //Thick start
@@ -59,8 +59,19 @@ class ProteomicsBedExporter extends AbstractChromosomalRegionBedExporter {
                 //Thick end
                 datarow.end,
                 //Item RGB
-                colorPicker.scaleLinearly(zscore).join(',')
+                getColor(zscore)
         ]
+    }
+
+    private static String getColor(BigDecimal zscore) {
+        if (zscore < LOW_ZSCORE_THRESHOLD) {
+            LOW_VALUE_RGB
+        } else if (zscore > HIGH_ZSCORE_THRESHOLD) {
+            HIGH_VALUE_RGB
+        } else {
+            DEFAULT_RGB
+        }
+
     }
 
 }
