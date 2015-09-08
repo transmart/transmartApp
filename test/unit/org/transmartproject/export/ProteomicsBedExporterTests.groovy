@@ -14,6 +14,14 @@ import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.hasSize
 import static org.junit.Assert.assertThat
 
+
+import static org.transmartproject.export.ProteomicsBedExporter.LOW_VALUE_RGB
+import static org.transmartproject.export.ProteomicsBedExporter.DEFAULT_RGB
+import static org.transmartproject.export.ProteomicsBedExporter.HIGH_VALUE_RGB
+
+import static org.transmartproject.export.ProteomicsBedExporter.LOW_ZSCORE_THRESHOLD
+import static org.transmartproject.export.ProteomicsBedExporter.HIGH_ZSCORE_THRESHOLD
+
 /**
  *
  */
@@ -27,9 +35,8 @@ class ProteomicsBedExporterTests {
     TabularResult tabularResult
     Projection projection
 
-    def darkBlueRgb = '41,0,204'
-    def greenRgb = '0,204,20'
-    def darkRedRgb = '204,0,0'
+    def lowZscoreValue = LOW_ZSCORE_THRESHOLD - 0.1
+    def highZscoreValue = HIGH_ZSCORE_THRESHOLD + 0.1
 
     @Before
     void before() {
@@ -60,17 +67,17 @@ class ProteomicsBedExporterTests {
             //NOTE: bioMarker is used as label if it's present
             assertThat assay1Lines, contains(
                     'track name="sample_code_1" itemRgb="On" genome_build="hg19"',
-                    'chrX\t1234\t1300\ttest-region1\t110\t.\t1234\t1300\t' + darkBlueRgb,
-                    'CHRY\t1301\t1400\ttest-bio-marker\t330\t.\t1301\t1400\t' + greenRgb,
-                    'chr9\t1000\t2000\ttest-region3\t550\t.\t1000\t2000\t' + darkBlueRgb,
+                    'chrX\t1234\t1300\ttest-region1\t' + lowZscoreValue + '\t.\t1234\t1300\t' + LOW_VALUE_RGB,
+                    'CHRY\t1301\t1400\ttest-bio-marker\t' + 0 + '\t.\t1301\t1400\t' + DEFAULT_RGB,
+                    'chr9\t1000\t2000\ttest-region3\t' + lowZscoreValue + '\t.\t1000\t2000\t' + LOW_VALUE_RGB,
             )
 
             List assay2Lines = assay2Output.readLines()
             assertThat assay2Lines, contains(
                     'track name="sample_code_2" itemRgb="On" genome_build="hg19"',
-                    'chrX\t1234\t1300\ttest-region1\t220\t.\t1234\t1300\t' + darkRedRgb,
-                    'CHRY\t1301\t1400\ttest-bio-marker\t440\t.\t1301\t1400\t' + darkRedRgb,
-                    'chr9\t1000\t2000\ttest-region3\t660\t.\t1000\t2000\t' + greenRgb,
+                    'chrX\t1234\t1300\ttest-region1\t' + highZscoreValue + '\t.\t1234\t1300\t' + HIGH_VALUE_RGB,
+                    'CHRY\t1301\t1400\ttest-bio-marker\t' + highZscoreValue + '\t.\t1301\t1400\t' + HIGH_VALUE_RGB,
+                    'chr9\t1000\t2000\ttest-region3\t' + 0 + '\t.\t1000\t2000\t' + DEFAULT_RGB,
             )
         }
     }
@@ -80,15 +87,15 @@ class ProteomicsBedExporterTests {
         List<AssayColumn> sampleAssays = createSampleAssays(2)
         Map<String, List<Object>> dataRows = [
                 "row1": [
-                        [intensity: 110, zscore: -3],
-                        [intensity: 220, zscore: 3]
+                        [intensity: 110, zscore: lowZscoreValue],
+                        [intensity: 220, zscore: highZscoreValue]
                 ],
                 "row2": [
                         [intensity: 330, zscore: 0],
-                        [intensity: 440, zscore: 3]
+                        [intensity: 440, zscore: highZscoreValue]
                 ],
                 "row3": [
-                        [intensity: 550, zscore: -3],
+                        [intensity: 550, zscore: lowZscoreValue],
                         [intensity: 660, zscore: 0]
                 ],
         ]
