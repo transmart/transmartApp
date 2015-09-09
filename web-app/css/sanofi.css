@@ -469,7 +469,6 @@ textarea#description, textarea#longDescription, input#description, input#longDes
 
 .overlay {
 	position: absolute;
-	z-index: 10000;	
 	border: 8px solid #DDDEE6;
 	border-radius: 16px;
 	box-shadow: #DDD 11px 11px 8px -7px;
@@ -584,7 +583,6 @@ textarea#description, textarea#longDescription, input#description, input#longDes
     padding: 4px;
     max-width: 90%;
     max-height: 90%;
-    z-index:2001;
 }
 
 /* hidden overlay div, display with visibility toggle (let window size to content)*/
