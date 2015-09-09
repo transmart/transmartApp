@@ -18,17 +18,4 @@ class OmicsPlatformSearchController {
         def result = omicsQueryService.getSearchResults(params.term, params.gplid)
         render result as JSON
     }
-
-    def getPlatform() {
-        def concept = params.get('concept_key')
-        def platform = omicsQueryService.getPlatform(concept)
-        if (platform) {
-            // let's add the requested concept key back in the response
-            platform.put('concept_key', concept)
-            render platform as JSON
-        }
-        else
-            render JSONObject.NULL
-    }
-
 }

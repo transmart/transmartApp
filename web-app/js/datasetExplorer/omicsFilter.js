@@ -61,96 +61,40 @@ function omicsFilterWindowReceived(result, request) {
     jQuery("#omics-filter-main").html(result.responseText);
 
     omicsfilterwin.setTitle(omics_filter_info.platform.markerType);
-    if (omics_filter_info.filter_type == "numeric") {
+
+    // add appropriate event handlers based on type of filter
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
         addOmicsFilterAutocomplete();
         if (omics_filter_info.filter) {
             addOmicsRangeSlider();
+            addOmicsBinsSlider();
             addOmicsFilterMinMaxInputHandlers();
         }
         jQuery("[id^=omics-slider-row]").css({'display': 'none'});
         jQuery("#omics-filter-selector").focus();
     }
+    else if (omics_filter_info.filter_type == "ACGH") {
+
+    }
+    else if (omics_filter_info.filter_type == "VCF") {
+
+    }
 }
 
 function applyOmicsFilterDialog(validation) {
-    if (omics_filter_info.filter) {
-        // filter
-        var params = getOmicsFilterParams();
-        if (validation && params.selector == "") {
-            alert("You must choose a gene.");
-            return;
-        }
-
-        // make sure that there is a value set
-        if (validation && (!jQuery.isNumeric(jQuery("#omics-amount-min").val()) || !jQuery.isNumeric(jQuery("#omics-amount-max").val()))) {
-            alert('You must specify a numeric value.');
-        } else {
-            if (validation)
-                omicsFilterDialogComplete(params);
-
-            if (STATE.Dragging) {
-                jQuery('#' + selectedConcept.id).remove();
-                removeUselessPanels();
-            }
-            omicsFilterValues = [];
-            omicsSliderLowHandleRatio = 0;
-            omicsSliderHighHandleRatio = 1;
-
-            document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
-            omicsfilterwin.hide();
-        }
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+        applySingleNumericOmicsFilter(validation);
     }
-    else {
-        // selection
-        var selector = jQuery("#omics-filter-selector").val();
-        if (validation && selector == "") {
-            alert("You must choose a gene.");
-            return;
-        }
-
-        if (validation) {
-            resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
-            var omics_params = {omics_selector: selector,
-                omics_value_type: omics_filter_info.platform.markerType,
-                omics_projection_type: jQuery("input[name=omics-filter-projection]:checked").val()};
-            Ext.Ajax.request(
-                {
-                    url : pageInfo.basePath+"/chart/analysis",
-                    method : 'POST',
-                    timeout: '600000',
-                    params :  Ext.urlEncode(
-                        {
-                            charttype : "analysis",
-                            concept_key : omics_filter_info.concept_key,
-                            omics_selector : omics_params.omics_selector,
-                            omics_value_type: omics_params.omics_value_type,
-                            omics_projection_type: omics_params.omics_projection_type,
-                            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-                            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
-                        }
-                    ), // or a URL encoded string
-                    success: function (result, request) {
-                        buildAnalysisComplete(result);
-                        resultsTabPanel.body.unmask();
-                    },
-                    failure: function (result, request) {
-                        alert("A problem arose while trying to retrieve the results");
-                        resultsTabPanel.body.unmask();
-                    }
-                }
-            );
-
-            getAnalysisGridData(omics_filter_info.concept_key, omics_params);
-        }
-
-        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
-        omicsfilterwin.hide();
+    else if (omics_filter_info.filter_type == "ACGH") {
+        applyACGHOmicsFilter(validation);
+    }
+    else if (omics_filter_info.filter_type == "VCF") {
+        applyVCFOmicsFilter(validation);
     }
 }
 
 function addOmicsFilterAutocomplete() {
     var searchbox = jQuery("#omics-filter-selector");
-    searchbox.css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
     searchbox.autocomplete({
         position:{my:"left top",at:"left bottom",collision:"none"},
         appendTo:"#omicsFilterWindow",
@@ -185,6 +129,7 @@ function addOmicsFilterAutocomplete() {
             .append(resulta)
             .appendTo(ul);
     };
+    jQuery(".ui-autocomplete").css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
 }
 
 function addOmicsRangeSlider() {
@@ -199,6 +144,25 @@ function addOmicsRangeSlider() {
             omicsSliderUpdated(ui);
         }
     });
+}
+
+function addOmicsBinsSlider() {
+    var slider = jQuery( "#omics-bins" );
+    slider.css({width: "130px", margin: "10px"});
+    slider.slider({
+        range: "min",
+        min: 5,
+        max: 25,
+        value: 10,
+        slide: function( event, ui ) {
+            jQuery("#omics-amount-bins").val(ui.value);
+        },
+        stop: function( event, ui ) {
+            showConceptDistributionHistogramForOmicsFilterComplete(null);
+            showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
+        }
+    });
+    jQuery("#omics-amount-bins").val(slider.slider('value'));
 }
 
 function addOmicsFilterMinMaxInputHandlers() {
@@ -285,15 +249,39 @@ function omicsProjectionChanged() {
 }
 
 function getOmicsFilterParams() {
-    var slider = jQuery("#omics-range");
-    return {
-        platform: omics_filter_info.platform.id,
-        selector: jQuery("#omics-filter-selector").val(),
-        value: slider.slider('values',0) + ":" + slider.slider('values',1),
-        operator: "BETWEEN",
-        projection_type: jQuery("input[name=omics-filter-projection]:checked").val(),
-        type: omics_filter_info.platform.markerType
-    };
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+        var slider = omics_filter_info.filter ? jQuery("#omics-range") : null;
+        return {
+            platform: omics_filter_info.platform.id,
+            selector: jQuery("#omics-filter-selector").val(),
+            value: omics_filter_info.filter ? slider.slider('values', 0) + ":" + slider.slider('values', 1) : "",
+            operator: omics_filter_info.filter ? "BETWEEN" : "",
+            projection_type: jQuery("input[name=omics-filter-projection]:checked").val(),
+            type: omics_filter_info.platform.markerType,
+            hist_bins: omics_filter_info.filter ? jQuery("#omics-amount-bins").val() : ""
+        };
+    }
+    else if (omics_filter_info.filter_type == "ACGH") {
+        return {
+            platform: omics_filter_info.platform.id,
+            selector: "DUMMY",
+            value: "",
+            operator: "BETWEEN",
+            projection_type: "COMPLEX",
+            type: omics_filter_info.platform.markerType
+        }
+    }
+    else if (omics_filter_info.filter_type == "VCF") {
+        return {
+            platform: omics_filter_info.platform.id,
+            selector: "DUMMY",
+            value: "",
+            operator: "BETWEEN",
+            projection_type: "COMPLEX",
+            type: omics_filter_info.platform.markerType
+        }
+    }
+    else return null;
 }
 
 function omicsFilterDialogComplete(params)
@@ -344,9 +332,11 @@ function getOmicsFilterValueText(params)
                     break;
             }
             break;
-        case "CHROMOSOMAL":
+        case "Chromosomal":
+            result = "Dummy ACGH filter";
             break;
         case "VCF":
+            result = "Dummy VCF filter";
             break;
     }
     return "<em>" + result + "</em>";
@@ -368,23 +358,33 @@ function showConceptDistributionHistogramForOmicsFilter(filter_params)
                 omics_selector: filter_params.selector,
                 omics_platform: filter_params.platform,
                 omics_value_type: filter_params.type,
-                omics_projection_type: filter_params.projection_type})
+                omics_projection_type: filter_params.projection_type,
+                omics_hist_bins: filter_params.hist_bins})
         });
 }
 
 function showConceptDistributionHistogramForOmicsFilterComplete(result)
 {
-    omicsfilterwin.setHeight(370);
+    omicsfilterwin.setHeight(430);
     var slider_rows = jQuery("[id^=omics-slider-row]");
+    var input_fields = jQuery("[id^=omics-amount-m]");
+    var sliders = jQuery("[id^=omics-slider-row] .ui-slider");
+    var projection_radio = jQuery("input[name=omics-filter-projection]:radio");
     var hist_div = jQuery("[id^=omics-filter-histogram]");
 
     if (result == null) {
-        slider_rows.css({'display': 'none'});
+        //
+        input_fields.prop('disabled', true);
+        projection_radio.prop('disabled', true);
+        sliders.slider('option','disabled', true);
         return hist_div.html("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
     }
     var data = JSON.parse(result.responseText);
     hist_div.html(data['commons']['conceptHisto']);
     slider_rows.css({'display': 'table-row'});
+    input_fields.prop('disabled', false);
+    projection_radio.prop('disabled', false);
+    sliders.slider('option','disabled', false);
     omicsValuesObtained(data['1']['conceptData']);
 }
 
@@ -417,3 +417,113 @@ function omicsValuesFailed(result) {
     document.getElementById("omics-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
 }
 
+function applySingleNumericOmicsFilter(validation) {
+    var params = getOmicsFilterParams();
+    if (omics_filter_info.filter) {
+        // filter
+        if (validation && params.selector == "") {
+            alert("You must choose a gene.");
+            return;
+        }
+
+        // make sure that there is a value set
+        if (validation && (!jQuery.isNumeric(jQuery("#omics-amount-min").val()) || !jQuery.isNumeric(jQuery("#omics-amount-max").val()))) {
+            alert('You must specify a numeric value.');
+        } else {
+            if (validation)
+                omicsFilterDialogComplete(params);
+
+            if (STATE.Dragging) {
+                jQuery('#' + selectedConcept.id).remove();
+                removeUselessPanels();
+            }
+            omicsFilterValues = [];
+            omicsSliderLowHandleRatio = 0;
+            omicsSliderHighHandleRatio = 1;
+
+            document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+            omicsfilterwin.hide();
+        }
+    }
+    else {
+        // selection
+        if (validation && params.selector == "") {
+            alert("You must choose a gene.");
+            return;
+        }
+
+        if (validation) {
+            resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+            var omics_params = {omics_selector: params.selector,
+                omics_value_type: omics_filter_info.platform.markerType,
+                omics_projection_type: jQuery("input[name=omics-filter-projection]:checked").val()};
+            Ext.Ajax.request(
+                {
+                    url : pageInfo.basePath+"/chart/analysis",
+                    method : 'POST',
+                    timeout: '600000',
+                    params :  Ext.urlEncode(
+                        {
+                            charttype : "analysis",
+                            concept_key : omics_filter_info.concept_key,
+                            omics_selector : omics_params.omics_selector,
+                            omics_value_type: omics_params.omics_value_type,
+                            omics_projection_type: omics_params.omics_projection_type,
+                            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                        }
+                    ), // or a URL encoded string
+                    success: function (result, request) {
+                        buildAnalysisComplete(result);
+                        resultsTabPanel.body.unmask();
+                    },
+                    failure: function (result, request) {
+                        alert("A problem arose while trying to retrieve the results");
+                        resultsTabPanel.body.unmask();
+                    }
+                }
+            );
+
+            getAnalysisGridData(omics_filter_info.concept_key, omics_params);
+        }
+
+        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        omicsfilterwin.hide();
+    }
+}
+
+function applyACGHOmicsFilter(validation) {
+    var params = getOmicsFilterParams();
+    if (omics_filter_info.filter) {
+        if (validation) // also check if required fields are filled correctly
+            omicsFilterDialogComplete(params);
+
+        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        omicsfilterwin.hide();
+    }
+    else {
+        if (validation)
+            omicsFilterDialogComplete(params);
+
+        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        omicsfilterwin.hide();
+    }
+}
+
+function applyVCFOmicsFilter(validation) {
+    var params = getOmicsFilterParams();
+    if (omics_filter_info.filter) {
+        if (validation) // also check if required fields are filled correctly
+            omicsFilterDialogComplete(params);
+
+        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        omicsfilterwin.hide();
+    }
+    else {
+        if (validation)
+            omicsFilterDialogComplete(params);
+
+        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        omicsfilterwin.hide();
+    }
+}

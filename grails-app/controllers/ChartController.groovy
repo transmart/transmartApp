@@ -179,17 +179,20 @@ class ChartController {
 
     def conceptDistributionWithValues = {
         // Lets put a bit of 'audit' in here
-        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Concept Values", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Concept Distribution With Values", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
 
         def concept = params.concept_key ?: null
 
         // We retrieve the omics parameters from the client, if they were passed
         def omics_params = [:]
-        if (params.omics_value_type != null) {
+
+        // check for required parameters
+        if (omicsQueryService.hasRequiredParams(params)) {
             omics_params.omics_value_type = params.omics_value_type
             omics_params.omics_projection_type = params.omics_projection_type
             omics_params.omics_selector = params.omics_selector
             omics_params.omics_platform = params.omics_platform
+            omics_params.omics_hist_bins = params.containsKey("omics_hist_bins") ? params.int("omics_hist_bins") : null
         }
         else {
             omics_params = null
@@ -215,7 +218,7 @@ class ChartController {
 
         // We retrieve the omics parameters from the client, if they were passed
         def omics_params = [:]
-        if (params.omics_value_type != null) {
+        if (omicsQueryService.hasRequiredParams(params)) {
             omics_params.omics_value_type = params.omics_value_type
             omics_params.omics_projection_type = params.omics_projection_type
             omics_params.omics_selector = params.omics_selector
@@ -263,9 +266,6 @@ class ChartController {
         String concept_key = params.concept_key;
         def result_instance_id1 = params.result_instance_id1;
         def result_instance_id2 = params.result_instance_id2;
-        def omics_selector = params.omics_selector ?: null;
-        def omics_value_type = params.omics_value_type ?: null;
-        def omics_projection_type = params.omics_projection_type ?: null;
 
         /*which subsets are present? */
         boolean s1 = (result_instance_id1 == "" || result_instance_id1 == null) ? false : true;
@@ -307,7 +307,16 @@ class ChartController {
 
         if (concept_key && !concept_key.isEmpty()) {
 
-            if (omics_value_type == null) {
+            if (omicsQueryService.hasRequiredParams(params)) {
+                def omics_params = [:]
+                omics_params.omics_value_type = params.omics_value_type
+                omics_params.omics_projection_type = params.omics_projection_type
+                omics_params.concept_key = concept_key
+                omics_params.omics_selector = params.omics_selector
+                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
+                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)
+            }
+            else {
                 String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
                 Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
 
@@ -326,16 +335,6 @@ class ChartController {
                     if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1);
                     if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2);
                 }
-            }
-
-            else {
-                def omics_params = [:]
-                omics_params.omics_value_type = omics_value_type
-                omics_params.omics_projection_type = omics_projection_type
-                omics_params.concept_key = concept_key
-                omics_params.omics_selector = omics_selector
-                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
-                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)
             }
 
         }

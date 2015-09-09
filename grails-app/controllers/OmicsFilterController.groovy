@@ -1,4 +1,5 @@
 import grails.converters.JSON
+import org.transmartproject.core.querytool.ConstraintByOmicsValue
 import org.transmartproject.db.dataquery.highdim.DeGplInfo
 import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping
 
@@ -25,26 +26,18 @@ class OmicsFilterController {
             return
         }
 
+        def info = ConstraintByOmicsValue.markerInfo[platform.markerType]
+        if (info == null) {
+            render template: template, model: [error: "Marker type unsupported: $platform.markerType"]
+            return
+        }
+
         def model = [gpl_id: platform.id,
                      marker_type: platform.markerType,
                      selector_name: "Gene",
-                     filter_type: filterType(platform.markerType),
-                     filter: filter]
-
-        switch (platform.markerType) {
-            case "Gene Expression":
-            case "MIRNA_QPCR":
-                model['projections'] = [raw_intensity: 'Raw', log_intensity: 'Log', zscore: 'Z-Score']
-                break
-            case "RNASEQ_RCNT":
-                model['projections'] = [normalized_readcount: 'Normalized', log_normalized_readcount: 'Log Normalized', zscore: 'Z-Score']
-                break
-            case "PROTEOMICS":
-                model['projections'] = [intensity: 'Raw', log_intensity: 'Log', zscore: 'Z-Score']
-                break
-            default:
-                model['error'] = "No information for marker type " + platform.getMarkerType()
-        }
+                     filter_type: info.filter_type,
+                     filter: filter,
+                     projections: info.allowed_projections.collectEntries {[it.name(), it.value]}]
 
         render(template: template, model: model)
     }
@@ -59,32 +52,14 @@ class OmicsFilterController {
         }
 
         def platform = DeSubjectSampleMapping.findByConceptCode(i2b2HelperService.getConceptCodeFromKey(concept_key)).getPlatform()
+
         def result = [platform: platform,
                       auto_complete_source: "/transmart/omicsPlatformSearch/searchAutoComplete?gplid=" + URLEncoder.encode(platform.id, "UTF-8"),
-                      filter_type: filterType(platform.markerType),
+                      filter_type: ConstraintByOmicsValue.markerInfo[platform.markerType]?.filter_type,
                       filter: filter,
                       concept_key: concept_key]
 
         if (result.filter_type == "") result['error'] = "Unrecognized marker type " + platform.markerType
         render result as JSON
-    }
-
-    private def filterType(String markerType) {
-        switch (markerType) {
-            case "Gene Expression":
-            case "MIRNA_QPCR":
-            case "RNASEQ_RCNT":
-            case "PROTEOMICS":
-                return "numeric"
-            case "Chromosomal":
-                return "acgh"
-                break
-            case "VCF":
-                return "vcf"
-                break
-            default:
-                log.error "Unrecognized marker type " + markerType
-                return ""
-        }
     }
 }

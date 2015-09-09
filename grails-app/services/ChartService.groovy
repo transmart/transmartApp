@@ -213,7 +213,7 @@ class ChartService {
 
                 }
             }
-        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.omics_params != null) {
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && omicsQueryService.hasRequiredParams(result.commons.omics_params)) {
 
             result.commons.type = 'value'
             result.commons.conceptName = result.commons.omics_params.omics_selector + " in " + result.commons.conceptName
@@ -234,7 +234,8 @@ class ChartService {
             }
 
             // Lets build our concept diagrams now that we have all the points in
-            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize, xlabel: args.omics_params.omics_projection_type, ylabel: "")
+            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize,
+                                                      xlabel: args.omics_params.omics_projection_type, ylabel: "", bins: args.omics_params.omics_hist_bins ?: 10)
             result.commons.conceptPlot = getSVGChart(type: 'boxplot-and-points', data: conceptHistogramHandle, boxplotdata: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible
@@ -321,6 +322,7 @@ class ChartService {
         def title = args.title ?: ""
         def xlabel = args.xlabel ?: ""
         def ylabel = args.ylabel ?: ""
+        def bins = args.bins ?: 10
 
         // We retrieve the dimension if provided
         def width = size?.width ?: 300
@@ -380,7 +382,7 @@ class ChartService {
                     min = min != null ? (v.min() != null && min > v.min() ? v.min() : min) : v.min()
                     max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
                 }.each { k, v ->
-                    if (k) set.addSeries(k, (double [])v.toArray(), 10, min ?: 0, max ?: 0)
+                    if (k) set.addSeries(k, (double [])v.toArray(), bins, min ?: 0, max ?: 0)
                 }
 
                 chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)

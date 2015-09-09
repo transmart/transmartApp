@@ -31,51 +31,60 @@ class OmicsQueryService {
             return values
         }
 
-        def sql_params = [omics_selector: omics_params.omics_selector,
-                          concept_cd: concept_cd,
-                          result_instance_id: result_instance_id]
-        String sqlt = ""
-        def info = ConstraintByOmicsValue.getMarkerInfo(omics_params.omics_value_type)
+        def info = ConstraintByOmicsValue.markerInfo[omics_params.omics_value_type]
         if (info == null) {
-            log.error "Concept distribution not yet supported for omics_params: $omics_params"
+            log.error "Concept distribution not supported for omics_params: $omics_params"
             return values
         }
 
-        String assay_id_subquery = "SELECT assay_id FROM deapp.de_subject_sample_mapping WHERE concept_code=:concept_cd"
-        String ssm_subquery = "SELECT patient_id, assay_id FROM deapp.de_subject_sample_mapping WHERE concept_code=:concept_cd"
-        if (result_instance_id != "") {
-            assay_id_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
-            ssm_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
-        }
+        if (info.filter_type == ConstraintByOmicsValue.FilterType.SINGLE_NUMERIC) {
+            String sqlt;
+            def sql_params = [omics_selector: omics_params.omics_selector,
+                          concept_cd    : concept_cd,
+                          result_instance_id: result_instance_id]
+
+            String assay_id_subquery = "SELECT assay_id FROM deapp.de_subject_sample_mapping WHERE concept_code=:concept_cd"
+            String ssm_subquery = "SELECT patient_id, assay_id FROM deapp.de_subject_sample_mapping WHERE concept_code=:concept_cd"
+            if (result_instance_id != "") {
+                assay_id_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
+                ssm_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
+            }
 
 
-        if (patientIDPopulated(info.data_table)) {
-            sqlt = """SELECT patient_id, AVG($omics_params.omics_projection_type) AS score FROM $info.data_table
-                      WHERE $info.id_column IN (SELECT $info.annotation_id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
-                      AND assay_id IN ($assay_id_subquery)
-                      GROUP BY patient_id"""
+            if (patientIDPopulated(info.data_table)) {
+                sqlt = """SELECT patient_id, AVG($omics_params.omics_projection_type) AS score FROM $info.data_table
+                          WHERE $info.id_column IN (SELECT $info.annotation_id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
+                          AND assay_id IN ($assay_id_subquery)
+                          GROUP BY patient_id"""
+            } else {
+                // patient id not populated in deapp data table, so we need to join with subject sample mapping table
+                sqlt = """SELECT b.patient_id, AVG($omics_params.omics_projection_type) AS score FROM
+                          (
+                            SELECT * FROM $info.data_table WHERE $info.id_column IN (SELECT $info.annotation_id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
+                            AND assay_id IN ($assay_id_subquery)
+                          ) a
+                          INNER JOIN
+                          (
+                            $ssm_subquery
+                          ) b
+                          ON a.assay_id = b.assay_id
+                          GROUP BY b.patient_id"""
+            }
+            log.info(sqlt)
+            Sql sql = new Sql(dataSource)
+            sql.eachRow(sqlt, sql_params, { row ->
+                // can't add the rows directly, as they are not available anymore after the resultset is closed
+                def thisrow = ["patient_id": row.patient_id, "score": row.score]
+                values.add(thisrow)
+            })
         }
-        else {
-            // patient id not populated in deapp data table, so we need to join with subject sample mapping table
-            sqlt = """SELECT b.patient_id, AVG($omics_params.omics_projection_type) AS score FROM
-                      (
-                        SELECT * FROM $info.data_table WHERE $info.id_column IN (SELECT $info.annotation_id_column FROM $info.annotation_table WHERE $info.selector_column=:omics_selector)
-                        AND assay_id IN ($assay_id_subquery)
-                      ) a
-                      INNER JOIN
-                      (
-                        $ssm_subquery
-                      ) b
-                      ON a.assay_id = b.assay_id
-                      GROUP BY b.patient_id"""
+        else if (info.filter_type == ConstraintByOmicsValue.FilterType.ACGH) {
+
         }
-        log.info(sqlt)
-        Sql sql = new Sql(dataSource)
-        sql.eachRow(sqlt, sql_params, { row ->
-            // can't add the rows directly, as they are not available anymore after the resultset is closed
-            def thisrow = ["patient_id": row.patient_id, "score": row.score]
-            values.add(thisrow)
-        })
+        else if (info.filter_type == ConstraintByOmicsValue.FilterType.VCF) {
+
+        }
+
         return values;
     }
 
@@ -109,7 +118,7 @@ class OmicsQueryService {
         })
 
         if (markertypes.size() > 1) {
-            log.error "Search for markertype of platform $gplid returned ${markertypes.size()} results."
+            log.warn "Search for markertype of platform $gplid returned ${markertypes.size()} results."
         }
         if (markertypes.size() == 0) {
             log.error "Search for markertype of platform $gplid returned no results."
@@ -117,7 +126,7 @@ class OmicsQueryService {
         }
 
         String markertype = markertypes.get(0)
-        def info = ConstraintByOmicsValue.getMarkerInfo(markertype)
+        def info = ConstraintByOmicsValue.markerInfo[markertype]
 
         if (info == null) {
             log.error "Unsupported platform type queried: $markertype"
@@ -196,15 +205,15 @@ class OmicsQueryService {
     def ExportTableNew addHighDimConceptDataToTable(ExportTableNew tablein, omics_constraint, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
-        def info = ConstraintByOmicsValue.getMarkerInfo(omics_constraint.omics_value_type)
+        def info = ConstraintByOmicsValue.markerInfo[omics_constraint.omics_value_type]
         if (info == null) {
             log.error "Omics data type " + omics_constraint.omics_value_type + " invalid or not yet implemented."
             return tablein
         }
         else {
-            if (!info.allowed_projections.contains(omics_constraint.omics_projection_type.toLowerCase())) {
+            if (!info.allowed_projections.collect {it.value.toLowerCase()}.contains(omics_constraint.omics_projection_type.toLowerCase())) {
                 log.error "Unsupported projection type for $omics_constraint.omics_value_type: $omics_constraint.omics_projection_type, " +
-                          "should be one of [" + info.allowed_projections.join(", ") + "]"
+                          "should be one of [" + info.allowed_projections.collect {it.value}.join(", ") + "]"
                 return tablein
             }
         }
@@ -249,20 +258,13 @@ class OmicsQueryService {
         return tablein;
     }
 
-    // returns a map describing the platform for the given concept_key
-    def getPlatform(String concept_key) {
-        def concept_code = i2b2HelperService.getConceptCodeFromKey(concept_key)
-        String sqlt = "SELECT * FROM deapp.de_gpl_info WHERE platform = (SELECT gpl_id FROM deapp.de_subject_sample_mapping WHERE concept_code=? LIMIT 1)"
-        log.info sqlt
-        def sql = new Sql(dataSource)
-        def result = [:]
-        def row = sql.firstRow(sqlt, concept_code)
-        log.info row
-        if (row) {
-            result = [gpl_id: row['gpl_id'],
-                      ]
-        }
-        result
+    /**
+     * Checks the given map for minimum required parameters for high-dimensional concepts
+     * @param map
+     * @return True if map contains required parameters, false otherwise
+     */
+    def hasRequiredParams(Map map) {
+        map != null ? ["omics_value_type", "omics_projection_type", "omics_selector", "omics_platform"].inject(true) {result, key -> result && map.containsKey(key)} : false
     }
 
     private def patientIDPopulated(String table) {
