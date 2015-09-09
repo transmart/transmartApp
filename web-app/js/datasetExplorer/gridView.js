@@ -268,7 +268,7 @@ function buildColumnModel(fields) {
         c.id = f.name;
         c.dataIndex = f.name;
         c.header = f.header;
-        c.tooltip = f.name;
+        c.tooltip = f.tooltip;
         c.width = f.width;
         c.sortable = f.sortable;
         c.menuDisabled = false;

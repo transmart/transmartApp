@@ -553,17 +553,32 @@ class I2b2HelperService {
 
         log.trace("Getting observation count for concept:" + concept_key + " and instance:" + result_instance_id);
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
+        String fullnameLike = fullname.asLikeLiteral() + "%" // Note: .asLikeLiteral() defined in github: 994dc5bb50055f8b800045f65c8e565b4aa0c113
         int i = 0;
+        log.trace("sql inputs: fullnameLike = " + fullnameLike)
+        log.trace("\tresult_instance_id = " + result_instance_id)
         Sql sql = new Sql(dataSource);
-        String sqlt = """select count (*) as obscount FROM i2b2demodata.observation_fact
-		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
-			where concept_path LIKE ? escape '\\')))) AND PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)""";
+        String sqlt = """
+            select count(*) from (
+                select distinct patient_num
+                FROM i2b2demodata.observation_fact
+                WHERE concept_cd IN (
+                        select concept_cd
+                        from i2b2demodata.concept_dimension c
+                        where concept_path LIKE ? escape '\\')
+                    AND PATIENT_NUM IN (
+                        select distinct patient_num
+                        from qt_patient_set_collection
+                        where result_instance_id = ?)
+            ) as subjectList
+        """
         sql.eachRow(sqlt, [
-                fullname.asLikeLiteral() + "%", // Note: .asLikeLiteral() defined in github: 994dc5bb50055f8b800045f65c8e565b4aa0c113
+                fullnameLike,
                 result_instance_id
         ], { row ->
             i = row[0]
         })
+        log.trace("count = " + i)
         return i;
     }
 
@@ -705,15 +720,24 @@ class I2b2HelperService {
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
+        /* As the column headers only show the (in many cases ambiguous) leaf part of the concept path,
+         * showing the full concept path in the tooltip is much more informative.
+         * As no tooltip text is passed on to the GridView code, the value of the string columnid is used
+         * and shown as the tooltip text when hoovering over the column header in GridView.
+         * Explicitly passing a tooltip text to the GridView code removes the necessity to use this columnid value.
+         * Removal of some undesired non-alpha-numeric characters from tooltip string
+         * prevents display errors in GridView (drop down menu, columns not showing or cells not being filled).
+         */
         String columnid = concept_key.encodeAsSHA1()
         String columnname = getColumnNameFromKey(concept_key).replace(" ", "_")
+        String columntooltip = keyToPath(concept_key).replaceAll('[^a-zA-Z0-9_\\-\\\\]+','_')
         if (isLeafConceptKey(concept_key)) {
             /*add the column to the table if its not there*/
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
             if (tablein.getColumn(columnid) == null) {
-                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number"));
+                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number", columntooltip));
             }
 
             if (isValueConceptKey(concept_key)) {
@@ -805,7 +829,7 @@ class I2b2HelperService {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
             if (tablein.getColumn(columnid) == null) {
-                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "string"));
+                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "string", columntooltip));
             }
 
             // Store the concept paths to query

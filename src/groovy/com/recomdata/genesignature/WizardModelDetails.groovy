@@ -1,5 +1,5 @@
 /**
- * model details class for the create/edit wizard in the gene signautre module
+ * model details class for the create/edit wizard in the gene signature module
  */
 package com.recomdata.genesignature
 
@@ -43,7 +43,7 @@ public class WizardModelDetails extends ModelDetails {
     def cloneId
 
     /**
-     * add an emtpy other ConceptCode item
+     * add an empty other ConceptCode item
      */
     public static void addOtherItem(List<ConceptCode> items, String optionId) {
         if (optionId == null) optionId = "other"

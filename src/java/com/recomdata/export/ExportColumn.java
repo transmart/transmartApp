@@ -17,18 +17,29 @@ public class ExportColumn {
     private String label;
     private String pattern;
     private String type;
+    private String tooltip;
 
     public ExportColumn(String id, String label, String pattern, String type) {
         this.id = id;
         this.label = label;
         this.pattern = pattern;
         this.type = type;
+        this.tooltip = label;
+    }
+
+    public ExportColumn(String id, String label, String pattern, String type, String tooltip) {
+        this.id = id;
+        this.label = label;
+        this.pattern = pattern;
+        this.type = type;
+        this.tooltip = tooltip;
     }
 
     public JSONObject toJSONObject() throws JSONException {
         JSONObject json = new JSONObject();
         json.put("name", id);
         json.put("header", label);
+        json.put("tooltip", tooltip);
         json.put("sortable", true);
         return json;
     }
@@ -82,4 +93,11 @@ public class ExportColumn {
         this.type = type;
     }
 
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
+    }
 }
