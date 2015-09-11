@@ -703,13 +703,13 @@ class I2b2HelperService {
                 newrow.put("SAMPLE_CDS", cds ? cds : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
-                if (row.SEX_CD!=null && row.SEX_CD!="") {
+                if (row.SEX_CD) {
                     newrow.put("SEX_CD", row.SEX_CD.toLowerCase().equals("m") || row.SEX_CD.toLowerCase().equals("male") ? "male" : (row.SEX_CD.toLowerCase().equals("f") || row.SEX_CD.toLowerCase().equals("female") ? "female" : "NULL") )
                 }
-                if (row.AGE_IN_YEARS_NUM!=null) {
+                if (row.AGE_IN_YEARS_NUM) {
                     newrow.put("AGE_IN_YEARS_NUM", row.AGE_IN_YEARS_NUM.toString())
                 }
-                if (row.RACE_CD!=null && row.RACE_CD!="") {
+                if (row.RACE_CD) {
                     newrow.put("RACE_CD", row.RACE_CD.toLowerCase())
                 }
                 tablein.putRow(subject, newrow);
@@ -862,18 +862,6 @@ class I2b2HelperService {
                     }
                 });
             }
-            //pad all the empty values for this column
-            /* Padding empty values introduces confusion with the user.
-             * It is not really clear anymore whether there was no observation done or whether "NULL" has been observed.
-             * Leaving a grid cell empty when no observation exists, is a more explicit representation of the status.
-             */
-            /*
-             * for (ExportRowNew row : tablein.getRows()) {
-             *     if (!row.containsColumn(columnid)) {
-             *         row.put(columnid, "NULL");
-             *     }
-             * }
-             */
         } else {
             // If a folder is dragged in, we want the contents of the folder to be added to the data
             // That is possible if the folder contains only categorical values and no subfolders.
@@ -945,18 +933,6 @@ class I2b2HelperService {
                     tablein.putRow(subject, newrow);
                 }
             }
-
-            //pad all the empty values for this column
-            /* Padding empty values introduces confusion with the user.
-             * It is not really clear anymore whether there was no observation done or whether "N" has been observed.
-             * Leaving a grid cell empty when no observation exists, is a more explicit representation of the status.
-             */
-            /* for (ExportRowNew row : tablein.getRows()) {
-             *     if (!row.containsColumn(columnid)) {
-             *         row.put(columnid, "N");
-             *     }
-             * }
-             */
         }
         return tablein;
     }
