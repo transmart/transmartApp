@@ -10895,7 +10895,8 @@ Ext.extend(Ext.data.Store, Ext.util.Observable, {
         var fn = function(r1, r2){
             var v1 = st(r1.data[f]), v2 = st(r2.data[f]);
             // Sort undefined, null and empty values towards the end (ASC) or begin (Otherwise)
-            var vv1=(v1==null||v1.toString()=="")?undefined:v1, vv2=(v2==null||v2.toString()=="")?undefined:v2;
+            var vv1=(v1==null||v1.toString()=="")?undefined:v1;
+            var vv2=(v2==null||v2.toString()=="")?undefined:v2;
             var CAREABOUTUNDEF=direction=="ASC"?vv1:vv2;
             var R=-1;
             if(vv1==vv2) {R=0} else if (vv1>vv2||CAREABOUTUNDEF==undefined) {R=1};
