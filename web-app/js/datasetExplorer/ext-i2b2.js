@@ -3,16 +3,21 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
 
-            this.transId = Ext.Ajax.request({
-                method: 'GET',
-                url: pageInfo.basePath + "/concepts/getChildren",
-                params: { concept_key: node.id },
-                success: this.handleResponse,
-                failure: this.handleFailure,
-                scope: this,
-                argument: {callback: callback, node: node},
-                timeout: '120000' //2 minutes
-            });
+            if(node.attributes.cls == 'fileFolderNode') {
+                this.transId = FM.handleFolderFilesRequest(this, node, callback);
+            }
+            else {
+	        this.transId = Ext.Ajax.request({
+	            method: 'GET',
+	            url: pageInfo.basePath + "/concepts/getChildren",
+	            params: { concept_key: node.id },
+	            success: this.handleResponse,
+	            failure: this.handleFailure,
+	            scope: this,
+	            argument: {callback: callback, node: node},
+	            timeout: '120000' //2 minutes
+	        });
+            }
 
         } else {
             // if the load is cancelled, make sure we notify
@@ -27,10 +32,28 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         node.beginUpdate();
         //node.appendChild(nodes);
         this.parseJson(response, node);
-        getChildConceptPatientCounts(node);
-        node.endUpdate();
-        if (typeof callback == "function") {
-            callback(this, node);
+        //getChildConceptPatientCounts(node);
+	if(node.attributes.cls == 'fileFolderNode') {
+            FM.addFileNodes(this, response, node, callback);
+            node.endUpdate();
+	    if (typeof callback == "function") {
+	        callback(this, node);
+	    }
+    	}
+    	else {
+	    if (node.attributes.level == 1) {
+	        FM.handleFolderHasFilesRequest(this, response, node, callback);
+	    }
+	        
+	    else {
+                //parseJson(response, node);
+	        getChildConceptPatientCounts(node);
+		//this.endAppending(node, callback);
+	    }
+	    node.endUpdate();
+	    if (typeof callback == "function") {
+	        callback(this, node);
+	    }
         }
     },
 
@@ -82,6 +105,58 @@ function getConceptPatientCount(node) {
             params: Ext.urlEncode({charttype: "conceptpatientcount",
                 concept_key: node.attributes.id})
         });
+}
+
+function parseJson (response, node) {
+        // shorthand
+        var Tree = Ext.tree;
+
+        var concepts = Ext.decode(response.responseText)
+
+        var matchList = GLOBAL.PathToExpand.split(",");
+        for (i = 0; i < concepts.length; i++) {
+            var c = getTreeNodeFromJsonNode(concepts[i]);
+            if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
+            //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+            if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
+                //However, don't filter studies/top folders out if a higher-level match exists
+                var highLevelMatchFound = false;
+                for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
+                    if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+                        highLevelMatchFound = true;
+                        break;
+                    }
+                }
+                if (!highLevelMatchFound) {
+                    continue;
+                }
+            }
+   		 
+            //If the node has been disabled, ignore all children
+            if (!node.disabled) {
+                node.appendChild(c);
+            }
+        }
+        
+ }
+
+ function handleFolderHasFilesRequest (source, originalResponse, node, callback) {
+
+    Ext.Ajax.request({
+        url: pageInfo.basePath+"/fmFolder/getFolderHasFiles",
+        method: 'GET',
+        success: function(response) {
+            if (response.responseText == "true") {
+                node.appendChild(getFileFolderNode(node));
+            }
+            //parseJson(originalResponse, node);
+            //source.endAppending(node, callback);
+        },
+        timeout: '120000', //2 minutes
+        params: {accession: node.attributes.accession}
+    });
+
+
 }
 
 function getConceptPatientCountComplete(result, node) {
