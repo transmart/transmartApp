@@ -9,8 +9,8 @@ public class FormLayout {
     Boolean display = true;
 
     static mapping = {
-        table 'CZ_FORM_LAYOUT'
-        id generator: 'sequence', params: [sequence: 'SEQ_CZ_FORM_LAYOUT_ID']
+        table 'SEARCH_FORM_LAYOUT'
+        id generator: 'sequence', params: [sequence: 'SEQ_SEARCH_FORM_LAYOUT_ID']
         version false
         id column: 'FORM_LAYOUT_ID'
         key column: 'FORM_KEY'
