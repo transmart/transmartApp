@@ -392,6 +392,10 @@ class GenericJobExecutor implements Job {
 
     def boolean isJobCancelled(jobName) {
         boolean jobCancelled = false
+
+        //if no job has been submitted, it cannot be cancelled
+        if (! jobName) return false
+
         //log.debug("Checking to see if the user cancelled the job")
         if (jobResultsService[jobName]["Status"] == "Cancelled") {
             log.warn("${jobName} has been cancelled")
