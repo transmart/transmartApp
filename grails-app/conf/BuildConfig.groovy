@@ -45,7 +45,11 @@ grails.project.dependency.resolution = {
             mavenCentral()
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
-            mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
+
+            // -- Genome Browser plugin --
+            //   to inclue the plugin, uncomment the following line
+            //   and see related comment block below 
+            // mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -143,8 +147,11 @@ grails.project.dependency.resolution = {
             //compile ':biomart-domain:1.2.5-Beta-SNAPSHOT'
             //// already included in biomart-domain
             //compile ':transmart-java:1.2.5-Beta-SNAPSHOT'
-            runtime ':dalliance-plugin:0.2-SNAPSHOT'
-            runtime ':transmart-mydas:0.1-SNAPSHOT'
+            // -- Genome Browser plugin --
+            //   to inclue the plugin, uncomment the following two lines
+            //   and see related comment block above 
+            // runtime ':dalliance-plugin:0.2-SNAPSHOT'
+            // runtime ':transmart-mydas:0.1-SNAPSHOT'
             runtime ':transmart-rest-api:1.2.5-Beta-SNAPSHOT'
             runtime ':blend4j-plugin:1.2.5-Beta-SNAPSHOT'
             runtime ':transmart-metacore-plugin:1.2.5-Beta-SNAPSHOT'
