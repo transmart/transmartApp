@@ -20,6 +20,7 @@ class ChangeMyPasswordController {
         } else {
             AuthUser currentUser = springSecurityService.currentUser
             currentUser.passwd = springSecurityService.encodePassword(command.newPassword)
+            currentUser.changePassword = false
             currentUser.save(flush: true)
 
             if (currentUser.hasErrors()) {

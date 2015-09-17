@@ -17,7 +17,7 @@
     </g:if>
 
     <!-- Include jQuery, Ext and app-specific scripts: -->
-    <g:javascript library="jquery" />    
+    <g:javascript library="jquery" />
     <r:require module="analyseTab" />
     <r:layoutResources/>
     <tmpl:/RWG/urls/>
@@ -127,7 +127,7 @@
 <tmpl:/RWG/filterBrowser/>
 
 <div id="modifierValueDiv" title="Modifier Value Selection" style="display:none;">
-     <g:render template="/layouts/modifierValueForm" />
+    <g:render template="/layouts/modifierValueForm" />
 </div>
 
 <div id="sidebartoggle">&nbsp;</div>
