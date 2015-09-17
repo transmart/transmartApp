@@ -12,8 +12,15 @@ class AuditLogFilters {
             after = { model ->
                 def ip = request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr
                 accessLogService.report(currentUserBean, 'Data Export',
-                    eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}",
-                    requestURL: "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}")
+                    eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}")
+            }
+        }
+        dataExport(controller: 'dataExport', action:'downloadFile') {
+            after = { model ->
+                def ip = request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr
+                accessLogService.report(currentUserBean, 'Data Export',
+                        eventMessage: "User (IP: ${ip}) downloaded an exported file.",
+                        requestURL: "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}")
             }
         }
     }
