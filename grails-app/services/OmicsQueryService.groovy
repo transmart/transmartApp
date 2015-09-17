@@ -2,8 +2,6 @@ import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import groovy.sql.Sql
-import org.transmartproject.core.dataquery.Patient
-import org.transmartproject.core.dataquery.assay.Assay
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
@@ -211,9 +209,9 @@ class OmicsQueryService {
             return tablein
         }
         else {
-            if (!info.allowed_projections.collect {it.value.toLowerCase()}.contains(omics_constraint.omics_projection_type.toLowerCase())) {
+            if (!info.allowed_projections.collect {it.name()}.contains(omics_constraint.omics_projection_type)) {
                 log.error "Unsupported projection type for $omics_constraint.omics_value_type: $omics_constraint.omics_projection_type, " +
-                          "should be one of [" + info.allowed_projections.collect {it.value}.join(", ") + "]"
+                          "should be one of [" + info.allowed_projections.collect {it.name()}.join(", ") + "]"
                 return tablein
             }
         }
@@ -264,7 +262,7 @@ class OmicsQueryService {
      * @return True if map contains required parameters, false otherwise
      */
     def hasRequiredParams(Map map) {
-        map != null ? ["omics_value_type", "omics_projection_type", "omics_selector", "omics_platform"].inject(true) {result, key -> result && map.containsKey(key)} : false
+        map != null ? ["omics_value_type", "omics_projection_type", "omics_selector"].inject(true) {result, key -> result && map.containsKey(key)} && (map.containsKey("omics_platform") || map.containsKey("concept_key")) : false
     }
 
     private def patientIDPopulated(String table) {
