@@ -82,7 +82,12 @@
                         <td align="left"><g:checkBox name="${it.authority}"/></td>
                     </tr>
                 </g:each>
-
+                <tr class="prop">
+                    <td valign="top" class="name">Force user to change the password:</td>
+                    <td valign="top" class="value">
+                        <g:checkBox name="changePassword" value="${person.changePassword}"/>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>
