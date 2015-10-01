@@ -130,6 +130,42 @@ public class GeneSignatureService {
         }
     }
 
+    def loadGeneSigItemsFromList(List<String> markers) {
+        List<GeneSignatureItem> gsItems = new ArrayList();
+        SortedSet invalidSymbols = new TreeSet();
+        Double foldChg = null;
+
+        Iterator iter = markers.iterator()
+        while(iter.hasNext()) {
+            def geneSymbol = iter.next()
+            def marker = lookupBioAssociations(geneSymbol)
+            if(marker==null || marker.size()==0) {
+                def snpUid = lookupSnpBioAssociations(geneSymbol)
+                if (snpUid) {
+                    gsItems.add(new GeneSignatureItem(bioDataUniqueId: snpUid))
+                    continue;
+                }
+                println("WARN: invalid gene symbol: "+ geneSymbol)
+                invalidSymbols.add(geneSymbol);
+                continue;
+            }
+            for (int j = 0; j < marker.size(); j++)
+            {
+                def bioMarkerId = marker[j].getAt(0);
+                def uniqueId = marker[j].getAt(1)
+                println(">> Gene lookup: 1) marker id: "+bioMarkerId+"; 2) unique id: "+uniqueId)
+                // create item instance
+                GeneSignatureItem item = new GeneSignatureItem(bioMarker: BioMarker.read(bioMarkerId), bioDataUniqueId: uniqueId, foldChgMetric: foldChg);
+                gsItems.add(item);
+            }
+        }
+
+        // check for invalid symbols
+        if(invalidSymbols.size()>0) FileSchemaException.ThrowInvalidGenesFileSchemaException(invalidSymbols);
+        log.info "created (" + gsItems.size() + ") GeneSignatureItem records"
+        return gsItems;
+    }
+
     /**
      * parse file and create associated gene sig item records
      */
@@ -242,6 +278,149 @@ public class GeneSignatureService {
 
             // check for invalid symbols
             if (invalidSymbols.size() > 0) FileSchemaException.ThrowInvalidGenesFileSchemaException(invalidSymbols);
+            log.info "created (" + gsItems.size() + ") GeneSignatureItem records"
+            return gsItems;
+        } finally {
+            br.close();
+        }
+    }
+
+    /**
+     * parse file and create associated gene sig item records
+     */
+    def loadGeneSigItemsFromFile(MultipartFile file, String organism, String metricType, String fileSchemaName) throws FileSchemaException {
+        BufferedReader br = null;
+        List<GeneSignatureItem> gsItems = new ArrayList();
+        SortedSet invalidSymbols = new TreeSet();
+        def origFile = file.getOriginalFilename()
+
+        // metric type
+        log.debug("\nINFO: Parsing: " + file.originalFilename + " for organism: "+organism+" [Type: "+metricType+"]")
+
+        try {
+            // establish a reader
+            InputStream is = file.getInputStream()
+            br = new BufferedReader(new InputStreamReader(is))
+
+            // parse file (read first three lines only)
+            String record = null
+            int i = 0;
+            StringTokenizer st = null;
+
+            while(br.ready()) {
+                i++;
+                record = br.readLine().trim();
+                println("Line " + i +": " + record)
+                if(record=="") continue;
+
+                List items = new ArrayList();
+                st = new StringTokenizer(record,"\t")
+
+                // parse into tokens
+                while(st.hasMoreTokens()) {
+                    items.add(st.nextToken())
+                }
+
+                String geneSymbol = (String)items.get(0);
+                String foldChgTest = (String)items.get(items.size()-1)
+                Double foldChg = null;
+
+                // parse fold change metric for non gene lists
+                if(metricType!=METRIC_CODE_GENE_LIST ) {
+                    // check valid fold change
+                    if(foldChgTest!="") {
+                        try {
+                            foldChg = Double.parseDouble(foldChgTest)
+                        } catch (NumberFormatException e) {
+                            log.error "invalid number format detected in file ("+foldChgTest+")",e
+                            throw new FileSchemaException("Invalid fold-change number detected in file:'"+origFile+"', please correct ("+foldChgTest+")",e)
+                        }
+                    }
+                }
+
+                // lookup gene symbol or probeset id
+                def marker
+                if(fileSchemaName.toUpperCase() =~ /GENE / && organism == null){
+                    marker = lookupBioAssociations(geneSymbol)
+
+                    if(marker==null || marker.size()==0) {
+                        def snpUid = lookupSnpBioAssociations(geneSymbol)
+                        if (snpUid) {
+                            gsItems.add(new GeneSignatureItem(bioDataUniqueId: snpUid))
+                            continue;
+                        }
+                        println("WARN: invalid gene symbol: "+ geneSymbol)
+                        invalidSymbols.add(geneSymbol);
+                        continue;
+                    }
+
+                    for (int j = 0; j < marker.size(); j++)
+                    {
+                        def bioMarkerId = marker[j].getAt(0);
+                        def uniqueId = marker[j].getAt(1)
+                        println(">> Gene lookup: 1) marker id: "+bioMarkerId+"; 2) unique id: "+uniqueId)
+
+                        // create item instance
+                        GeneSignatureItem item = new GeneSignatureItem(bioMarker: BioMarker.read(bioMarkerId), bioDataUniqueId: uniqueId, foldChgMetric: foldChg);
+                        gsItems.add(item);
+                    }
+                }
+                else if(fileSchemaName.toUpperCase() =~ /GENE /){
+                    marker = lookupBioAssociations(geneSymbol,organism)
+					
+                    if(marker==null || marker.size()==0) {
+                        def snpUid = lookupSnpBioAssociations(geneSymbol)
+                        if (snpUid) {
+                            gsItems.add(new GeneSignatureItem(bioDataUniqueId: snpUid))
+                            continue;
+                        }
+                        println("WARN: invalid gene symbol: "+ geneSymbol)
+                        invalidSymbols.add(geneSymbol);
+                        continue;
+                    }
+					
+                    def bioMarkerId = marker.getAt(0);
+                    def uniqueId = marker.getAt(1)
+                    println(">> Gene lookup: 1) marker id: "+bioMarkerId+"; 2) unique id: "+uniqueId)
+					
+                    // create item instance
+                    GeneSignatureItem item = new GeneSignatureItem(bioMarker: BioMarker.read(bioMarkerId), bioDataUniqueId: uniqueId, foldChgMetric: foldChg);
+                    gsItems.add(item);
+					
+                } else if(fileSchemaName.toUpperCase() =~ /PROBESET /){
+                    // geneSymbol ==> probeset id
+                    marker = lookupProbesetBioAssociations(geneSymbol)
+				
+                    if(marker==null || marker.isEmpty()) {
+                        def snpUid = lookupSnpBioAssociations(geneSymbol)
+                        if (snpUid) {
+                            gsItems.add(new GeneSignatureItem(bioDataUniqueId: snpUid))
+                            continue;
+                        }
+                        println("WARN: invalid probe set id: "+ geneSymbol)
+                        invalidSymbols.add(geneSymbol);
+                        continue;
+                    }
+					
+                    //def probesetId = marker.getAt(0);
+                    def probesetId = marker.getAt(0);
+                    //	def bioMarkerId = marker.getAt(1);
+                    println(">> Probeset lookup: 1) probeset id: "+probesetId )
+					
+                    // create item instance if this probeset exists in bio_assay_feature_group table, otherwise do nothing
+                    def ba = bio.BioAssayFeatureGroup.read(probesetId);
+                    if(ba!=null){
+                        GeneSignatureItem item = new GeneSignatureItem(probeset: ba, foldChgMetric: foldChg);
+                        gsItems.add(item);
+                    }
+                }else{
+                    marker = null
+                }
+
+            }
+
+            // check for invalid symbols
+            if(invalidSymbols.size()>0) FileSchemaException.ThrowInvalidGenesFileSchemaException(invalidSymbols);
             log.info "created (" + gsItems.size() + ") GeneSignatureItem records"
             return gsItems;
         } finally {
@@ -540,6 +719,53 @@ public class GeneSignatureService {
     }
 
     /**
+     * match up the uploaded gene symbol with our internal bio_marker & bio_data_uid tables
+     */
+    def lookupBioAssociations(String geneSymbol) {
+        def query = new Query(mainTableAlias:"bd");
+        query.addTable("org.transmart.biomart.BioMarker bm")
+        query.addTable("org.transmart.biomart.BioData bd")
+        query.addCondition("bm.id=bd.id")
+        query.addCondition("bm.bioMarkerType='GENE'")
+        query.addCondition("UPPER(bm.name) ='" + geneSymbol.toUpperCase() + "'")
+        query.addCondition("bd.type='BIO_MARKER.GENE'")
+        query.addSelect("bm.id")
+        query.addSelect("bd.uniqueId")
+
+        def qBuf = query.generateSQL();
+        //log.debug "Lookup query: "+qBuf
+
+        //def markers = BioMarker.executeQuery(qBuf);
+        def markers = BioData.executeQuery(qBuf);
+
+        // try ext code lookup if necessary
+        // println(markers)
+
+        if(markers==null || markers.size()==0) {
+            query = new Query(mainTableAlias:"bm");
+            query.addTable("org.transmart.biomart.BioDataExternalCode ext")
+            query.addTable("org.transmart.biomart.BioMarker bm")
+            query.addTable("org.transmart.biomart.BioData bd")
+            query.addCondition("ext.bioDataId=bm.id")
+            query.addCondition("bm.id=bd.id")
+            query.addCondition("UPPER(ext.code) = '" + geneSymbol.toUpperCase() + "'")
+            query.addCondition("bm.bioMarkerType='GENE'")
+            query.addCondition("bd.type='BIO_MARKER.GENE'")
+            query.addSelect("bm.id")
+            query.addSelect("bd.uniqueId")
+
+            qBuf = query.generateSQL();
+            log.info "Ext Bio Marker lookup query: "+qBuf
+            markers = BioMarker.executeQuery(qBuf)
+
+            // check for none or ambiguity
+            if(markers==null) return null;
+        }
+
+        return markers;
+    }
+
+    /**
      * match up the uploaded probeset id with our internal bio_assay_feature_group & bio_data_uid tables
      */
     def lookupProbesetBioAssociations(String probeset, String platform) {
@@ -595,6 +821,16 @@ public class GeneSignatureService {
         /////return marker;
         def mm = marker[0]
         return ['gplId':mm[0], 'probeId':mm[1], geneId:mm[2], probesetId:mm[3], bioMarkerId:mm[4]]
+    }
+
+    /**
+     *  Match the uploaded item with our SNP list
+     */
+    def lookupSnpBioAssociations(String keyword) {
+        def skt = SearchKeyword.findByKeywordAndDataCategory(keyword, 'SNP')
+        if (!skt) return null
+        def skid = skt.uniqueId
+        return skid;
     }
 
     /**

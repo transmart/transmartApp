@@ -1870,6 +1870,78 @@ constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
     return newnode;
     }
 
+
+function getTreeNodeFromJSON(concept)
+{
+		var Tree = Ext.tree;
+         var level = concept.hlevel;
+         //alert(concept.id);
+         var key=concept.key
+         var name = concept.name;
+         var tooltip = concept.tooltip;
+         var dimcode = concept.dimcode;
+         var visualattributes = concept.visualattributes;
+         var tablename = concept.tablename;
+         var metadataxml=concept.metadataxml;
+         var oktousevalues=metadataxml.oktousevalues;
+         var normalunits=metadataxml.normalunits;
+         var access=concept.access;
+         var comment=concept.comment;
+         // get type of node
+         var nodetype = visualattributes.substr(0, 1);
+         var nodestatus = visualattributes.substr(1, 1);
+         // A = active I = inactive H = hidden
+         if(nodetype == 'F') // folder - dragable
+         {
+            leaf = false;
+            draggable = true;
+         }
+         else if(nodetype == 'C') // folder - dragable
+         {
+            leaf = false;
+            draggable = false;
+         }
+         else if(nodetype == 'L' || nodetype == 'M') // leaf - dragable
+         {
+            leaf = true;
+            draggable = true;
+         }
+         var newnode = new Tree.AsyncTreeNode(
+         {
+            accession: name,
+            text : name,
+            draggable : draggable,
+            leaf : leaf,
+            id : key,
+            qtip : tooltip,
+            level : level,  // extra attribute for storing level in hierarchy access through node.attributes.level
+            dimcode : dimcode,
+            tablename : tablename,
+            normalunits : normalunits,
+            oktousevalues: oktousevalues,
+            comment: comment
+         }
+         );
+  		   newnode.addListener('contextmenu',ontologyRightClick);
+  		   return newnode;
+  }
+
+
+
+function setTreeNodeSecurity(newnode, access)
+{
+if(access!=undefined)
+  			{
+  			if(access=='Locked')
+  			{
+  			//newnode.setText(child.text+" <b>Locked</b>");
+  			newnode.attributes.access='locked';
+  			newnode.disable();
+  			newnode.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});		
+  			}
+  		   }
+}
+
 function climbTreeBuildName(baseNode)
 {
     var nodeNameString = "\\";

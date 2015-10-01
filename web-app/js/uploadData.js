@@ -436,16 +436,16 @@ jQuery(document).ready(function() {
             changeField('study-combobox', 'study');
             jQuery('#formPage2').hide();
             jQuery('#formPage1').show();
-            jQuery('.dataFormTitle').text("Upload Analysis Data");
+            jQuery('.dataFormTitle').text("Upload GWAS results");
         }
         else {
             if (jQuery(this).attr('id') == 'uploadFileDatasetExplorerRadio') {
                 UPLOAD_STUDY_TYPE = 'i2b2';
-                jQuery('.dataFormTitle').text("Upload File to Dataset Explorer");
+                jQuery('.dataFormTitle').text("Upload File to Analyze");
             }
             else if (jQuery(this).attr('id') == 'uploadFileRadio') {
                 UPLOAD_STUDY_TYPE = 'Experiment';
-                jQuery('.dataFormTitle').text("Upload File to Faceted Search");
+                jQuery('.dataFormTitle').text("Upload File to GWAS");
             }
             jQuery('#uploadAnalysisPane').hide();
             jQuery('#enterMetadataButton').hide();
