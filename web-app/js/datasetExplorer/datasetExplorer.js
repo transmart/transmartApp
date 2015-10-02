@@ -3355,6 +3355,15 @@ function storeLoaded(jsonStore, rows, paramsObject) {
                     }
                 });
                 bbar.add(exportButton);
+                var patientIDsButton = new Ext.Button ({
+                    text: 'Get patient IDs',
+                    listeners: {
+                        click: function () {
+                            grid.getPatientIDs()
+                        }
+                    }
+                });
+                bbar.add(patientIDsButton);
             }
         });
     }
