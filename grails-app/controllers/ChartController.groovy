@@ -1,26 +1,13 @@
 import com.recomdata.export.ExportTableNew
-import com.recomdata.statistics.StatHelper
 import grails.converters.JSON
-import org.jfree.chart.ChartFactory
-import org.jfree.chart.ChartRenderingInfo
-import org.jfree.chart.ChartUtilities
-import org.jfree.chart.JFreeChart
-import org.jfree.chart.axis.NumberAxis
-import org.jfree.chart.entity.StandardEntityCollection
-import org.jfree.chart.plot.PlotOrientation
-import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.renderer.xy.StandardXYBarPainter
-import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.chart.servlet.ChartDeleter
 import org.jfree.chart.servlet.ServletUtilities
-import org.jfree.data.statistics.HistogramDataset
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream
 import javax.servlet.http.HttpSession
-import java.awt.*
 import java.util.List
 
 //import edu.mit.wi.haploview.*;
@@ -128,7 +115,7 @@ class ChartController {
 
         // We retrieve the omics parameters from the client, if they were passed
         def omics_params = [:]
-        if (params.omics_value_type != null) {
+        if (omicsQueryService.areValidParams(params)) {
             omics_params.omics_value_type = params.omics_value_type
             omics_params.omics_platform = params.omics_platform
             omics_params.omics_projection_type = params.omics_projection_type
@@ -159,7 +146,7 @@ class ChartController {
 
         // We retrieve the omics parameters from the client, if they were passed
         def omics_params = [:]
-        if (params.omics_value_type != null) {
+        if (omicsQueryService.areValidParams(params)) {
             omics_params.omics_value_type = params.omics_value_type
             omics_params.omics_projection_type = params.omics_projection_type
             omics_params.omics_selector = params.omics_selector
@@ -187,7 +174,7 @@ class ChartController {
         def omics_params = [:]
 
         // check for required parameters
-        if (omicsQueryService.hasRequiredParams(params)) {
+        if (omicsQueryService.areValidParams(params)) {
             omics_params.omics_value_type = params.omics_value_type
             omics_params.omics_projection_type = params.omics_projection_type
             omics_params.omics_selector = params.omics_selector
@@ -218,7 +205,7 @@ class ChartController {
 
         // We retrieve the omics parameters from the client, if they were passed
         def omics_params = [:]
-        if (omicsQueryService.hasRequiredParams(params)) {
+        if (omicsQueryService.areValidParams(params)) {
             omics_params.omics_value_type = params.omics_value_type
             omics_params.omics_projection_type = params.omics_projection_type
             omics_params.omics_selector = params.omics_selector
@@ -307,7 +294,7 @@ class ChartController {
 
         if (concept_key && !concept_key.isEmpty()) {
 
-            if (omicsQueryService.hasRequiredParams(params)) {
+            if (omicsQueryService.areValidParams(params)) {
                 def omics_params = [:]
                 omics_params.omics_value_type = params.omics_value_type
                 omics_params.omics_projection_type = params.omics_projection_type

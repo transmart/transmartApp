@@ -213,7 +213,7 @@ class ChartService {
 
                 }
             }
-        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && omicsQueryService.hasRequiredParams(result.commons.omics_params)) {
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && omicsQueryService.areValidParams(result.commons.omics_params)) {
 
             result.commons.type = 'value'
             result.commons.conceptName = result.commons.omics_params.omics_selector + " in " + result.commons.conceptName

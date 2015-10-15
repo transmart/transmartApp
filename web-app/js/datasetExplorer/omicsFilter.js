@@ -7,6 +7,7 @@ var omicsFilterValues;                  // List of values for the current select
 var omicsSliderLowHandleRatio = 0;      // Ratio where low handle bar is
 var omicsSliderHighHandleRatio = 1;     // Ratio where high handle bar is (used when changing projection)
 var omicsSliderSteps = 500;             // Amount of steps between low and high values on the slider
+var omicsAutoCompleteList = [];         // List of results returned by the autocomplete search (for input validation)
 
 /**
  * Function to be called when a high dimensional concept is dropped. This will look up the high dimensional
@@ -114,6 +115,9 @@ function addOmicsFilterAutocomplete() {
             if (ui.item) {
                 jQuery("#omics-filter-selector").val(ui.item.label);
             }
+        },
+        response: function(event, ui) {
+            omicsAutoCompleteList = ui.content.map(function(item) {return item.label;});
         }
     }).data("uiAutocomplete")._renderItem = function( ul, item ) {
         var resulta = '<a><span class="category-gene"><b>' + item.label + '</b>';
@@ -421,9 +425,25 @@ function applySingleNumericOmicsFilter(validation) {
     var params = getOmicsFilterParams();
     if (omics_filter_info.filter) {
         // filter
-        if (validation && params.selector == "") {
-            alert("You must choose a gene.");
-            return;
+        if (validation) {
+            if (params.selector == "") {
+                alert("You must choose a gene.");
+                return;
+            }
+
+            var in_list = false;
+            for (var i = 0; i < omicsAutoCompleteList.length; i++) {
+                if (omicsAutoCompleteList[i].toLowerCase() == params.selector.toLocaleLowerCase()) {
+                    in_list = true;
+                    params.selector = omicsAutoCompleteList[i];  // case insensitive match, so change the user-supplied value to the 'real' value
+                    break;
+                }
+            }
+
+            if (!in_list) {
+                alert("Please select a gene from the list.")
+                return;
+            }
         }
 
         // make sure that there is a value set

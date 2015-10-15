@@ -4,6 +4,7 @@ import com.recomdata.export.ExportTableNew
 import groovy.sql.Sql
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
+import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
@@ -47,7 +48,6 @@ class OmicsQueryService {
                 assay_id_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
                 ssm_subquery += " AND patient_id IN (SELECT patient_num FROM i2b2demodata.qt_patient_set_collection WHERE result_instance_id=:result_instance_id)"
             }
-
 
             if (patientIDPopulated(info.data_table)) {
                 sqlt = """SELECT patient_id, AVG($omics_params.omics_projection_type) AS score FROM $info.data_table
@@ -160,7 +160,7 @@ class OmicsQueryService {
     }
 
     /**
-     * This will add the gene_symbol to the concept key, e.g. ...\Biomarker data\Genome platform\TNF
+     *
      * @param resultInstanceId
      * @return
      */
@@ -257,12 +257,25 @@ class OmicsQueryService {
     }
 
     /**
-     * Checks the given map for minimum required parameters for high-dimensional concepts
+     * Checks the given map for minimum required parameters for high-dimensional concepts, and checks if the given
+     * selector is valid.
+     * omics_value_type, omics_projection_type, omics_selectory and (omics_platform or concept_key) must be in the map
      * @param map
      * @return True if map contains required parameters, false otherwise
      */
-    def hasRequiredParams(Map map) {
-        map != null ? ["omics_value_type", "omics_projection_type", "omics_selector"].inject(true) {result, key -> result && map.containsKey(key)} && (map.containsKey("omics_platform") || map.containsKey("concept_key")) : false
+    def areValidParams(Map map) {
+        def containsRequired = (map != null ? ["omics_value_type", "omics_projection_type", "omics_selector"].inject(true) {result, key -> result && map.containsKey(key)} && (map.containsKey("omics_platform") || map.containsKey("concept_key")) : false)
+        if (!containsRequired) return false
+        def selector = map.omics_selector
+        def gplid = ""
+        if (!map.containsKey("omics_platform")) {
+            def concept_cd = i2b2HelperService.getConceptCodeFromKey(map.concept_key)
+            gplid = DeSubjectSampleMapping.findByConceptCode(concept_cd).getPlatform().getId()
+        }
+        else {
+            gplid = map.omics_platform
+        }
+        return getSearchResults(map.omics_selector, gplid).size() > 0
     }
 
     private def patientIDPopulated(String table) {
