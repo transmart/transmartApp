@@ -79,7 +79,11 @@ beans = {
 
     sessionRegistry(SessionRegistryImpl)
     sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
-        maximumSessions = 10
+        if (grailsApplication.config.com.recomdata.maxConcurrentUserSessions) {
+                maximumSessions = grailsApplication.config.com.recomdata.maxConcurrentUserSessions
+        } else {
+                maximumSessions = 10
+        }
     }
     concurrentSessionFilter(ConcurrentSessionFilter) {
         sessionRegistry = sessionRegistry
