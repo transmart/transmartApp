@@ -185,7 +185,7 @@ function createPanelItemNew(panel, concept)
 	if (concept.visualattributes.indexOf('LEAF') != -1 ||
 		concept.visualattributes.indexOf('MULTIPLE') != -1) {
 		if (concept.oktousevalues == "N")
-			iconCls = "alphaicon";
+			iconCls = concept.nodeType ? concept.nodeType : 'alphaicon';
 		// Yet another hack to get icon working seemlessly
 		li.className += " x-tree-node-leaf"
 	}
