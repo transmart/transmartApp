@@ -293,15 +293,9 @@ class ChartService {
         // Depending on the type of chart we proceed
         switch (type) {
             case 'histogram':
-
-                def min = null
-                def max = null
                 set = new HistogramDataset()
-                data.each { k, v ->
-                    min = min != null ? (v.min() != null && min > v.min() ? v.min() : min) : v.min()
-                    max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
-                }.each { k, v ->
-                    if (k) set.addSeries(k, (double [])v.toArray(), 10, min, max)
+                data.findAll { it.key && it.value }.each { k, v ->
+                    set.addSeries(k, (double [])v.toArray(), 10)
                 }
 
                 chart = ChartFactory.createHistogram(title, null, "", set, PlotOrientation.VERTICAL, true, true, false)
