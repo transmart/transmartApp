@@ -2813,8 +2813,11 @@ function storeLoaded(jsonStore, rows, paramsObject) {
                     text: 'Export to Excel',
                     listeners: {
                         click: function () {
-                            window.location = 'data:application/vnd.ms-excel;base64,' +
-                            Base64.encode(grid.getExcelXml());
+                            var a = document.createElement('a');
+                            a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
+                                + Base64.encode(grid.getExcelXml());
+                            a.download = 'grid_view.xlsx';
+                            a.click();
                             jQuery.post(pageInfo.basePath + '/chart/reportGridTableExport', paramsObject.params);
                         }
                     }
