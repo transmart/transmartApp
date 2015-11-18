@@ -2816,8 +2816,11 @@ function storeLoaded(jsonStore, rows, paramsObject) {
                             var a = document.createElement('a');
                             a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
                                 + Base64.encode(grid.getExcelXml());
+                            a.setAttribute('type', 'hidden');
                             a.download = 'grid_view.xlsx';
+                            document.body.appendChild(a);
                             a.click();
+                            jQuery(a).remove();
                             jQuery.post(pageInfo.basePath + '/chart/reportGridTableExport', paramsObject.params);
                         }
                     }
