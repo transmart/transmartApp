@@ -95,7 +95,11 @@ beans = {
 
     sessionRegistry(SessionRegistryImpl)
     sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
-        maximumSessions = 10
+        if (grailsApplication.config.org.transmartproject.maxConcurrentUserSessions) {
+                maximumSessions = grailsApplication.config.org.transmartproject.maxConcurrentUserSessions
+        } else {
+                maximumSessions = 10
+        }
     }
     concurrentSessionFilter(ConcurrentSessionFilter) {
         sessionRegistry = sessionRegistry
