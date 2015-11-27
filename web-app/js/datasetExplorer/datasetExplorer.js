@@ -2819,7 +2819,7 @@ function storeLoaded(jsonStore, rows, paramsObject) {
                             a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
                                 + Base64.encode(grid.getExcelXml());
                             a.setAttribute('type', 'hidden');
-                            a.download = 'grid_view.xlsx';
+                            a.download = 'grid_view.xls';
                             document.body.appendChild(a);
                             a.click();
                             jQuery(a).remove();
