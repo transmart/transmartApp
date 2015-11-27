@@ -81,9 +81,11 @@ class ChartService {
 
             // Getting the age data
             p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance).toList()
-            p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.ageData)
-            ageHistogramHandle["Subset $n"] = p.ageData
-            agePlotHandle["Subset $n"] = p.ageStats
+            if (p.ageData) {
+                p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.ageData)
+                ageHistogramHandle["Subset $n"] = p.ageData
+                agePlotHandle["Subset $n"] = p.ageStats
+            }
 
             // Sex chart has to be generated for each subset
             p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance)
