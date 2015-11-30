@@ -8,6 +8,7 @@ import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.SecureAccessLevel
 import org.transmart.searchapp.SecureObjectPath
+import org.transmartproject.core.concept.ConceptFullName
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
 import org.transmartproject.db.querytool.QtPatientSetCollection
@@ -843,43 +844,51 @@ class I2b2HelperService {
             def paths = item.children*.fullName
 
             // Find the concept codes for the given children
-            def conceptCriteria = ConceptDimension.createCriteria()
-            def concepts = conceptCriteria.list {
-                'in'("conceptPath", paths)
+            def concepts = ConceptDimension.findAll {
+                conceptPath in paths
             }
 
             // Determine the patients to query
-            def patientIds = QtPatientSetCollection.executeQuery("SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong())
-            patientIds = patientIds.collect { BigDecimal.valueOf(it) }
+            def patientIds = QtPatientSetCollection.executeQuery('SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?', result_instance_id.toLong())
 
             // If nothing is found, return
             if (!concepts || !patientIds) {
                 return
             }
 
+            def fullPathsByCode = concepts.collectEntries { concept ->
+                [concept.conceptCode, new ConceptFullName(concept.conceptPath)]
+            }
+
             // After that, retrieve all data entries for the children
-            def results = ObservationFact.executeQuery("SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect {
-                it?.toLong()
-            }])
+            def observations = ObservationFact.executeQuery '''
+                FROM ObservationFact WHERE conceptCode IN (:conceptCodes) AND patient.id IN (:patientIds)
+                ''', [conceptCodes: fullPathsByCode.keySet(), patientIds: patientIds]
 
-            results.each { row ->
+            def patientValues = observations
+                .groupBy { it.patientId }
+                .collectEntries { patientId, patientObservations ->
+                    String value = patientObservations.collect { observation ->
+                        observation.textValue ?: fullPathsByCode[observation.conceptCode].parts[-1]
+                    }.sort().join(', ')
 
-                /*If I already have this subject mark it in the subset column as belonging to both subsets*/
-                String subject = row[0]
-                String value = row[1]
-                if (value == null) {
-                    value = "Y";
+                    [patientId, value]
                 }
+
+            patientValues.each { patientId, patientValue ->
+                String subject = patientId as String
+                String value = patientValue as String
+
                 if (isURL(value)) {
                     /* Embed URL in a HTML Link */
-                    value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>"
+                    value = "<a href=\"${value}\" target=\"_blank\">${value}</a>"
                 }
                 if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                    tablein.getRow(subject).put(columnid, value.toString());
+                    tablein.getRow(subject).put(columnid, value);
                 } else /*fill the row*/ {
                     ExportRowNew newrow = new ExportRowNew();
                     newrow.put("subject", subject);
-                    newrow.put(columnid, value.toString());
+                    newrow.put(columnid, value);
                     tablein.putRow(subject, newrow);
                 }
             }
