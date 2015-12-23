@@ -121,7 +121,7 @@ grails.project.dependency.resolution = {
         //compile ':spring-security-kerberos:0.1'
         compile ':spring-security-ldap:2.0-RC2'
         compile ':spring-security-core:2.0-RC5'
-        compile ':spring-security-oauth2-provider:2.0-RC4'
+        compile ':spring-security-oauth2-provider:2.0-RC5'
 
         runtime ':prototype:1.0'
         runtime ':jquery:1.11.1'
