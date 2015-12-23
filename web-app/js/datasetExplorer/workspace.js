@@ -229,6 +229,21 @@ function linkifySubsets(link){
 	jQuery(workspaceLinkDisplayDialog).data("displayData",link).dialog("open");
 }
 
+function mailComparison(link, comparisonId) {
+	var subject = 'Link to Saved comparison' + (comparisonId ? ' ID=' + comparisonId : '');
+	var body = 'The following is a link to the saved comparison in tranSMART.' +
+		' Please, note that you need to be logged into tranSMART prior to using this link.';
+
+	var a = document.createElement('a');
+	a.href = 'mailto:?subject=' + encodeURIComponent(subject) +
+		'&body=' + encodeURIComponent(body) +
+		' ' + encodeURIComponent(link);
+	a.setAttribute('type', 'hidden');
+	document.body.appendChild(a);
+	a.click();
+	jQuery(a).remove();
+}
+
 function deleteSubset(subsetId){
 	if(confirm("Subset will be deleted. Proceed?")){
 		jQuery.get(pageInfo.basePath + '/subset/delete', {subsetId:subsetId}, function(data){
