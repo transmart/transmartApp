@@ -1210,12 +1210,6 @@ function projectDialogComplete() {
     //Now that the ont tree has been set up, call the initial search
     showSearchResults();
 
-    if (GLOBAL.RestoreComparison) {
-        refillQueryPanels ({
-            1: GLOBAL.RestoreQID1,
-            2: GLOBAL.RestoreQID2
-        })
-    }
     if (GLOBAL.Tokens.indexOf("EXPORT") === -1 && !GLOBAL.IsAdmin) {
         //Ext.getCmp("exportbutton").disable();
     }

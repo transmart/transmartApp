@@ -231,8 +231,7 @@ function linkifySubsets(link){
 
 function mailComparison(link, comparisonId) {
 	var subject = 'Link to Saved comparison' + (comparisonId ? ' ID=' + comparisonId : '');
-	var body = 'The following is a link to the saved comparison in tranSMART.' +
-		' Please, note that you need to be logged into tranSMART prior to using this link.';
+	var body = 'The following is a link to the saved comparison in tranSMART.';
 
 	var a = document.createElement('a');
 	a.href = 'mailto:?subject=' + encodeURIComponent(subject) +
