@@ -54,7 +54,7 @@ class LoginController {
 
         def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
         boolean guestLoginEnabled = (guestAutoLogin == 'true' || guestAutoLogin.is(true))
-        log.info("enabled guest login")
+        log.info("enable guest login: " + guestLoginEnabled)
         //log.info("requet:"+request.getQueryString())
         boolean forcedFormLogin = request.getQueryString() != null
         log.info("User is forcing the form login? : " + forcedFormLogin)

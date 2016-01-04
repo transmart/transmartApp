@@ -104,8 +104,11 @@ class ExportService {
 
             if (checkboxItem.dataTypeId) {
                 //Second item is the data type.
-                String currentDataType = checkboxItem.dataTypeId.trim()
-                subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType)
+                String selectedFile = checkboxItem.dataTypeId.trim()
+                if (!(checkboxItem.fileType in ['.TSV', 'TSV'])) {
+                    selectedFile += checkboxItem.fileType
+                }
+                subsetSelectedFilesMap.get(currentSubset)?.push(selectedFile)
             }
         }
 

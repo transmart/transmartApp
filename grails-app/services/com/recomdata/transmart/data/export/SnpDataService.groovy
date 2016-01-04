@@ -24,6 +24,7 @@ class SnpDataService {
     def plinkService
     def fileDownloadService
     def utilService
+    def databasePortabilityService
 
     def Map getData(studyDir, fileName, jobName, resultInstanceId) {
         def snpFilesMap = [:]
@@ -95,11 +96,21 @@ class SnpDataService {
         conn = dataSource.getConnection()
 
         //check if there are data for copy number. If not, don't create files for this
-        def query = """SELECT count(*)
-                FROM de_snp_copy_number 
-                WHERE patient_num in (
-                select distinct patient_num from
-                qt_patient_set_collection where result_instance_id = ?)"""
+        def query = """
+            select dssm.patient_id,
+                dssm.trial_name,
+                dssd.snp_name,
+                null as chrom,
+                null as chrom_pos,
+                dssd.copy_number
+            from deapp.de_subject_sample_mapping dssm
+                inner join deapp.DE_SAMPLE_SNP_DATA dssd
+                on dssm.sample_cd = dssd.sample_id
+            where dssm.patient_id in (
+                select distinct patient_num
+                from i2b2demodata.qt_patient_set_collection
+                where result_instance_id = ?
+            )"""
         pStmt = conn.prepareStatement(query)
         pStmt.setBigDecimal(1, Integer.valueOf(resultInstanceId))
         rs = pStmt.executeQuery()
@@ -123,15 +134,18 @@ class SnpDataService {
         log.debug("Starting the long query to get cnv file information")
 
         subjectIds.each { subjectId ->
-            def PatientData patientData = patientDataMap.get(subjectId)
+            def PatientData patientData = patientDataMap.get(subjectId.toLong())
 
             /**
              * Prepare the query to extract the records for this subject
              */
-            query = """SELECT dssm.sample_cd as gsm_num, dscn.snp_name, dscn.copy_number
-    				FROM de_snp_copy_number dscn, de_subject_sample_mapping dssm
-    				WHERE dscn.patient_num = ?
-                             and dssm.patient_id=dscn.patient_num"""
+            query = """ select dssm.sample_cd as gsm_num,
+                              dssd.snp_name,
+                              dssd.copy_number
+                        from deapp.de_subject_sample_mapping dssm
+                            inner join deapp.DE_SAMPLE_SNP_DATA dssd
+                            on dssm.sample_cd = dssd.sample_id
+                        where dssm.patient_id = ?"""
 
             def filename = subjectId + '.CNV'
             def FileWriterUtil writerUtil = new FileWriterUtil(studyDir, filename, jobName, dataTypeName, dataTypeFolder, separator)
@@ -459,8 +473,7 @@ class SnpDataService {
 							INNER JOIN qt_patient_set_collection qt ON qt.result_instance_id = ? AND qt.PATIENT_NUM = DSM.PATIENT_ID
 							INNER JOIN DE_SAMPLE_SNP_DATA SNP ON DSM.SAMPLE_CD = SNP.SAMPLE_ID
 							INNER JOIN DE_SNP_GENE_MAP D2 ON D2.SNP_NAME = SNP.SNP_NAME
-							INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = to_char(D2.ENTREZ_GENE_ID)
-						""")
+							INNER JOIN bio_marker bm ON bm.PRIMARY_EXTERNAL_ID = ${databasePortabilityService.toChar('D2.ENTREZ_GENE_ID')}""")
 
         //If a list of genes was entered, look up the gene ids and add them to the query. If a gene signature or list was supplied then we modify the query to join on the tables that link the list to the gene ids.
         if (pathway != null && pathway.length() > 0 && !(pathway.startsWith("GENESIG") || pathway.startsWith("GENELIST"))) {
@@ -480,7 +493,7 @@ class SnpDataService {
             sTables.append(" AND sk.unique_id IN ").append(convertStringToken(pathway)).append(" ");
 
             includePathwayInfo = true
-        } else if (pathway.startsWith("GENESIG") || pathway.startsWith("GENELIST")) {
+        } else if ((pathway!=null)&&(pathway.startsWith("GENESIG") || pathway.startsWith("GENELIST"))) {
             //If we are querying by a pathway, we need to include that id in the final output.
             sSelect.append(",sk.SEARCH_KEYWORD_ID ")
 
