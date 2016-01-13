@@ -5,6 +5,7 @@ import org.transmartproject.core.users.User
 class AuditLogFilters {
 
     def accessLogService
+    def auditLogService
     User currentUserBean
 
     def filters = {
@@ -14,6 +15,11 @@ class AuditLogFilters {
                 accessLogService.report(currentUserBean, 'Data Export',
                     eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}",
                     requestURL: "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}")
+            }
+        }
+        chart(controller: 'chart', action: '*') {
+            before = { model ->
+                auditLogService.report(controllerName, actionName, params)
             }
         }
     }

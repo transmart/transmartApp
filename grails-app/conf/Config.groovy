@@ -1,3 +1,4 @@
+import org.apache.log4j.DailyRollingFileAppender
 import grails.util.Environment
 
 
@@ -202,6 +203,27 @@ bruteForceLoginLock {
 }
 
 log4j = {
+    /**
+     * Configuration for writing audit metrics.
+     * Needs to be placed in the out-of-tree Config.groovy as well, as the merge
+     * of the two files seems to discard this log configuration.
+     * (and don't forget to 'import org.apache.log4j.DailyRollingFileAppender'.)
+     */
+    appenders {
+        // default log directory is either the tomcat root directory or the
+        // current working directory.
+        def catalinaBase = System.getProperty('catalina.base') ?: '.'
+        def logDirectory = "${catalinaBase}/logs".toString()
+        appender new DailyRollingFileAppender(
+            name: 'auditLogger',
+            datePattern: "'.'yyyy-MM-dd",
+            fileName: "${logDirectory}/audit.log",
+            layout: pattern(conversionPattern:'%d %m%n')
+        )
+    }
+    trace auditLogger: 'org.transmartproject.audit'
+    trace stdout: 'org.transmartproject.audit'
+
     environments {
         test {
             warn 'org.codehaus.groovy.grails.commons.spring'
