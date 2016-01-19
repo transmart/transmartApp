@@ -19,7 +19,7 @@ class AuditLogFilters {
         }
         chart(controller: 'chart', action: '*') {
             before = { model ->
-                auditLogService.report(controllerName, actionName, params)
+                auditLogService.report(params, controllerName, actionName)
             }
         }
     }

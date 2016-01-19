@@ -1,6 +1,6 @@
 package org.transmartproject.audit
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j
 import org.transmartproject.core.users.User;
 
 /**
@@ -9,13 +9,13 @@ import org.transmartproject.core.users.User;
  *
  * @author gijs@thehyve.nl
  */
-@Slf4j
+@Log4j
 class AuditLogService {
 
     User currentUserBean
     def grailsApplication
 
-    def report(String controller, String action, Map params) {
+    def report(Map params, String controller, String action) {
         def result_instance_id1 = params.result_instance_id1
         def result_instance_id2 = params.result_instance_id2
         def concept_key = params.concept_key
