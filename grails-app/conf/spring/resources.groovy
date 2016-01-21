@@ -1,6 +1,7 @@
 import com.google.common.collect.ImmutableMap
 import com.recomdata.security.ActiveDirectoryLdapAuthenticationExtension
 import grails.plugin.springsecurity.SpringSecurityUtils
+import com.recomdata.extensions.ExtensionsRegistry
 import org.apache.log4j.Logger
 import org.codehaus.groovy.grails.commons.spring.DefaultBeanConfiguration
 import org.springframework.beans.factory.config.CustomScopeConfigurer
@@ -201,4 +202,6 @@ beans = {
         sourceMap = grailsApplication.config.dataExport.bed.acgh.rgbColorScheme
     }
 
+    transmartExtensionsRegistry(ExtensionsRegistry) {
+    }
 }
