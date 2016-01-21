@@ -6,6 +6,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
+import org.apache.log4j.helpers.LogLog
 
 import static java.lang.ProcessBuilder.Redirect.*
 
@@ -14,8 +15,8 @@ import static java.lang.ProcessBuilder.Redirect.*
 class ExternalProcessAppender extends AppenderSkeleton {
 
     List<String> command
-    int restartWindow
-    int restartLimit
+    int restartLimit = 15
+    int restartWindow = 1800
     boolean throwOnFailure = false
 
     protected long starttime
@@ -31,8 +32,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
     ] as ThreadLocal<int[]>
 
     void setRestartLimit(int l) {
-        if (l < 0) throw new IllegalArgumentException("restartLimit cannot be negative (use 0 to " +
-                "disable the limit)")
+        if (l < 0) throw new IllegalArgumentException("restartLimit cannot be negative (use 0 to disable the limit)")
         this.restartLimit = l
     }
 
@@ -41,9 +41,20 @@ class ExternalProcessAppender extends AppenderSkeleton {
         this.restartWindow = w
     }
 
+    boolean isBroken() { return broken }
+
+    ExternalProcessAppender() {}
+
     ExternalProcessAppender(Map<String,Object> opts) {
-        println "foo"
-        opts?.each { String prop, val -> println "setting $prop";  metaClass.setProperty(this, prop, val) }
+        opts?.each { String prop, val ->
+            setProperty(prop, val)
+        }
+    }
+
+    /* We cannot call into the normal logging system while we have this appender locked (that risks deadlock), so use
+     * the backup logging system.*/
+    private void debug(String msg) {
+        LogLog.debug("${this.class.name}(name: $name): $msg")
     }
 
     private synchronized startProcess() {
@@ -52,6 +63,8 @@ class ExternalProcessAppender extends AppenderSkeleton {
         }
         process = new ProcessBuilder(command).redirectOutput(INHERIT).redirectError(INHERIT).start()
         input = new OutputStreamWriter(process.getOutputStream(), Charsets.UTF_8)
+        // Give child some time to fail if it fails quickly
+        sleep(1)
     }
 
     synchronized boolean getChildAlive() {
@@ -66,19 +79,21 @@ class ExternalProcessAppender extends AppenderSkeleton {
 
     private synchronized String restartChild() {
         failcount++
-        long restartWindowEnd = starttime + restartWindow * 1000
+        long restartWindowEnd = starttime + restartWindow * 1000L
         long now = System.currentTimeMillis()
-        boolean inWindow = restartLimit == 0 ? false : now > restartWindowEnd
+        boolean inWindow = restartLimit == 0 ? false : now <= restartWindowEnd
         if (restartLimit != 0 && inWindow && failcount > restartLimit) {
             broken = true
             // Don't log from here while we are synchronized, that would cause a deadlock condition
             return "Failed to restart external log handling process \"${command.join(' ')}\", failed $failcount times" +
-                    " in $restartWindow seconds"
+                    " in less than $restartWindow seconds"
         }
         input.close()
         if (!inWindow) {
             starttime = now
+            failcount = 0
         }
+        debug("Restarting external logging process ${command.join(' ')}")
         startProcess()
         return null
     }
@@ -100,16 +115,16 @@ class ExternalProcessAppender extends AppenderSkeleton {
             // input.write and input.flush synchronize, so there is no use in optimizing away this synchronized block
             // in the normal flow.
             synchronized (this) {
+                if (!input) {
+                    startProcess()
+                }
                 while (errmsg == null) {
                     try {
                         input.write(str)
                         input.flush()
                         return
                     } catch (IOException e) {
-                        if (childAlive) {
-                            broken = true
-                            throw e
-                        }
+                        debug("Caught exception while writing to child process: $e")
                         errmsg = restartChild()
                     }
                 }
@@ -126,6 +141,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
         }
     }
 
+    @Override
     void append(LoggingEvent event) {
         // Check for recursive invocation
         if (recursionCount.get()[0] > 0) return;
@@ -140,6 +156,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
 
     @Override
     synchronized void close() {
-        input.close()
+        closed = true
+        input?.close()
     }
 }
