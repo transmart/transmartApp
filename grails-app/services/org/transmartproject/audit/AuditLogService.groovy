@@ -1,9 +1,6 @@
 package org.transmartproject.audit
 
-import java.util.Map;
-
-import groovy.util.logging.Slf4j
-
+import groovy.util.logging.Log4j
 import org.transmartproject.core.users.User;
 
 /**
@@ -12,7 +9,7 @@ import org.transmartproject.core.users.User;
  *
  * @author gijs@thehyve.nl
  */
-@Slf4j
+@Log4j
 class AuditLogService {
 
     User currentUserBean
