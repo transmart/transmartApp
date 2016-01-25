@@ -1,7 +1,5 @@
 package org.transmart
 
-import com.google.common.escape.Escaper
-import com.google.common.escape.Escapers
 import grails.converters.JSON
 import org.apache.log4j.Level
 import org.apache.log4j.spi.LoggingEvent
@@ -22,8 +20,8 @@ class ExternalProcessAppenderTests {
     static String TESTSTRING = "hello world! testing org.transmart.ExternalProcessAppender\n"
 
     static sh(cmd) { return ['sh', '-c', cmd] }
-    static Escaper SHELL_ESCAPE = Escapers.builder().addEscape("'" as char, "'\"'\"'").build()
-    static path(File file) { "'${SHELL_ESCAPE.escape(file.path)}'" }
+    // escape shell strings, based on http://stackoverflow.com/a/1250279/264177
+    static path(File file) { "'${file.path.replaceAll("'", "'\"'\"'")}'" }
 
     static void waitForChild(ExternalProcessAppender a) {
         a.input.close()
@@ -31,7 +29,7 @@ class ExternalProcessAppenderTests {
     }
 
     @Test
-    void loggingEventTest() {
+    void testLoggingEvent() {
         File output = temp.newFile('output')
         def p = new ExternalProcessAppender(command: sh("cat >"+path(output)))
         LoggingEvent e = new LoggingEvent("", new Category('debug'), Level.DEBUG, TESTSTRING, null)
@@ -42,7 +40,7 @@ class ExternalProcessAppenderTests {
     }
 
     @Test
-    void outputTest() {
+    void testOutput() {
         File output = temp.newFile('output')
         def p = new ExternalProcessAppender(command: sh("cat > "+path(output)))
         p.write(TESTSTRING)
@@ -67,19 +65,19 @@ class ExternalProcessAppenderTests {
 
     @Test
     void testRestart() {
-        testRestart(3, 15)
+        do_testRestart(3, 15)
     }
 
     @Test(expected=Exception.class)
     void testRestartLimit() {
-        testRestart(5, 3)
+        do_testRestart(5, 3)
     }
 
-    void testRestart(int restarts, int limit) {
+    void do_testRestart(int restarts, int limit) {
         File runcount = temp.newFile('count')
         File output = temp.newFile('output')
         writeStringToFile(runcount, '0\n')
-        String command ="""
+        String command = """
             countfile=${path(runcount)}
             count=`cat "\$countfile"`
             if [ "\$count" -le ${restarts} ]
