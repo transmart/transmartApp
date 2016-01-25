@@ -2,6 +2,7 @@ package org.transmart
 
 import com.google.common.base.Charsets
 import grails.converters.JSON
+import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
 import org.apache.log4j.AppenderSkeleton
@@ -124,7 +125,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
                         input.flush()
                         return
                     } catch (IOException e) {
-                        debug("Caught exception while writing to child process: $e")
+                        debug("Caught IOException while writing to child process: $e")
                         errmsg = restartChild()
                     }
                 }
@@ -147,8 +148,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
         if (recursionCount.get()[0] > 0) return;
 
         // convert to JSON outside of the lock
-        JSON msg = [message: event.toString()] as JSON
-        write(msg.toString())
+        write(new JsonBuilder([message: event.message]).toString())
     }
 
     @Override
