@@ -147,7 +147,12 @@
         </table>
 
         <br>
+<!--
+        Currently this button links to action:createListWizard, which links to action:createList,
+            which links to view:wizard_list which is non-existent! removing the button until the view file is found
         <p style="text-align: right;"><span class="button"><g:actionSubmit class="edit" action="createListWizard" value="New Gene/RSID List"/></span></p>
+
+-->
         <!-- show my lists -->
         <table id="myLists"  class="detail" style="width: 100%">
             <g:tableHeaderToggle label="My Lists (${myListItems.size()})" divPrefix="my_lists" status="open" colSpan="${5}"/>
