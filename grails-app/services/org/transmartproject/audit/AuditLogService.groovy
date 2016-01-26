@@ -1,6 +1,6 @@
 package org.transmartproject.audit
 
-import groovy.util.logging.Slf4j
+import groovy.util.logging.Log4j
 import org.transmartproject.core.users.User;
 
 /**
@@ -9,26 +9,16 @@ import org.transmartproject.core.users.User;
  *
  * @author gijs@thehyve.nl
  */
-@Slf4j
+@Log4j
 class AuditLogService {
 
     User currentUserBean
     def grailsApplication
 
-    def report(String controller, String action, Map params) {
-        def result_instance_id1 = params.result_instance_id1
-        def result_instance_id2 = params.result_instance_id2
-        def concept_key = params.concept_key
-
-        def task = controller
-        def act = action
-        switch(controller) {
-            case 'chart':
-                task = "Summary Statistics (${action})"
-                act = "${concept_key}|${result_instance_id1}|${result_instance_id2}"
-                break
-        }
-        def message = "${task}\t${act}\t${currentUserBean.username}\t${grailsApplication.metadata['app.version']}\t"
+    def report(Map<String, Object> additionalParams = [:], User user, String task, String action) {
+        def metadata = grailsApplication?.metadata
+        def appVersion = metadata ? metadata['app.version'] : ''
+        def message = "${task}\t${action}\t${user?.username}\t${appVersion}\t"
         log.trace message
     }
 }
