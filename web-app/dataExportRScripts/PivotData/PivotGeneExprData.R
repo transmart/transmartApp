@@ -90,8 +90,9 @@ fileName
 	colnames(finalData)[1] <- "PROBE ID"
 	
 	#Write the final data file.
-	write.matrix(finalData,fileName,sep = "\t")
-
+	#write.matrix(finalData,fileName,sep = "\t")
+    # Using write.table because write.matrix writes out trailing whitespace - see JIRA item TRANSREL-24
+    write.table(finalData,filename, sep = "\t", quote = FALSE, row.names = FALSE)
 }
 
 
