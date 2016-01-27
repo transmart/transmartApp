@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" %>
+<%@ page language="java" import="grails.converters.JSON" %>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -95,6 +96,7 @@
             isGridViewLoaded: false,
             galaxyEnabled: '${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}',
             galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}",
+            analysisTabExtensions: ${grailsApplication.mainContext.getBean('transmartExtensionsRegistry').analysisTabExtensions as JSON},
             smartREnabled: ${!grailsApplication.config.ui.analyzetabs.smartR.hide}
         };
 

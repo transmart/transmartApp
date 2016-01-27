@@ -571,7 +571,7 @@ class I2b2HelperService {
                         select distinct patient_num
                         from qt_patient_set_collection
                         where result_instance_id = ?)
-            ) as subjectList
+            ) subjectList
         """
         sql.eachRow(sqlt, [
                 fullnameLike,
@@ -847,6 +847,7 @@ class I2b2HelperService {
             def concepts = ConceptDimension.findAll {
                 conceptPath in paths
             }
+            if (!concepts) {
 
             // Determine the patients to query
             def patientIds = QtPatientSetCollection.executeQuery('SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?', result_instance_id.toLong())
@@ -864,6 +865,18 @@ class I2b2HelperService {
             def observations = ObservationFact.executeQuery '''
                 FROM ObservationFact WHERE conceptCode IN (:conceptCodes) AND patient.id IN (:patientIds)
                 ''', [conceptCodes: fullPathsByCode.keySet(), patientIds: patientIds]
+                    WHERE conceptCode IN (:conceptCodes) AND o.patient.id IN (
+                        SELECT q.patient.id FROM QtPatientSetCollection q
+                        WHERE q.resultInstance.id = :resultInstanceId
+                    )""",
+                    [
+                            conceptCodes: concepts*.conceptCode,
+                            resultInstanceId: result_instance_id.toLong(),
+                    ])
+
+            if (results.isEmpty()) {
+                return
+            }
 
             def patientValues = observations
                 .groupBy { it.patientId }

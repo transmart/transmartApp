@@ -1869,6 +1869,19 @@ function getTreeNodeFromJsonNode(concept)
 	newnode.addListener('contextmenu',ontologyRightClick);
 	return newnode;
 }
+function setTreeNodeSecurity(newnode, access)
+{
+if(access!=undefined)
+  			{
+  			if(access=='Locked')
+  			{
+  			//newnode.setText(child.text+" <b>Locked</b>");
+  			newnode.attributes.access='locked';
+  			newnode.disable();
+  			newnode.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});		
+  			}
+  		   }
+}
 
 function climbTreeBuildName(baseNode)
 {

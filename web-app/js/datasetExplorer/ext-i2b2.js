@@ -138,8 +138,8 @@ function getChildConceptPatientCountsComplete(result, node) {
     for (var i = 0; i < size2; i++) {
         var key = children[i].attributes.id;
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
-        var count = childcounts != null ? childcounts[fullname] : '';
-        var access = childaccess != null ? childaccess[fullname] : '';
+        var count = childcounts != null ? childcounts[fullname] : undefined;
+        var access = childaccess != null ? childaccess[fullname] : undefined;
         var child = children[i];
         if (count != undefined) {
             child.setText(child.text + "<em> (" + count + ")</em>");
