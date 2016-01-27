@@ -60,8 +60,8 @@
                     </g:if>
 
                     <g:if test="${!grailsApplication.config.ui.tabs.uploadData.hide}">
-                        <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload Data</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
+                        <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload GWAS</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="uploadData">Upload GWAS</g:link></th></g:else>
                     </g:if>
 
                     <sec:ifAnyGranted roles="ROLE_ADMIN">
