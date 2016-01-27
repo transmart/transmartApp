@@ -4,6 +4,7 @@ import com.google.common.base.Charsets
 import grails.converters.JSON
 import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
+import groovy.transform.InheritConstructors
 import groovy.util.logging.Log4j
 import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.spi.LoggingEvent
@@ -11,6 +12,37 @@ import org.apache.log4j.helpers.LogLog
 
 import static java.lang.ProcessBuilder.Redirect.*
 
+
+/**
+ * This appender spawns a process, and sends log messages encoded as json to the process which can read them on its
+ * standard input. If the process dies or writing to its input pipe fails for some other reason the process is
+ * restarted. Note that ExternalProcessAppender does not forcibly kill its child process in such cases, only the
+ * stdin pipe is closed. It is expected that the process will exit if its stdin is closed, but a misbehaving process
+ * may live on.
+ *
+ * Process management is done using a restart counter and a time window. If the child process needs to be restarted
+ * more than a set number of times within the time window, the process is considered to be broken and this appender
+ * will stop trying to restart it and go into a 'broken' state. If more elaborate process management is needed you
+ * should configure this appender to start the child under a process manager program.
+ *
+ * This appender has the standard properties inherited from AppenderSkeleton, i.e. name, filter and threshold.
+ * Properties layout and errorHandler are not used. Furthermore there are the following properties:
+ *
+ * command: List<String>  The command to run to start the external process
+ *
+ * restartLimit: int (default 15)  The number of times the child process will be restarted within the restartWindow
+ * before this appender decides that the child process configuration is broken. Set to 0 to disable the restart
+ * limiting feature. Doing so can cause running in an infinite restart loop if the child process exits immediately,
+ * so doing so is not recommended for production deployments.
+ *
+ * restartWindow: int (default 1800)  The number of seconds of the restartWindow. If the child process fails more
+ * than restartLimit times within this window, this is interpreted as a configuration error for the child. The child
+ * is not restarted and this appender goes into a 'broken' state.
+ *
+ * throwOnFailure: boolean (default false)  Throw an exception if this appender goes into the 'broken' state or if it
+ * is broken and it is asked to handle new log messages. Enable this if you want to be sure Transmart fails fast if
+ * the child process cannot be restarted.
+ */
 @CompileStatic
 @Log4j
 class ExternalProcessAppender extends AppenderSkeleton {
@@ -108,8 +140,13 @@ class ExternalProcessAppender extends AppenderSkeleton {
             if (rc[0] > 1) return
 
             if (broken) {
-                log.warn("Attempting to write to broken external log handling process")
-                return
+                String msg = "Attempting to write to broken external log handling process"
+                if (throwOnFailure) {
+                    throw new ExternalProcessAppenderException(msg)
+                } else {
+                    log.warn(msg)
+                    return
+                }
             }
 
             String errmsg = null
@@ -135,7 +172,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
             // Log outside of the synchronized block
             log.error(errmsg)
             if (throwOnFailure) {
-                throw new Exception(errmsg)
+                throw new ExternalProcessAppenderException(errmsg)
             }
         } finally {
             rc[0] = oldrc
@@ -152,11 +189,14 @@ class ExternalProcessAppender extends AppenderSkeleton {
     }
 
     @Override
-    boolean requiresLayout() {return false}
+    boolean requiresLayout() { return false }
 
     @Override
     synchronized void close() {
         closed = true
         input?.close()
     }
+
+    @InheritConstructors
+    static class ExternalProcessAppenderException extends IOException {}
 }
