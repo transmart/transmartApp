@@ -1,12 +1,11 @@
 package org.transmart
 
 import com.google.common.base.Charsets
-import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Log4j
 import org.apache.log4j.AppenderSkeleton
-import org.apache.log4j.MDC
+import org.apache.log4j.PatternLayout
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.helpers.LogLog
 
@@ -76,9 +75,12 @@ class ExternalProcessAppender extends AppenderSkeleton {
 
     boolean isBroken() { return broken }
 
-    ExternalProcessAppender() {}
+    ExternalProcessAppender() {
+        setLayout(new PatternLayout("%m%n"))
+    }
 
     ExternalProcessAppender(Map<String,Object> opts) {
+        this()
         opts?.each { String prop, val ->
             setProperty(prop, val)
         }
@@ -142,7 +144,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
             if (broken) {
                 String msg = "Attempting to write to broken external log handling process"
                 if (throwOnFailure) {
-                    throw new ExternalProcessAppenderException(msg)
+                    throw new ChildFailedException(msg)
                 } else {
                     log.warn(msg)
                     return
@@ -172,7 +174,7 @@ class ExternalProcessAppender extends AppenderSkeleton {
             // Log outside of the synchronized block
             log.error(errmsg)
             if (throwOnFailure) {
-                throw new ExternalProcessAppenderException(errmsg)
+                throw new ChildFailedException(errmsg)
             }
         } finally {
             rc[0] = oldrc
@@ -184,19 +186,11 @@ class ExternalProcessAppender extends AppenderSkeleton {
         // Check for recursive invocation
         if (recursionCount.get()[0] > 0) return;
 
-        // convert to JSON outside of the lock
-
-        Map json = [message: event.message]
-
-        event.getMDC("AuditLogService").each { Map.Entry<String,Object> entry ->
-            json.put entry.key, entry.value
-        }
-
-        write(new JsonBuilder(json).toString()+"\n")
+        write(layout.format(event))
     }
 
     @Override
-    boolean requiresLayout() { return false }
+    boolean requiresLayout() { return true }
 
     @Override
     synchronized void close() {
@@ -205,5 +199,5 @@ class ExternalProcessAppender extends AppenderSkeleton {
     }
 
     @InheritConstructors
-    static class ExternalProcessAppenderException extends IOException {}
+    static class ChildFailedException extends IOException {}
 }

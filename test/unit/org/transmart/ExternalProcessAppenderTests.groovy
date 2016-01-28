@@ -12,7 +12,7 @@ import static org.apache.commons.io.FileUtils.writeStringToFile
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
-import static ExternalProcessAppender.ExternalProcessAppenderException
+import static org.transmart.ExternalProcessAppender.ChildFailedException
 
 class ExternalProcessAppenderTests {
 
@@ -38,7 +38,7 @@ class ExternalProcessAppenderTests {
         p.doAppend(e)
         p.close()
         waitForChild(p)
-        assertThat JSON.parse(readFileToString(output)).message, is(TESTSTRING)
+        assertThat readFileToString(output), is(TESTSTRING+'\n')qgi
     }
 
     @Test
@@ -50,7 +50,7 @@ class ExternalProcessAppenderTests {
         assertThat readFileToString(output), is(TESTSTRING)
     }
 
-    @Test(expected=ExternalProcessAppenderException.class)
+    @Test(expected=ChildFailedException.class)
     void testFail() {
         def p = new ExternalProcessAppender(command: ["false"], restartLimit: 3, throwOnFailure: true)
         p.write(TESTSTRING)
@@ -70,7 +70,7 @@ class ExternalProcessAppenderTests {
         do_testRestart(3, 15)
     }
 
-    @Test(expected=ExternalProcessAppenderException.class)
+    @Test(expected=ChildFailedException.class)
     void testRestartLimit() {
         do_testRestart(5, 3)
     }

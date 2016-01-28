@@ -1,10 +1,11 @@
 package org.transmartproject.audit
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j
 import javax.servlet.http.HttpServletRequest
-import org.apache.commons.lang.time.FastDateFormat
-import org.apache.log4j.MDC
+import org.apache.log4j.Level
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.transmartproject.core.users.User
 
@@ -18,30 +19,37 @@ class AuditLogService {
 
     GrailsApplication grailsApplication
 
-    static final FastDateFormat isoFormat = FastDateFormat.getInstance "yyyy-MM-dd'T'HH:mm:ssZ", TimeZone.default
+    @Lazy
+    static final Gson gson = {new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+            .serializeNulls()
+            .setPrettyPrinting()
+            .create()}()
 
     def report(Map<String, Object> params = [:], String task, HttpServletRequest request) {
-        String action = params.action
+        String action = (String) params.action
         User user = (User) params.user
-        if (MDC.get("AuditLogService") == null) {
-            MDC.put "AuditLogService", [:]
-        }
-        Map mdc = (Map) MDC.get("AuditLogService")
 
-        mdc.put 'appVersion', grailsApplication?.metadata?."app.version" ?: ''
-        mdc.put 'userAgent', request.getHeader('user-agent')
+        if (log.effectiveLevel.toInt() > Level.TRACE.toInt()) return
 
-        params.each { k, v -> mdc.put k, v }
+        Map msg = [:]
 
-        mdc.put 'user', user.username
-        mdc.put 'task', task
-        mdc.put 'action', action
-        mdc.put 'timestamp', isoFormat.format(new Date())
+        msg.program = "Transmart"
+        msg.programVersion = grailsApplication?.metadata?."app.version" ?: ''
+        // Written twice to ensure order, although nothing should depend on that
+        msg.user = user.username
+        msg.task = task
+        msg.action = action
 
-        try {
-            log.trace "${task}: ${action}"
-        } finally {
-            MDC.remove("AuditLogService")
-        }
+        msg.putAll(params)
+
+        // Override user and other fields
+        msg.user = user.username
+        msg.task = task
+        msg.action = action
+        msg.userAgent = request.getHeader 'user-agent'
+        msg.timestamp = new Date()
+
+        log.trace(gson.toJson(msg))
     }
 }

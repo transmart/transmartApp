@@ -1,5 +1,6 @@
 import org.apache.log4j.DailyRollingFileAppender
 import grails.util.Environment
+import org.transmart.ExternalProcessAppender
 
 
 def console
@@ -209,20 +210,27 @@ log4j = {
      * of the two files seems to discard this log configuration.
      * (and don't forget to 'import org.apache.log4j.DailyRollingFileAppender'.)
      */
+    /*
     appenders {
         // default log directory is either the tomcat root directory or the
         // current working directory.
         def catalinaBase = System.getProperty('catalina.base') ?: '.'
         def logDirectory = "${catalinaBase}/logs".toString()
         appender new DailyRollingFileAppender(
-            name: 'auditLogger',
+            name: 'fileAuditLogger',
             datePattern: "'.'yyyy-MM-dd",
             fileName: "${logDirectory}/audit.log",
             layout: pattern(conversionPattern:'%d %m%n')
         )
+        appender new ExternalProcessAppender(
+                name: 'processAuditLogger',
+                command: ['your', 'command', 'here']
+        )
     }
-    trace auditLogger: 'org.transmartproject.audit'
+    trace fileAuditLogger: 'org.transmartproject.audit'
+    trace processAuditLogger: 'org.transmartproject.audit'
     trace stdout: 'org.transmartproject.audit'
+    */
 
     environments {
         test {
