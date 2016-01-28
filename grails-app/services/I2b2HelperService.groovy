@@ -848,20 +848,24 @@ class I2b2HelperService {
             def concepts = conceptCriteria.list {
                 'in'("conceptPath", paths)
             }
-
-            // Determine the patients to query
-            def patientIds = QtPatientSetCollection.executeQuery("SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong())
             patientIds = patientIds.collect { BigDecimal.valueOf(it) }
 
             // If nothing is found, return
-            if (!concepts || !patientIds) {
+            if (!concepts) {
                 return
             }
 
             // After that, retrieve all data entries for the children
             def results = ObservationFact.executeQuery("SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect {
-                it?.toLong()
-            }])
+                FROM ObservationFact o
+                WHERE o.conceptCode IN (:conceptCodes) AND o.patient.id IN (
+                    SELECT q.patient.id FROM QtPatientSetCollection q
+                    WHERE q.resultInstance.id = :resultInstanceId)''',
+                [
+                        conceptCodes: concepts*.conceptCode,
+                        resultInstanceId: result_instance_id.toLong(),
+                ]
+            if (!observations) {
 
             results.each { row ->
 
