@@ -22,6 +22,8 @@
     <r:require module="analyseTab" />
     <r:layoutResources/>
     <tmpl:/RWG/urls/>
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'folderManagement.css', plugin: 'folder-management')}">
+    <script type="text/javascript" src="${resource(dir:'js', file:'folderManagementDE.js', plugin: 'folder-management')}"></script>
 
     <script type="text/javascript">
 

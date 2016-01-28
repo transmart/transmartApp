@@ -82,7 +82,7 @@ modules = {
     }
 
     analyseTab {
-        dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs', 'session_timeout', 'folder_management'
+        dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs', 'session_timeout'
 
         resource url: 'js/advancedWorkflowFunctions.js', disposition: 'head'
         resource url: 'js/ajax_queue.js', disposition: 'head'
