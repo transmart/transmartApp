@@ -1,12 +1,12 @@
 package org.transmart
 
 import com.google.common.base.Charsets
-import grails.converters.JSON
 import groovy.json.JsonBuilder
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Log4j
 import org.apache.log4j.AppenderSkeleton
+import org.apache.log4j.MDC
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.helpers.LogLog
 
@@ -185,7 +185,14 @@ class ExternalProcessAppender extends AppenderSkeleton {
         if (recursionCount.get()[0] > 0) return;
 
         // convert to JSON outside of the lock
-        write(new JsonBuilder([message: event.message]).toString())
+
+        Map json = [message: event.message]
+
+        event.getMDC("AuditLogService").each { Map.Entry<String,Object> entry ->
+            json.put entry.key, entry.value
+        }
+
+        write(new JsonBuilder(json).toString()+"\n")
     }
 
     @Override
