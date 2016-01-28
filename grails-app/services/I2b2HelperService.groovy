@@ -847,13 +847,9 @@ class I2b2HelperService {
             def concepts = ConceptDimension.findAll {
                 conceptPath in paths
             }
-            if (!concepts) {
-
-            // Determine the patients to query
-            def patientIds = QtPatientSetCollection.executeQuery('SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?', result_instance_id.toLong())
 
             // If nothing is found, return
-            if (!concepts || !patientIds) {
+            if (!concepts) {
                 return
             }
 
@@ -863,18 +859,16 @@ class I2b2HelperService {
 
             // After that, retrieve all data entries for the children
             def observations = ObservationFact.executeQuery '''
-                FROM ObservationFact WHERE conceptCode IN (:conceptCodes) AND patient.id IN (:patientIds)
-                ''', [conceptCodes: fullPathsByCode.keySet(), patientIds: patientIds]
-                    WHERE conceptCode IN (:conceptCodes) AND o.patient.id IN (
-                        SELECT q.patient.id FROM QtPatientSetCollection q
-                        WHERE q.resultInstance.id = :resultInstanceId
-                    )""",
-                    [
-                            conceptCodes: concepts*.conceptCode,
-                            resultInstanceId: result_instance_id.toLong(),
-                    ])
+                FROM ObservationFact o
+                WHERE o.conceptCode IN (:conceptCodes) AND o.patient.id IN (
+                    SELECT q.patient.id FROM QtPatientSetCollection q
+                    WHERE q.resultInstance.id = :resultInstanceId)''',
+                [
+                        conceptCodes: concepts*.conceptCode,
+                        resultInstanceId: result_instance_id.toLong(),
+                ]
 
-            if (results.isEmpty()) {
+            if (!observations) {
                 return
             }
 
