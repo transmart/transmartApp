@@ -31,7 +31,7 @@ class AuditLogFilters {
         chart(controller: 'RWG', action: 'getFacetResults') {
             before = { model ->
                 auditLogService.report("Clinical Data Active Filter", request,
-                        action: searchString,
+                        action: params.searchString,
                         user: currentUserBean,
                 )
             }
