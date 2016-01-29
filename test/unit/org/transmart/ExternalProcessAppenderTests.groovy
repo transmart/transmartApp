@@ -38,7 +38,7 @@ class ExternalProcessAppenderTests {
         p.doAppend(e)
         p.close()
         waitForChild(p)
-        assertThat readFileToString(output), is(TESTSTRING+'\n')qgi
+        assertThat readFileToString(output), is(TESTSTRING+'\n')
     }
 
     @Test
