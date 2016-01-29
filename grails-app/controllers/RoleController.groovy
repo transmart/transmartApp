@@ -39,8 +39,39 @@ class RoleController {
             redirect action: "list"
             return
         }
+        def people = authority.people
+        if (params.sort) {
+            def sortFunction = {o1,o2 ->
+                def v1 = peopleFieldSelector(params.sort,o1)
+                def v2 = peopleFieldSelector(params.sort,o2)
+                v1.compareTo(v2)
+            }
+            if (params.order.equals("asc")) {
+                people = people.sort(sortFunction)
+            } else {
+                people = people.sort(sortFunction).reverse()
+            }
+        } else {
+            people = people.sort({it.id})
+        }
+        [authority: authority, sortedPeople: people]
+    }
 
-        [authority: authority]
+    def peopleFieldSelector(feildName,authUser) {
+        switch (feildName) {
+            case "id" :
+                return authUser.id
+            case "username" :
+                return authUser.username
+            case "userRealName" :
+                return authUser.userRealName
+            case "enabled" :
+                return authUser.enabled
+            case "description" :
+                return authUser.description
+            default :
+                return authUser.id
+        }
     }
 
     /**
