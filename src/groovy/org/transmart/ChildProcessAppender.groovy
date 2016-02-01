@@ -15,7 +15,7 @@ import static java.lang.ProcessBuilder.Redirect.*
 /**
  * This appender spawns a process, and sends log messages encoded as json to the process which can read them on its
  * standard input. If the process dies or writing to its input pipe fails for some other reason the process is
- * restarted. Note that ExternalProcessAppender does not forcibly kill its child process in such cases, only the
+ * restarted. Note that ChildProcessAppender does not forcibly kill its child process in such cases, only the
  * stdin pipe is closed. It is expected that the process will exit if its stdin is closed, but a misbehaving process
  * may live on.
  *
@@ -44,7 +44,7 @@ import static java.lang.ProcessBuilder.Redirect.*
  */
 @CompileStatic
 @Log4j
-class ExternalProcessAppender extends AppenderSkeleton {
+class ChildProcessAppender extends AppenderSkeleton {
 
     List<String> command
     int restartLimit = 15
@@ -75,11 +75,11 @@ class ExternalProcessAppender extends AppenderSkeleton {
 
     boolean isBroken() { return broken }
 
-    ExternalProcessAppender() {
+    ChildProcessAppender() {
         setLayout(new PatternLayout("%m%n"))
     }
 
-    ExternalProcessAppender(Map<String,Object> opts) {
+    ChildProcessAppender(Map<String,Object> opts) {
         this()
         opts?.each { String prop, val ->
             setProperty(prop, val)

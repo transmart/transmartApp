@@ -1,6 +1,5 @@
 package org.transmart
 
-import grails.converters.JSON
 import org.apache.log4j.Level
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.Category
@@ -12,20 +11,20 @@ import static org.apache.commons.io.FileUtils.writeStringToFile
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
-import static org.transmart.ExternalProcessAppender.ChildFailedException
+import static ChildProcessAppender.ChildFailedException
 
-class ExternalProcessAppenderTests {
+class ChildProcessAppenderTests {
 
     @Rule
     public TemporaryFolder temp = new TemporaryFolder()
 
-    static String TESTSTRING = "hello world! testing org.transmart.ExternalProcessAppender\n"
+    static String TESTSTRING = "hello world! testing org.transmart.ChildProcessAppender\n"
 
     static sh(cmd) { return ['sh', '-c', cmd] }
     // escape shell strings, based on http://stackoverflow.com/a/1250279/264177
     static path(File file) { "'${file.path.replaceAll("'", "'\"'\"'")}'" }
 
-    static void waitForChild(ExternalProcessAppender a) {
+    static void waitForChild(ChildProcessAppender a) {
         a.input.close()
         a.process.waitFor()
     }
@@ -33,7 +32,7 @@ class ExternalProcessAppenderTests {
     @Test
     void testLoggingEvent() {
         File output = temp.newFile('output')
-        def p = new ExternalProcessAppender(command: sh("cat >"+path(output)))
+        def p = new ChildProcessAppender(command: sh("cat >"+path(output)))
         LoggingEvent e = new LoggingEvent("", new Category('debug'), Level.DEBUG, TESTSTRING, null)
         p.doAppend(e)
         p.close()
@@ -44,7 +43,7 @@ class ExternalProcessAppenderTests {
     @Test
     void testOutput() {
         File output = temp.newFile('output')
-        def p = new ExternalProcessAppender(command: sh("cat > "+path(output)))
+        def p = new ChildProcessAppender(command: sh("cat > "+path(output)))
         p.write(TESTSTRING)
         waitForChild(p)
         assertThat readFileToString(output), is(TESTSTRING)
@@ -52,7 +51,7 @@ class ExternalProcessAppenderTests {
 
     @Test(expected=ChildFailedException.class)
     void testFail() {
-        def p = new ExternalProcessAppender(command: ["false"], restartLimit: 3, throwOnFailure: true)
+        def p = new ChildProcessAppender(command: ["false"], restartLimit: 3, throwOnFailure: true)
         p.write(TESTSTRING)
         waitForChild(p)
         p.write(TESTSTRING)
@@ -89,7 +88,7 @@ class ExternalProcessAppenderTests {
             else
                 cat > ${path(output)}
             fi"""
-        def p = new ExternalProcessAppender(command: sh(command), restartLimit: limit, throwOnFailure: true)
+        def p = new ChildProcessAppender(command: sh(command), restartLimit: limit, throwOnFailure: true)
         int count = -1
         while (count <= restarts) {
             p.write(TESTSTRING)

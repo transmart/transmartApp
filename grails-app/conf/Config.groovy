@@ -1,7 +1,4 @@
-import org.apache.log4j.DailyRollingFileAppender
 import grails.util.Environment
-import org.transmart.ExternalProcessAppender
-
 
 def console
 if (!Environment.isWarDeployed() && Environment.isWithinShell()) {
@@ -206,9 +203,9 @@ bruteForceLoginLock {
 log4j = {
     /**
      * Configuration for writing audit metrics.
-     * Needs to be placed in the out-of-tree Config.groovy as well, as the merge
-     * of the two files seems to discard this log configuration.
-     * (and don't forget to 'import org.apache.log4j.DailyRollingFileAppender'.)
+     * This needs to be placed in the out-of-tree Config.groovy, as the log4j config there will override this.
+     * (and don't forget to 'import org.apache.log4j.DailyRollingFileAppender' and
+     * 'import org.transmart.ChildProcessAppender'.)
      */
     /*
     appenders {
@@ -222,7 +219,7 @@ log4j = {
             fileName: "${logDirectory}/audit.log",
             layout: pattern(conversionPattern:'%d %m%n')
         )
-        appender new ExternalProcessAppender(
+        appender new ChildProcessAppender(
                 name: 'processAuditLogger',
                 command: ['your', 'command', 'here']
         )
