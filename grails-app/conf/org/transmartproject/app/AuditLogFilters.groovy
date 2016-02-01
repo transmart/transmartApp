@@ -6,25 +6,42 @@ class AuditLogFilters {
 
     def accessLogService
     def auditLogService
+    def studyIdService
     User currentUserBean
 
     def filters = {
         dataExport(controller: 'dataExport', action:'runDataExport') {
             after = { model ->
                 def ip = request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr
+                def fullUrl = "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}"
                 accessLogService.report(currentUserBean, 'Data Export',
                     eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}",
-                    requestURL: "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}")
+                    requestURL: fullUrl)
+                auditLogService.report("Data Export", request,
+                    action: params.searchString,
+                    user: currentUserBean,
+                    url: fullUrl as String,
+                )
             }
         }
-        chart(controller: 'chart', action: '*') {
+        chart(controller: 'chart', action: '*', actionExclude:'clearGrid|displayChart') {
             before = { model ->
-                auditLogService.report("Summary Statistics", request,
-                        action: params.concept_key,
+                def result_instance_id1 = params.result_instance_id1 ?: ''
+                def result_instance_id2 = params.result_instance_id2 ?: ''
+                def studies = ''
+                if (params.concept_key) {
+                    studies = studyIdService.getStudyIdForConceptKey(params.concept_key) ?: ''
+                }
+                if (studies.empty) {
+                    studies = studyIdService.getStudyIdsForQueries([result_instance_id1, result_instance_id2])
+                }
+                def task = "Summary Statistics (${actionName})"
+                auditLogService.report(task, request,
+                        action: "${studies}|${result_instance_id1}|${result_instance_id2}",
                         user: currentUserBean,
-                        study: actionName,
-                        subset1: params.result_instance_id1,
-                        subset2: params.result_instance_id2,
+                        study: studies,
+                        subset1: result_instance_id1,
+                        subset2: result_instance_id2,
                 )
             }
         }
