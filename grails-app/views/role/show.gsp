@@ -50,7 +50,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <g:each in="${authority.people}" status="i" var="person">
+                        <g:each in="${sortedPeople}" status="i" var="person">
                             <tr class="${(i % 2) == 0 ? 'odd' : 'even'}">
                                 <td>${person.id}</td>
                                 <td>${person.username?.encodeAsHTML()}</td>
