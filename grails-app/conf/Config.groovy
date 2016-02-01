@@ -227,9 +227,9 @@ log4j = {
                 command: ['your', 'command', 'here']
         )
     }
-    trace fileAuditLogger: 'org.transmartproject.audit'
-    trace processAuditLogger: 'org.transmartproject.audit'
-    trace stdout: 'org.transmartproject.audit'
+    trace fileAuditLogger: 'org.transmart.audit'
+    trace processAuditLogger: 'org.transmart.audit'
+    trace stdout: 'org.transmart.audit'
     */
 
     environments {
