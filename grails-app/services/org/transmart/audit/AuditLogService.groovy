@@ -19,9 +19,12 @@ class AuditLogService {
 
     GrailsApplication grailsApplication
 
+    // NB: gson uses SimpleDateFormat internally, which is quite slow. For heavy use that might need to be optimized
+    // by e.g. importing joda time, or caching and recomputing time once per second the way log4j's
+    // AbsoluteTimeDateFormat does.
     @Lazy
-    static final Gson gson = new GsonBuilder()
-            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+    static final private Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd HH:mm:ss.SSSX")
             .serializeNulls()
             .setPrettyPrinting()
             .create()
