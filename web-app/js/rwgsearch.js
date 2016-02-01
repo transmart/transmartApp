@@ -583,9 +583,19 @@ function unselectFilterItem(id) {
 // ---
 
 function toggleSidebar() {
-    // This causes problem with ExtJS in case of rapid consecutive clicks.
     element = jQuery('#sidebar')[0] || jQuery('#westPanel')[0];
     element = '#' + element.id;
+
+    var leftPointingArrow = (jQuery('#sidebartoggle').css('background-image').indexOf("-right") < 0);
+    var sidebarIsVisible = (jQuery(element + ':visible').size() > 0);
+    //console.log("toggleSidebar: leftPointingArrow = " + leftPointingArrow + ", sidebarIsVisible = " + sidebarIsVisible);
+
+    // This fixes problems with ExtJS in case of rapid consecutive clicks, double-click. JIRA TRANSREL-18.
+    if (leftPointingArrow != sidebarIsVisible) { // it is still fading
+    //    console.log("Too fast.")
+        return;
+    }
+
     func = null;
     if (typeof resizeAccordion == 'function') func = resizeAccordion;
     else func = function () {
@@ -602,8 +612,6 @@ function toggleSidebar() {
             viewport.doLayout();
         }
     };
-    var sidebarIsVisible = (jQuery(element + ':visible').size() > 0);
-    console.log(sidebarIsVisible);
     if (sidebarIsVisible) {
         jQuery(element).fadeOut(500, func);
         var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
