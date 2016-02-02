@@ -33,11 +33,11 @@ class ChildProcessAppenderTests {
     void testLoggingEvent() {
         File output = temp.newFile('output')
         def p = new ChildProcessAppender(command: sh("cat >"+path(output)))
-        LoggingEvent e = new LoggingEvent("", new Category('debug'), Level.DEBUG, TESTSTRING, null)
+        LoggingEvent e = new LoggingEvent("", new Category('debug'), Level.DEBUG, [foo: 'bar', baz: 'quux'], null)
         p.doAppend(e)
         p.close()
         waitForChild(p)
-        assertThat readFileToString(output), is(TESTSTRING+'\n')
+        assertThat readFileToString(output), is('{"foo":"bar","baz":"quux"}\n')
     }
 
     @Test

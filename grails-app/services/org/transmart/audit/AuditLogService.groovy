@@ -53,6 +53,6 @@ class AuditLogService {
         msg.userAgent = request.getHeader 'user-agent'
         msg.timestamp = new Date()
 
-        log.trace(gson.toJson(msg))
+        log.trace(msg)
     }
 }

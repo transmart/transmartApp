@@ -8,6 +8,7 @@ import org.apache.log4j.AppenderSkeleton
 import org.apache.log4j.PatternLayout
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.helpers.LogLog
+import org.transmart.audit.JsonLayout
 
 import static java.lang.ProcessBuilder.Redirect.*
 
@@ -76,14 +77,7 @@ class ChildProcessAppender extends AppenderSkeleton {
     boolean isBroken() { return broken }
 
     ChildProcessAppender() {
-        setLayout(new PatternLayout("%m%n"))
-    }
-
-    ChildProcessAppender(Map<String,Object> opts) {
-        this()
-        opts?.each { String prop, val ->
-            setProperty(prop, val)
-        }
+        layout = new JsonLayout(singleLine: true)
     }
 
     /* We cannot call into the normal logging system while we have this appender locked (that risks deadlock), so use
