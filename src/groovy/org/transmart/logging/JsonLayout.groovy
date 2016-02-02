@@ -1,4 +1,4 @@
-package org.transmart.audit
+package org.transmart.logging
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder

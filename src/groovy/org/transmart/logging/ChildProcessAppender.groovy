@@ -1,14 +1,13 @@
-package org.transmart
+package org.transmart.logging
 
 import com.google.common.base.Charsets
 import groovy.transform.CompileStatic
 import groovy.transform.InheritConstructors
 import groovy.util.logging.Log4j
 import org.apache.log4j.AppenderSkeleton
-import org.apache.log4j.PatternLayout
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.log4j.helpers.LogLog
-import org.transmart.audit.JsonLayout
+import org.transmart.logging.JsonLayout
 
 import static java.lang.ProcessBuilder.Redirect.*
 

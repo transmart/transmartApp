@@ -1,4 +1,4 @@
-package org.transmart
+package org.transmart.logging
 
 import org.apache.log4j.Level
 import org.apache.log4j.spi.LoggingEvent
@@ -6,6 +6,7 @@ import org.apache.log4j.Category
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+
 import static org.apache.commons.io.FileUtils.readFileToString
 import static org.apache.commons.io.FileUtils.writeStringToFile
 import static org.hamcrest.MatcherAssert.assertThat
@@ -18,7 +19,7 @@ class ChildProcessAppenderTests {
     @Rule
     public TemporaryFolder temp = new TemporaryFolder()
 
-    static String TESTSTRING = "hello world! testing org.transmart.ChildProcessAppender\n"
+    static String TESTSTRING = "hello world! testing org.transmart.logging.ChildProcessAppender\n"
 
     static sh(cmd) { return ['sh', '-c', cmd] }
     // escape shell strings, based on http://stackoverflow.com/a/1250279/264177
