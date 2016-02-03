@@ -1,4 +1,4 @@
-import org.codehaus.groovy.grails.plugins.PluginManagerHolder
+import grails.util.Holders
 
 class PluginDetectorController {
 
@@ -8,7 +8,7 @@ class PluginDetectorController {
         def pluginName = request.getParameter("pluginName")
         def result = false
 
-        if (PluginManagerHolder.getPluginManager().hasGrailsPlugin(pluginName)) { // check if plugin is installed
+        if (Holders.pluginManager.hasGrailsPlugin(pluginName)) { // check if plugin is installed
             result = true
         }
 
