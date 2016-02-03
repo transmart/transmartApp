@@ -34,8 +34,7 @@ class AuditLogService {
         log.effectiveLevel.toInt() <= Level.TRACE.toInt()
     }()
 
-    def report(Map<String, Object> params = [:], String task, HttpServletRequest request) {
-        String action = (String) params.action
+    def report(Map<String, Object> params = [:], String event, HttpServletRequest request) {
         User user = (User) params.user
 
         if (!enabled) return
@@ -46,15 +45,13 @@ class AuditLogService {
         msg.programVersion = grailsApplication?.metadata?."app.version" ?: ''
         // Written twice to ensure order, although nothing should depend on that
         msg.user = user.username
-        msg.task = task
-        msg.action = action
+        msg.event = event
 
         msg.putAll(params)
 
         // Override user and other fields
         msg.user = user.username
-        msg.task = task
-        msg.action = action
+        msg.event = event
         msg.userAgent = request.getHeader 'user-agent'
         msg.timestamp = new Date()
 

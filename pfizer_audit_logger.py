@@ -23,13 +23,13 @@ failcount = 0
 def send_url(msg):
     global failcount
     
-    action = [msg.get('study'), msg.get('subset1'), msg.get('subset2')]
-    action = '|'.join([i for i in task if i])
+    action = [msg.get('action')] or [msg.get('study'), msg.get('subset1'), msg.get('subset2')]
+    action = '|'.join([i for i in action if i])
     args = dict(action = action,
                 application = msg['program'],
                 appVersion = msg['programVersion'],
                 user = msg['user'],
-                task = msg['task'],
+                task = msg['event'],
                 browser = httpagentparser.detect(msg['userAgent'])['browser']['name']
             )
     fullurl = url + urllib.parse.urlencode(args)
