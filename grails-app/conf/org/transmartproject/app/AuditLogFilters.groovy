@@ -38,9 +38,8 @@ class AuditLogFilters {
                 }
                 def task = "Summary Statistics (${actionName})"
                 auditLogService.report(task, request,
-                        action: studies,
-                        user: currentUserBean,
                         study: studies,
+                        user: currentUserBean,
                         subset1: result_instance_id1,
                         subset2: result_instance_id2,
                 )
