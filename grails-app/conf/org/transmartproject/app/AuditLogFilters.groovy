@@ -26,6 +26,7 @@ class AuditLogFilters {
         }
         chart(controller: 'chart', action: '*', actionExclude:'clearGrid|displayChart') {
             before = { model ->
+                if (!auditLogService.enabled) return
                 def result_instance_id1 = params.result_instance_id1 ?: ''
                 def result_instance_id2 = params.result_instance_id2 ?: ''
                 def studies = ''
@@ -37,7 +38,7 @@ class AuditLogFilters {
                 }
                 def task = "Summary Statistics (${actionName})"
                 auditLogService.report(task, request,
-                        action: "${studies}|${result_instance_id1}|${result_instance_id2}",
+                        action: studies,
                         user: currentUserBean,
                         study: studies,
                         subset1: result_instance_id1,

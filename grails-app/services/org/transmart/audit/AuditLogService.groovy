@@ -29,11 +29,16 @@ class AuditLogService {
             .setPrettyPrinting()
             .create()
 
+    @Lazy
+    volatile boolean enabled = {
+        log.effectiveLevel.toInt() <= Level.TRACE.toInt()
+    }()
+
     def report(Map<String, Object> params = [:], String task, HttpServletRequest request) {
         String action = (String) params.action
         User user = (User) params.user
 
-        if (log.effectiveLevel.toInt() > Level.TRACE.toInt()) return
+        if (!enabled) return
 
         Map msg = [:]
 
