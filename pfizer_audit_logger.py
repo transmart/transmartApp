@@ -8,6 +8,7 @@
 import sys
 import json
 import concurrent.futures
+from threading import Lock
 import urllib.request
 import urllib.parse
 from urllib.request import Request
@@ -17,7 +18,7 @@ import httpagentparser
 url = 'http://metrics.pfizer.com/metrics/servlet/RegisterEventServlet?'
 TIMEOUT = 4 #seconds
 
-
+countlock = Lock()
 failcount = 0
 
 def send_url(msg):
@@ -38,9 +39,10 @@ def send_url(msg):
         urllib.request.urlopen(Request(fullurl, method='POST'), timeout=TIMEOUT).readall()
         failcount = 0
     except Exception as e:
-        failcount += 1
-        if failcount > 15:
-            raise
+        with countlock:
+            failcount += 1
+            if failcount > 15:
+                raise
         print(e, file=sys.stderr)
 
 
