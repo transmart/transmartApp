@@ -78,6 +78,9 @@ grails.project.dependency.resolution = {
         compile 'com.google.guava:guava:14.0.1'
         compile 'net.sf.ehcache:ehcache:2.9.0'
 
+        compile 'org.apache.solr:solr-solrj:5.4.1'
+        compile 'org.apache.solr:solr-core:5.4.1'
+
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
 
