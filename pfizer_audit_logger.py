@@ -24,8 +24,7 @@ failcount = 0
 def send_url(msg):
     global failcount
     
-    action = [msg.get('action')] or [msg.get('study'), msg.get('subset1'), msg.get('subset2')]
-    action = '|'.join([i for i in action if i])
+    action = msg.get('action') or '|'.join(msg.get(x) for x in ('study', 'subset1', 'subset2') if msg.get(x))
     args = dict(action = action,
                 application = msg['program'],
                 appVersion = msg['programVersion'],
