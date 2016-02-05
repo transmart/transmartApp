@@ -124,7 +124,7 @@ function addSearchAutoComplete()	{
 			if (category == 'ALL') {category = 'text'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
-            jQuery('#search-ac').empty();
+			jQuery('#search-ac').empty();
 			return false;
 		}
 	});
@@ -671,9 +671,9 @@ jQuery(document).ready(function() {
 		jQuery(this).find('.foldericonwrapper').fadeOut(150);
 	});
 
-    jQuery('body').on('click', '.foldericon.add', function() {
+    jQuery('body').on('click', '.foldericon.addcart', function() {
 		var id = jQuery(this).attr('name');
-		jQuery(this).removeClass("foldericon").removeClass("add").removeClass("link").text("Added to cart");
+		jQuery(this).removeClass("foldericon").removeClass("addcart").removeClass("link").text("Added to cart");
 		jQuery('#cartcount').hide();
 		
 		jQuery.ajax({
@@ -689,11 +689,11 @@ jQuery(document).ready(function() {
 	});
 
     jQuery('body').on('click', '.foldericon.addall', function() {
-		var nameelements = jQuery(this).closest('table').find('.foldericon.add');
+		var nameelements = jQuery(this).closest('table').find('.foldericon.addcart');
 		var ids = [];
 		for (i = 0; i < nameelements.size(); i++) {
 			ids.push(jQuery(nameelements[i]).attr('name'));
-			jQuery(nameelements[i]).removeClass("foldericon").removeClass("add").removeClass("link").text("Added to cart");
+			jQuery(nameelements[i]).removeClass("foldericon").removeClass("addcart").removeClass("link").text("Added to cart");
 		}
 		
 		jQuery('#cartcount').hide();
@@ -710,7 +710,7 @@ jQuery(document).ready(function() {
 		});
 	});
     
-    jQuery('body').on('click', '.foldericon.delete', function() {
+    jQuery('body').on('click', '.foldericon.deletefile', function() {
 		var id = jQuery(this).attr('name');
 		
 		if (confirm("Are you sure you want to delete this file?")) {
@@ -872,13 +872,13 @@ jQuery(document).ready(function() {
 	});
 	jQuery('#metadata-viewer').on('click', '.uploadfiles', function() {
 	    var id = jQuery(this).attr('name'); 
-	    jQuery('#uploadtitle').html("<p>Upload files in folder "+jQuery('#folderName').val()+"</p>");
-	    jQuery('#parentFolderId').val(id);   
+	    jQuery('#uploadtitle').html("<p>Upload files into folder "+jQuery('#parentFolderName').val()+"</p>");
+	    jQuery('#parentFolderId').val(id);
 	    jQuery('#uploadFilesOverlay').fadeIn();
 	    if (jQuery('#existingfiles').val()!="yes"){
 	      jQuery.ajax({
 	        url:uploadFilesURL + "?",
-	        data: {folderId: id},      
+            data: {folderId: id},
 	        success: function(response) {
 	          jQuery('#uploadFiles').html(response).removeClass('ajaxloading');
 	          createUploader();
@@ -888,7 +888,7 @@ jQuery(document).ready(function() {
 	        }
 	      });
 	    }else{
-	    	setUploderEndPoint(id);
+            setUploderEndPoint(id);
 	    }
 	});
 	  
@@ -951,7 +951,7 @@ jQuery(document).ready(function() {
 				row.remove();
 				jQuery('#cartcount').show().text(response);
 				updateExportCount();
-				jQuery('#metadata-viewer').find(".exportaddspan[name='" + id + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
+				jQuery('#metadata-viewer').find(".exportaddspan[name='" + id + "']").addClass("foldericon").addClass("addcart").addClass("link").text('Add to export');
 			},
 			error: function(xhr) {
 				jQuery('#cartcount').show();
@@ -981,7 +981,7 @@ jQuery(document).ready(function() {
 					jQuery(checkboxes[j]).closest("tr").remove();
 					jQuery('#cartcount').show().text(response);
 					updateExportCount();
-					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[j] + "']").addClass("foldericon").addClass("add").addClass("link").text('Add to export');
+					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[j] + "']").addClass("foldericon").addClass("addcart").addClass("link").text('Add to export');
 				}
 			},
 			error: function(xhr) {
@@ -1093,7 +1093,12 @@ function incrementeDocumentCount(folderId) {
           '<tr><td class="foldertitle">'+
       '<span class="result-document-count"><i>Documents (<span class="document-count">1</span>)</i></span></td></tr>');
     }
+<<<<<<< HEAD
   } 	
+=======
+}
+
+>>>>>>> f37c6811d8188d64387118bb12fbc5ddcb2de56f
 function loadSearchFromSession() {
 	var sessionFilters = sessionSearch.split(",,,");
 	var sessionOperatorStrings = sessionOperators.split(";");
@@ -1260,6 +1265,65 @@ function createUploader() {
     });
 }
 
+<<<<<<< HEAD
+=======
+function createUploader() {
+    $fub = jQuery('#fine-uploader-basic');
+    uploader = new qq.FineUploaderBasic({
+      button: $fub[0],
+      multiple: true,
+      request: {
+        endpoint: uploadActionURL+'?parentId='+jQuery('#parentFolderId').val()
+      },
+      callbacks: {
+        onSubmit: function(id, fileName) {
+            var folderName = jQuery('#parentFolderName').val();
+
+            jQuery('#uploadtable').append('<tr id="file-' + id + '" class="alert" style="margin: 20px 0 0">'+
+                '<td id="parent">'+folderName+'</td>'+
+                '<td id="name">'+fileName+'</td>'+
+                '<td id="status">Submitting</td>'+
+                '<td id="progress"></td></tr>');
+        },
+        onUpload: function(id, fileName) {
+            jQuery('#file-' + id + " #name").html(fileName);
+            jQuery('#file-' + id + " #status").html('Initializing ');
+        },
+        onProgress: function(id, fileName, loaded, total) {
+          if (loaded < total) {
+            progress = Math.round(loaded / total * 100) + '% of ' + Math.round(total / 1024) + ' kB';
+
+            jQuery('#file-' + id + " #status").html('Uploading ');
+            jQuery('#file-' + id + " #progress").html(progress);
+          } else {
+              jQuery('#file-' + id + " #status").html('Saving');
+              jQuery('#file-' + id + " #progress").html('100%');
+          }
+        },
+        onComplete: function(id, fileName, responseJSON) {
+          if (responseJSON.success) {
+            jQuery('#file-' + id + " #status").html('File successfully uploaded ');
+              jQuery('#file-' + id + " #progress").html('');
+
+              var folderId=responseJSON.folderId;
+              incrementeDocumentCount(folderId);
+
+              if(folderId == jQuery('#parentFolderId').val()){
+                jQuery('#metadata-viewer').empty().addClass('ajaxloading');
+                jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
+                    jQuery('#metadata-viewer').removeClass('ajaxloading');
+                });
+              }
+          } else {
+              jQuery('#file-' + id + " #status").html('Error: '+responseJSON.error);
+                jQuery('#file-' + id + " #progress").html('');
+          }
+        }
+      }
+    });
+}
+
+>>>>>>> f37c6811d8188d64387118bb12fbc5ddcb2de56f
 function setUploderEndPoint(id) {
 	uploader.setEndpoint(uploadActionURL+'?parentId='+id);
 }
