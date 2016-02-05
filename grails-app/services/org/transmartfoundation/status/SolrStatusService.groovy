@@ -44,6 +44,7 @@ class SolrStatusService {
 		solr.close();
 		
 		def settings = [
+            'url'                   : urlString,
 			'connected'             : canConnect,
 			'rwgAvailable'          : rwgAvailable,
 			'rwgNumberOfRecords'    : rwgNumberOfRecords,

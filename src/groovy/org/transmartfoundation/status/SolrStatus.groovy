@@ -2,6 +2,7 @@ package org.transmartfoundation.status
 
 class SolrStatus {
 
+	String url
 	boolean connected
 	boolean rwgAvailable
 	int rwgNumberOfRecords
@@ -12,6 +13,6 @@ class SolrStatus {
 	Date lastProbe
 
 	String toString () {
-		return "SolrStatus - probe at: " + lastProbe
+		return "SolrStatus (URL: " + url + ") - probe at: " + lastProbe
 	}
 }
