@@ -78,6 +78,7 @@ grails.project.dependency.resolution = {
         compile 'com.google.guava:guava:14.0.1'
         compile 'net.sf.ehcache:ehcache:2.9.0'
 
+        compile 'org.apache.httpcomponents:httpclient:4.5.1'
         compile 'org.apache.solr:solr-solrj:5.4.1'
         compile 'org.apache.solr:solr-core:5.4.1'
 
