@@ -1093,12 +1093,8 @@ function incrementeDocumentCount(folderId) {
           '<tr><td class="foldertitle">'+
       '<span class="result-document-count"><i>Documents (<span class="document-count">1</span>)</i></span></td></tr>');
     }
-<<<<<<< HEAD
-  } 	
-=======
 }
 
->>>>>>> f37c6811d8188d64387118bb12fbc5ddcb2de56f
 function loadSearchFromSession() {
 	var sessionFilters = sessionSearch.split(",,,");
 	var sessionOperatorStrings = sessionOperators.split(";");
@@ -1264,9 +1260,6 @@ function createUploader() {
       }
     });
 }
-
-<<<<<<< HEAD
-=======
 function createUploader() {
     $fub = jQuery('#fine-uploader-basic');
     uploader = new qq.FineUploaderBasic({
@@ -1323,7 +1316,6 @@ function createUploader() {
     });
 }
 
->>>>>>> f37c6811d8188d64387118bb12fbc5ddcb2de56f
 function setUploderEndPoint(id) {
 	uploader.setEndpoint(uploadActionURL+'?parentId='+id);
 }
