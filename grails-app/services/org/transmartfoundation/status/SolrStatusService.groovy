@@ -19,7 +19,8 @@ class SolrStatusService {
 		def urlString = "http://localhost:8983/solr/"
 		def solrQuery = '*:*'
 
-		SolrClient solr = new HttpSolrClient(urlString)
+        HttpClient httpClient = HttpClientBuilder.create().build()
+		SolrClient solr = new HttpSolrClient(urlString,httpClient)
 		
 		NamedList nl = new NamedList()
 		nl.addAll(['q':solrQuery])
