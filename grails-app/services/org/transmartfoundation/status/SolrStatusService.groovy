@@ -45,6 +45,7 @@ class SolrStatusService {
 		def canConnect = reachedServer
 			
 		solr.close();
+        httpClient.close();
 		
 		def settings = [
             'url'                   : urlString,
