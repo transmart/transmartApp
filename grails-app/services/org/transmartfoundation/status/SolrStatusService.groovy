@@ -2,6 +2,8 @@ package org.transmartfoundation.status
 
 import java.util.Date
 import grails.transaction.Transactional
+import org.apache.http.impl.client.HttpClientBuilder
+import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.solr.common.SolrDocumentList
 import org.apache.solr.common.params.SolrParams
 import org.apache.solr.common.util.NamedList
@@ -19,7 +21,8 @@ class SolrStatusService {
 		def urlString = "http://localhost:8983/solr/"
 		def solrQuery = '*:*'
 
-		SolrClient solr = new HttpSolrClient(urlString)
+        CloseableHttpClient httpClient = HttpClientBuilder.create().build()
+		SolrClient solr = new HttpSolrClient(urlString,httpClient)
 		
 		NamedList nl = new NamedList()
 		nl.addAll(['q':solrQuery])
@@ -42,6 +45,7 @@ class SolrStatusService {
 		def canConnect = reachedServer
 			
 		solr.close();
+        httpClient.close();
 		
 		def settings = [
             'url'                   : urlString,
