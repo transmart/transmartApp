@@ -697,57 +697,87 @@ Ext.onReady(function () {
         });
     }
 
-    function loadPlugin(pluginName, scriptsUrl, bootstrap) {
+    var pluginPromises = []; // contain { promise: , bootstrap: }
+    function loadPlugin(pluginName, scriptsUrl, bootstrap, legacy) {
         var def = jQuery.Deferred();
-        var loadResources = function () {
-            loadResourcesByUrl(pageInfo.basePath + scriptsUrl, function() {
-                bootstrap();
-                def.resolve();
-            }).fail(def.reject);
-        };
-        if (pluginName) {
-            jQuery.post(pageInfo.basePath + "/pluginDetector/checkPlugin", {pluginName: pluginName}, function (data) {
-                if (data === 'true') {
-                    loadResources();
-                } else {
-                    def.reject();
-                }
-            }).fail(def.reject);
+        function loadResources() {
+            loadResourcesByUrl(
+                pageInfo.basePath + scriptsUrl,
+                function() {
+                    def.resolve.apply(def, arguments);
+                })
+                .fail(function() { def.reject.apply(def, arguments); });
+        }
+
+        // if it's a legacy call (hardcoded in datasetExplorer.js),
+        // we need to check whether the plugin is present
+        if (legacy) {
+            jQuery.post(pageInfo.basePath + '/pluginDetector/checkPlugin',
+                {pluginName: pluginName })
+                .done(function(data) {
+                    if (data === 'true') {
+                        loadResources()
+                    } else {
+                        console.log("Plugin " + pluginName + " not active");
+                        def.reject('not active');
+                    }
+                })
+                .fail(function() {
+                    console.log('Could not determine whether plugin ' + pluginName +
+                            ' is active');
+                    def.reject.apply(def, arguments);
+                });
         } else {
             loadResources();
         }
 
-        return def;
-    }
-
-    function loadAnalysisTabExtensions(currentIndex) {
-        if (currentIndex >= GLOBAL.analysisTabExtensions.length) {
-            return;
-        }
-        var tabExtension = GLOBAL.analysisTabExtensions[currentIndex];
-        loadPlugin(null, tabExtension.resourcesUrl, function () {
-            (window[tabExtension.bootstrapFunction])(resultsTabPanel, tabExtension.config);
-        }).always(function () {
-            loadAnalysisTabExtensions(currentIndex + 1);
+        pluginPromises.push({
+            promise: def.promise(),
+            bootstrap: bootstrap,
         });
     }
 
-    // DALLIANCE
-    // =======
-    loadPlugin('dalliance-plugin', "/Dalliance/loadScripts", function () {
+    /* load the leegacy hardcoded tabs */
+    loadPlugin('dalliance-plugin', '/Dalliance/loadScripts', function () {
         loadDalliance(resultsTabPanel);
-    }).always(function () {
-        // Keep loading order to prevent tabs shuffling
-        if (GLOBAL.metacoreAnalyticsEnabled) {
-            loadPlugin('transmart-metacore-plugin', "/MetacoreEnrichment/loadScripts", function () {
-                loadMetaCoreEnrichment(resultsTabPanel);
-            }).always(function () {
-                loadAnalysisTabExtensions(0);
+    }, true);
+    loadPlugin('transmart-metacore-plugin', '/MetacoreEnrichment/loadScripts', function () {
+        loadMetaCoreEnrichment(resultsTabPanel);
+    }, true);
+
+    /* load the tabs registered with the extension mechanism */
+    (function loadAnalysisTabExtensions() {
+        GLOBAL.analysisTabExtensions.forEach(function(tabExtension) {
+            loadPlugin(null, tabExtension.resourcesUrl, function () {
+                (window[tabExtension.bootstrapFunction])(resultsTabPanel, tabExtension.config);
             });
-        } else {
-            loadAnalysisTabExtensions(0);
-        }
-    });
+        });
+    })();
+
+    // wait for all the tab scripts to be loaded, and only then run their bootstrap code
+    // this ensures that they are added in a predictable order
+    (function runTabBootstrapCode() {
+        var def = jQuery.Deferred();
+        var n = pluginPromises.length;
+        // cannot use .when() because we don't want to fail when
+        // one of the plugins fails to load
+        pluginPromises.forEach(function(promiseAndBootstrap) {
+            promiseAndBootstrap.promise.always(function() {
+                if (--n == 0) {
+                    def.resolve();
+                }
+            });
+        });
+
+        def.done(function() {
+            pluginPromises.forEach(function(promiseAndBootstrap) {
+                if (promiseAndBootstrap.promise.state() == 'resolved') {
+                    promiseAndBootstrap.bootstrap();
+                }
+            });
+        });
+    })();
+
 
     if (GLOBAL.galaxyEnabled === 'true') {
        resultsTabPanel.add(GalaxyPanel);
