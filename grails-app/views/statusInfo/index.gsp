@@ -27,12 +27,28 @@
             <tr><th>Component</th><th>Status</th></tr>
         </thead>
         <tbody>
-        <tr><td>Overall - is avaiable?</td><td>${rserveStatus.connected}</td></tr>
-        <tr><td>working</td><td>${rserveStatus.simpleExpressionOK}</td></tr>
-        <tr><td>necessary libraries</td><td>${rserveStatus.librariesOk}</td></tr>
-        <tr><td>error message (if any)</td><td>${rserveStatus.lastErrorMessage}</td></tr>
+            <tr><td>Overall - is avaiable?</td><td>${rserveStatus.connected}</td></tr>
+            <tr><td>working</td><td>${rserveStatus.simpleExpressionOK}</td></tr>
+            <tr><td>necessary libraries</td><td>${rserveStatus.librariesOk}</td></tr>
+            <tr><td>error message (if any)</td><td>${rserveStatus.lastErrorMessage}</td></tr>
         </tbody>
     </table>
+    <h1 class="status-title">Status of connection to gwava.war</h1>
+    <g:if test="${gwavaStatus.enabled}">
+        <div class="gwava-status-tag status-tag">${gwavaStatus.toString()}</div>
+        <table class="gwava-status-results-table status-results-table">
+            <thead>
+                <tr><th>Component</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Overall - is avaiable?</td><td>${gwavaStatus.connected}</td></tr>
+                <tr><td>error message (if any)</td><td>${gwavaStatus.errorMessage}</td></tr>
+            </tbody>
+        </table>
+    </g:if>
+    <g:else>
+        <div class="gwava-status-tag status-tag">The GWAS option appears not to be enabled. See ~/.grails/transmartConfig/Config.groovy</div>
+    </g:else>
 </div>
 </body>
 </html>
