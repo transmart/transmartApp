@@ -1,6 +1,7 @@
 package org.transmart.audit
 
 import javax.annotation.Resource
+import grails.plugin.cache.Cacheable
 import org.transmartproject.core.exceptions.NoSuchResourceException
 import org.transmartproject.core.ontology.ConceptsResource
 import org.transmartproject.core.querytool.QueriesResource
@@ -14,8 +15,6 @@ class StudyIdService {
     @Resource
     ConceptsResource conceptsResourceService
 
-    private Map<Long, Set<String>> conceptKeyToStudyIdMap = [:]
-
     /**
      * Fetches the study id associated with a concept from the 
      * {@link ConceptsResource} using the concept key.
@@ -25,6 +24,7 @@ class StudyIdService {
      *         concept key is null; the empty string if the concept key is empty 
      *         or the concept could not be found.
      */
+    @Cacheable('org.transmart.audit.StudyIdService')
     public String getStudyIdForConceptKey(String concept_key) {
         if (concept_key == null) {
             return null
@@ -33,34 +33,27 @@ class StudyIdService {
         if (concept_key.empty) {
             return ""
         }
-        String studyId = conceptKeyToStudyIdMap[concept_key]
-        if (studyId == null) {
-            try {
-                studyId = conceptsResourceService.getByKey(concept_key)?.study?.id
-            } catch(NoSuchResourceException e) {
-                log.warn "Resource not found: " +
-                        "ConceptResource.getByKey(${concept_key})"
-                studyId = ""
-            }
-            conceptKeyToStudyIdMap[concept_key] = studyId
+        String studyId = ""
+        try {
+            log.info "Query study id for concept key: {$concept_key}"
+            studyId = conceptsResourceService.getByKey(concept_key)?.study?.id
+        } catch(NoSuchResourceException e) {
+            log.warn "Resource not found: " +
+                    "ConceptResource.getByKey(${concept_key})"
         }
         studyId
     }
 
-    private Map<Long, Set<String>> queryIdToStudyIdsMap = [:]
-
-    private Set<String> getStudyIdsForQueryId(Long queryId) {
-        Set<String> result = queryIdToStudyIdsMap[queryId]
-        if (result == null) {
-            try {
-                QueryResult queryResult = queriesResourceService.getQueryResultFromId(queryId)
-                result = queryResult.patients*.trial as Set
-            } catch (NoSuchResourceException e) {
-                log.warn "Resource not found: " +
-                        "QueriesResource.getQueryResultFromId(${queryId})"
-                result = []
-            }
-            queryIdToStudyIdsMap[queryId] = result
+    @Cacheable('org.transmart.audit.StudyIdService')
+    Set<String> getStudyIdsForQueryId(Long queryId) {
+        Set<String> result = []
+        try {
+            log.info "Query trials for query id: {$queryId}"
+            QueryResult queryResult = queriesResourceService.getQueryResultFromId(queryId)
+            result = queryResult.patients*.trial as Set
+        } catch (NoSuchResourceException e) {
+            log.warn "Resource not found: " +
+                    "QueriesResource.getQueryResultFromId(${queryId})"
         }
         result
     }
