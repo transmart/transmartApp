@@ -3,7 +3,6 @@ package org.transmartfoundation.status
 import grails.util.Holders
 
 import java.util.Date
-import grails.transaction.Transactional
 //import org.apache.http.impl.client.HttpClientBuilder
 //import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.DefaultHttpClient
