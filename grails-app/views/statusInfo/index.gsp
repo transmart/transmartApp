@@ -20,6 +20,19 @@
             <tr><td>sample core?</td><td>${solrStatus.sampleAvailable} (number of records: ${solrStatus.sampleNumberOfRecords})</td></tr>
         </tbody>
     </table>
+    <h1 class="status-title">Status of R server (Rserve)</h1>
+    <div class="rserve-status-tag status-tag">${rserveStatus.toString()}</div>
+    <table class="rserve-status-results-table status-results-table">
+        <thead>
+            <tr><th>Component</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+        <tr><td>Overall - is avaiable?</td><td>${rserveStatus.connected}</td></tr>
+        <tr><td>working</td><td>${rserveStatus.simpleExpressionOK}</td></tr>
+        <tr><td>necessary libraries</td><td>${rserveStatus.librariesOk}</td></tr>
+        <tr><td>error message (if any)</td><td>${rserveStatus.lastErrorMessage}</td></tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
