@@ -1,7 +1,8 @@
 package org.transmartfoundation.status
 
+import grails.util.Holders
+
 import java.util.Date
-import grails.transaction.Transactional
 //import org.apache.http.impl.client.HttpClientBuilder
 //import org.apache.http.impl.client.CloseableHttpClient
 import org.apache.http.impl.client.DefaultHttpClient
@@ -19,7 +20,8 @@ class SolrStatusService {
 		
 		// https://lucene.apache.org/solr/5_4_1/solr-solrj/index.html
 
-		def urlString = "http://localhost:8983/solr/"
+        def solrHost = Holders.config.com.rwg.solr.host
+		def urlString = "http:// "+ solrHost + "/solr/"
 		def solrQuery = '*:*'
 
 //        CloseableHttpClient httpClient = HttpClientBuilder.create().build()
