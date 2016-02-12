@@ -53,6 +53,14 @@ class AuditLogFilters {
                 )
             }
         }
+        userlanding(controller: 'userLanding', action: '*', actionExclude:'checkHeartBeat') {
+            before = { model ->
+                auditLogService.report("User Access", request,
+                        action: actionName,
+                        user: currentUserBean,
+                )
+            }
+        }
         oauth(controller: 'oauth', action: '*') {
             before = { model ->
                 auditLogService.report("OAuth authentication", request,
