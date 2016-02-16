@@ -47,12 +47,13 @@ def send_auditlog_record(line):
     # Invalid json input is not an error we can handle
     msg = json.loads(line)
     action = msg.get('action') or '|'.join(msg.get(x) for x in ('study', 'subset1', 'subset2') if msg.get(x))
+    browser = httpagentparser.detect(msg['userAgent'])['browser']
     args = dict(action = action,
                 application = msg['program'],
                 appVersion = msg['programVersion'],
                 user = msg['user'],
                 task = msg['event'],
-                browser = httpagentparser.detect(msg['userAgent'])['browser']['name']
+                browser = browser['name'] + ' ' + browser['version']
             )
     fullurl = URL + '?' + urllib.parse.urlencode(args)
     #print(fullurl)
