@@ -77,7 +77,7 @@ def process(line):
 with concurrent.futures.ThreadPoolExecutor(max_workers=THREADS) as executor:
     for line in sys.stdin:
         if queuelength > MAX_QUEUE_LENGTH:
-            log.error("MAX_QUEUELENGTH exceeded, ignoring message {line}".format(line=line))
+            log.error("MAX_QUEUE_LENGTH exceeded, ignoring message {line}".format(line=line))
             continue
         with countlock:
             queuelength += 1
