@@ -729,12 +729,6 @@ Ext.onReady(function () {
         }
     });
 
-    if (GLOBAL.smartREnabled) {
-        loadPlugin('smartR', "/SmartR/loadScripts", function () {
-            resultsTabPanel.add(smartRPanel);
-        });
-    }
-
     if (GLOBAL.galaxyEnabled === 'true') {
        resultsTabPanel.add(GalaxyPanel);
     }
