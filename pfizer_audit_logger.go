@@ -1,3 +1,15 @@
+/*
+to build: install go tools,
+> go get github.com/mssola/user_agent
+> go build pfizer_audit_logger.go
+
+This script will read json-encoded auditlog messages from Transmart and send them as HTTP POST messages to
+metrics.pfizer.com. The input must be provided as json objects on stdin. If a request fails this is noted
+on stderr, but the request is not retried so in that case the message is lost. If more than MAX_QUEUE_LENGTH
+http operations are in progress at the same time any further input messages are ignored until some http
+operations finish.
+*/
+
 package main
 
 import (
@@ -6,16 +18,13 @@ import (
 	"sync"
 	"sync/atomic"
 	"encoding/json"
+	"fmt"
 	"strings"
 	"net/url"
 	"net/http"
 	"io/ioutil"
-	//"log"
-	//"reflect"
 	"github.com/mssola/user_agent"
 )
-
-import "fmt"
 
 const URL = "http://metrics.pfizer.com/metrics/servlet/RegisterEventServlet"
 
@@ -32,35 +41,37 @@ func atomicAdd(i *int32, delta int32) { atomic.AddInt32(i, delta) }
 func atomicLoad(i *int32) int32 { return atomic.LoadInt32(i) }
 
 
-//type jsonMsg map[string]interface{}
-
+/* struct based implementation */
 type jsonMsg struct {
-	Action string
-	Study string
-	Subset1 string
-	Subset2 string
-	Application string `json:"program"`
-	AppVersion string `json:"programVersion"`
-	User string
-	Task string `json:"event"`
-	Browser string `json:"userAgent"`
+       Action string
+       Study string
+       Subset1 string
+       Subset2 string
+       Application string `json:"program"`
+       AppVersion string `json:"programVersion"`
+       User string
+       Task string `json:"event"`
+       Browser string `json:"userAgent"`
 }
+/**/
 
+/* Alternative map based implementation 
+type jsonMsg map[string]string
 
-func removeEmpty(in []string) []string {
-	res := []string{}
-	for _, i := range in {
-		if i != "" {
-			res = append(res, i)
-		}
-	}
-	return res
+var keyMap = map[string]string{
+	"program": "application",
+	"programVersion": "appVersion",
+	"event": "task",
 }
+*/
+
 
 func send_auditlog_record(msg jsonMsg) {
 
 	//fmt.Println(msg)
 	params := url.Values{}
+
+/* struct based implementation */
 
 	if msg.Action != "" {
 		params.Set("action", msg.Action)
@@ -78,25 +89,45 @@ func send_auditlog_record(msg jsonMsg) {
 	if msg.User != "" { params.Set("user", msg.User) }
 	if msg.Task != "" { params.Set("task", msg.Task) }
 	if msg.Browser != "" {
-		ua := user_agent.New(msg.Browser)
-		browser, version := ua.Browser()
+		browser, version := user_agent.New(msg.Browser).Browser()
 		params.Set("browser", browser + " " + version)
 	}
+/**/
 
-//	for k, v := range msg {
-//		params.Set(k, fmt.Sprintf("%v", v))
-//	}
+/* alternative map based implementation 
+
+	for _, k := range []string{"action", "program", "programVersion", "user", "event"} {
+		if _, hasKey := msg[k]; !hasKey { continue }
+		key := k
+		if outkey, translate := keyMap[k]; translate {
+			key = outkey
+		}
+		params.Set(key, fmt.Sprintf("%v", msg[k]))
+	}
+	if _, hasKey := msg["action"]; !hasKey {
+		action := []string{}
+		for _, s := range []string{msg["study"], msg["subset1"], msg["subset2"]} {
+			if s != "0" && s != "" {
+				action = append(action, s)
+			}
+		}
+		params.Set("action", strings.Join(action, "|"))
+	}
+	if _, hasKey := msg["userAgent"]; hasKey {
+		browser, version := user_agent.New(msg["userAgent"]).Browser()
+		params.Set("browser", browser + " " + version)
+	}
+*/
 
 	fullurl := URL + "?" + params.Encode()
 
-	fmt.Println(fullurl)
-	
+	//fmt.Println(fullurl)
 	resp, err := http.PostForm(fullurl, url.Values{})
 	if err != nil {
 		error("WARNING: Failed to post message to metrics server: "+err.Error())
 	} else {
-		defer resp.Body.Close()
 		ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
 	}
 
 	atomicAdd(&requests_in_progress, -1)
@@ -118,10 +149,9 @@ func main() {
 	
 	dec := json.NewDecoder(os.Stdin)
 	msg := jsonMsg{}
-	msgp := &msg
 
 	for dec.More() {
-		err := dec.Decode(&msgp)
+		err := dec.Decode(&msg)
 		if err != nil { fatal("ERROR: Failed to parse JSON message from stdin: " + err.Error()) }
 		if atomicLoad(&requests_in_progress) > MAX_QUEUE_LENGTH {
 			line, _ := json.Marshal(msg)
@@ -138,4 +168,3 @@ func main() {
 	wg.Wait()
 	//fmt.Println("Exiting")
 }
-
