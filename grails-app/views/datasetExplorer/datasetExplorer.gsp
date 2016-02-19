@@ -96,9 +96,7 @@
             currentReportStudy: [],
             currentSubsetsStudy: '',
             isGridViewLoaded: false,
-            galaxyEnabled: '${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}',
-            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}",
-            analysisTabExtensions: ${grailsApplication.mainContext.getBean('transmartExtensionsRegistry').analysisTabExtensions as JSON},
+            analysisTabExtensions: ${grailsApplication.mainContext.getBean('transmartExtensionsRegistry').analysisTabExtensions as JSON}
         };
 
         var sessionSearch = "${rwgSearchFilter}";

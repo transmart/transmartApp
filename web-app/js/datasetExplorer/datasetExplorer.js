@@ -391,21 +391,6 @@ Ext.onReady(function () {
         ]
     });
 
-    GalaxyPanel = new Ext.Panel({
-        id: 'GalaxyPanel',
-        title: 'Galaxy Export',
-        region: 'center',
-        split: true,
-        height: 90,
-        layout: 'fit',
-        listeners: {
-            activate: function(p) {
-                getJobsDataForGalaxy(p);
-            }
-        },
-        collapsible: true
-    });
-
     // **************
     // Grid view tab
     // **************
@@ -728,10 +713,6 @@ Ext.onReady(function () {
             loadAnalysisTabExtensions(0);
         }
     });
-
-    if (GLOBAL.galaxyEnabled === 'true') {
-       resultsTabPanel.add(GalaxyPanel);
-    }
 
     southCenterPanel = new Ext.Panel({
         id: 'southCenterPanel',
