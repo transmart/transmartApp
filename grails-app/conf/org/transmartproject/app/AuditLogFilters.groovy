@@ -14,13 +14,17 @@ class AuditLogFilters {
             after = { model ->
                 def ip = request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr
                 def fullUrl = "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}"
+                def result_instance_id1 = params.result_instance_id1 ?: ''
+                def result_instance_id2 = params.result_instance_id2 ?: ''
+                def studies = studyIdService.getStudyIdsForQueries([result_instance_id1, result_instance_id2])
+
                 accessLogService.report(currentUserBean, 'Data Export',
                     eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}",
                     requestURL: fullUrl)
                 auditLogService.report("Data Export", request,
-                    action: params.searchString,
-                    user: currentUserBean,
+                    study: studies,
                     url: fullUrl as String,
+                    user: currentUserBean,
                 )
             }
         }
@@ -49,6 +53,7 @@ class AuditLogFilters {
             before = { model ->
                 auditLogService.report("Clinical Data Active Filter", request,
                         action: params.searchString,
+                        query: params.searchString,
                         user: currentUserBean,
                 )
             }
@@ -58,6 +63,7 @@ class AuditLogFilters {
                 auditLogService.report("User Access", request,
                         action: actionName,
                         user: currentUserBean,
+                        userId: currentUserBean.username
                 )
             }
         }
