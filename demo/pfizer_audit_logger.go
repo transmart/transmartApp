@@ -50,7 +50,6 @@ type jsonMsg struct {
 		Analysis string
 		Query string
 		FacetQuery string
-		UserId string
 		Application string `json:"program"`
 		AppVersion string `json:"programVersion"`
 		User string
@@ -83,7 +82,7 @@ func send_auditlog_record(msg jsonMsg) {
 		action := []string{}
 		for _, s := range []string{
 				msg.Study, msg.Subset1, msg.Subset2, msg.Analysis,
-				msg.Query, msg.FacetQuery, msg.UserId} {
+				msg.Query, msg.FacetQuery, msg.User} {
 			if s != "0" && s != "" {
 				action = append(action, s)
 			}
@@ -112,7 +111,8 @@ func send_auditlog_record(msg jsonMsg) {
 	}
 	if _, hasKey := msg["action"]; !hasKey {
 		action := []string{}
-		for _, s := range []string{msg["study"], msg["subset1"], msg["subset2"]} {
+		for _, s := range []string{msg["study"], msg["subset1"], msg["subset2"]; msg["analysis"], msg["query"],
+								msg["facetQuery"], msg["User"]} {
 			if s != "0" && s != "" {
 				action = append(action, s)
 			}
