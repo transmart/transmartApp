@@ -53,7 +53,6 @@ class AuditLogFilters {
             before = { model ->
                 auditLogService.report("Clinical Data Active Filter", request,
                         action: params.searchString,
-                        query: params.searchString,
                         user: currentUserBean,
                 )
             }
@@ -63,7 +62,6 @@ class AuditLogFilters {
                 auditLogService.report("User Access", request,
                         action: actionName,
                         user: currentUserBean,
-                        userId: currentUserBean.username
                 )
             }
         }

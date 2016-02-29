@@ -43,15 +43,19 @@ func atomicLoad(i *int32) int32 { return atomic.LoadInt32(i) }
 
 /* struct based implementation */
 type jsonMsg struct {
-       Action string
-       Study string
-       Subset1 string
-       Subset2 string
-       Application string `json:"program"`
-       AppVersion string `json:"programVersion"`
-       User string
-       Task string `json:"event"`
-       Browser string `json:"userAgent"`
+		Action string
+		Study string
+		Subset1 string
+		Subset2 string
+		Analysis string
+		Query string
+		FacetQuery string
+		UserId string
+		Application string `json:"program"`
+		AppVersion string `json:"programVersion"`
+		User string
+		Task string `json:"event"`
+		Browser string `json:"userAgent"`
 }
 /**/
 
@@ -77,7 +81,9 @@ func send_auditlog_record(msg jsonMsg) {
 		params.Set("action", msg.Action)
 	} else {
 		action := []string{}
-		for _, s := range []string{msg.Study, msg.Subset1, msg.Subset2} {
+		for _, s := range []string{
+				msg.Study, msg.Subset1, msg.Subset2, msg.Analysis,
+				msg.Query, msg.FacetQuery, msg.UserId} {
 			if s != "0" && s != "" {
 				action = append(action, s)
 			}
