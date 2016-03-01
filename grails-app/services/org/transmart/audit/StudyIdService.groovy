@@ -35,8 +35,9 @@ class StudyIdService {
         }
         String studyId = ""
         try {
-            log.info "Query study id for concept key: {$concept_key}"
+            log.debug "Query study id for concept key: {$concept_key}"
             studyId = conceptsResourceService.getByKey(concept_key)?.study?.id
+            log.debug "Study id for concept key {$concept_key} is: ${studyId}"
         } catch(NoSuchResourceException e) {
             log.warn "Resource not found: " +
                     "ConceptResource.getByKey(${concept_key})"
@@ -48,7 +49,7 @@ class StudyIdService {
     Set<String> getStudyIdsForQueryId(Long queryId) {
         Set<String> result = []
         try {
-            log.info "Query trials for query id: {$queryId}"
+            log.debug "Query trials for query id: {$queryId}"
             QueryResult queryResult = queriesResourceService.getQueryResultFromId(queryId)
             result = queryResult.patients*.trial as Set
         } catch (NoSuchResourceException e) {
