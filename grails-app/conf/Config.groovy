@@ -225,7 +225,7 @@ log4j = {
         // the default layout is a JsonLayout(conversionPattern: '%m%n, singleLine: true)
         appender new ChildProcessAppender(
                 name: 'processAuditLogger',
-                command: ['your', 'command', 'here']
+                command: ['/usr/bin/your/command/here', 'arg1', 'arg2']
         )
     }
     trace fileAuditLogger: 'org.transmart.audit'
