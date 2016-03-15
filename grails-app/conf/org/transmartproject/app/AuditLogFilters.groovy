@@ -28,7 +28,7 @@ class AuditLogFilters {
                 )
             }
         }
-        chart(controller: 'chart', action: '*', actionExclude:'clearGrid|displayChart') {
+        chart(controller: 'chart', action: '*', actionExclude:'clearGrid|displayChart|childConceptPatientCounts') {
             before = { model ->
                 if (!auditLogService.enabled) return
                 def result_instance_id1 = params.result_instance_id1 ?: ''
@@ -52,7 +52,22 @@ class AuditLogFilters {
                 )
             }
         }
-        chart(controller: 'RWG', action: 'getFacetResults') {
+        concepts(controller: 'concepts', action: 'getChildren') {
+            before = { model ->
+                if (!auditLogService.enabled) return
+                def studies = null
+                if (params.concept_key) {
+                    studies = studyIdService.getStudyIdForConceptKey(params.concept_key, studyConceptOnly: true)
+                }
+                if (studies == null) return
+                def task = "Clinical Data Access"
+                auditLogService?.report(task, request,
+                        study: studies,
+                        user: currentUserBean
+                )
+            }
+        }
+        rwg(controller: 'RWG', action: 'getFacetResults') {
             before = { model ->
                 auditLogService?.report("Clinical Data Active Filter", request,
                         query: params.searchTerms,
