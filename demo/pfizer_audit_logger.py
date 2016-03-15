@@ -51,7 +51,7 @@ def send_auditlog_record(line):
     if task == "User Access":
         action = user
     else:
-        action = msg.get('action') or '|'.join(msg.get(x) for x in ('study', 'subset1', 'subset2', 'analysis', 'query', 'facetQuery', 'user') if msg.get(x))
+        action = msg.get('action') or '|'.join(msg.get(x) for x in ('study', 'subset1', 'subset2', 'analysis', 'query', 'facetQuery', 'clientId') if msg.get(x))
     browser = httpagentparser.detect(msg['userAgent'])['browser']
     args = dict(action = action,
                 application = msg['program'],
