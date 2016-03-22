@@ -129,6 +129,7 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
+            runtime ':smart-r:16.2-SNAPSHOT'
             compile ':rdc-rmodules:1.2.2-SNAPSHOT'
             runtime ':transmart-core:1.2.2-SNAPSHOT'
             compile ':transmart-gwas:1.2.2-SNAPSHOT'
@@ -160,6 +161,7 @@ grails.project.dependency.resolution = {
 }
 
 dm?.with {
+    configureInternalPlugin 'runtime', 'smart-r'
     configureInternalPlugin 'compile', 'rdc-rmodules'
     configureInternalPlugin 'runtime', 'transmart-core'
     configureInternalPlugin 'test', 'transmart-core-db-tests'
