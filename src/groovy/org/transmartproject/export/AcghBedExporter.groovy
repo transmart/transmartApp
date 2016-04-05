@@ -25,15 +25,17 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
 
     private static final Map<CopyNumberState, List<Integer>> FLAG_TO_RGB_DEFAULT_MAP = [
                 //white
-                (CopyNumberState.INVALID):         [255, 255, 255],
+                (CopyNumberState.INVALID):             [255, 255, 255],
+                //light blue
+                (CopyNumberState.HOMOZYGOUS_DELETION): [0, 0, 255],
                 //blue
-                (CopyNumberState.LOSS):            [0, 0, 205],
+                (CopyNumberState.LOSS):                [0, 0, 205],
                 //gray
-                (CopyNumberState.NORMAL):          [169, 169, 169],
+                (CopyNumberState.NORMAL):              [169, 169, 169],
                 //red
-                (CopyNumberState.GAIN):            [205, 0, 0],
+                (CopyNumberState.GAIN):                [205, 0, 0],
                 //dark red
-                (CopyNumberState.AMPLIFICATION):   [88, 0, 0],
+                (CopyNumberState.AMPLIFICATION):       [88, 0, 0],
         ]
 
     private Map<Integer, String> prepareFlagToRgbStringMap() {
