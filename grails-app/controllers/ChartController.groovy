@@ -8,7 +8,6 @@ import org.transmart.searchapp.AuthUser
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream
 import javax.servlet.http.HttpSession
-import java.util.List
 
 //import edu.mit.wi.haploview.*;
 class ChartController {
@@ -18,7 +17,7 @@ class ChartController {
     def i2b2HelperService
     def springSecurityService
     def chartService
-    def omicsQueryService
+    def highDimensionQueryService
 
 
     def displayChart = {
@@ -113,16 +112,12 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the omics parameters from the client, if they were passed
+        // We retrieve the highdimension parameters from the client, if they were passed
         def omics_params = [:]
-        if (omicsQueryService.areValidParams(params)) {
-            omics_params.omics_value_type = params.omics_value_type
-            omics_params.omics_platform = params.omics_platform
-            omics_params.omics_projection_type = params.omics_projection_type
-            omics_params.omics_selector = params.omics_selector
-        }
-        else {
-            omics_params = null
+        params.findAll { k, v ->
+            k ==~ /omics_/
+        }.each { k, v ->
+            omics_params[k] = v
         }
 
         // Collect concept information
@@ -144,16 +139,12 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the omics parameters from the client, if they were passed
+        // We retrieve the highdimension parameters from the client, if they were passed
         def omics_params = [:]
-        if (omicsQueryService.areValidParams(params)) {
-            omics_params.omics_value_type = params.omics_value_type
-            omics_params.omics_projection_type = params.omics_projection_type
-            omics_params.omics_selector = params.omics_selector
-            omics_params.omics_platform = params.omics_platform
-        }
-        else {
-            omics_params = null
+        params.findAll { k, v ->
+            k ==~ /omics_/
+        }.each { k, v ->
+            omics_params[k] = v
         }
 
         // Collect concept information
@@ -170,21 +161,13 @@ class ChartController {
 
         def concept = params.concept_key ?: null
 
-        // We retrieve the omics parameters from the client, if they were passed
+        // We retrieve the highdimension parameters from the client, if they were passed
         def omics_params = [:]
-
-        // check for required parameters
-        if (omicsQueryService.areValidParams(params)) {
-            omics_params.omics_value_type = params.omics_value_type
-            omics_params.omics_projection_type = params.omics_projection_type
-            omics_params.omics_selector = params.omics_selector
-            omics_params.omics_platform = params.omics_platform
-            omics_params.omics_hist_bins = params.containsKey("omics_hist_bins") ? params.int("omics_hist_bins") : null
+        params.findAll { k, v ->
+            k.startsWith("omics_")
+        }.each { k, v ->
+            omics_params[k] = v
         }
-        else {
-            omics_params = null
-        }
-
         // Collect concept information
         concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
 
@@ -203,16 +186,12 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the omics parameters from the client, if they were passed
+        // We retrieve the highdimension parameters from the client, if they were passed
         def omics_params = [:]
-        if (omicsQueryService.areValidParams(params)) {
-            omics_params.omics_value_type = params.omics_value_type
-            omics_params.omics_projection_type = params.omics_projection_type
-            omics_params.omics_selector = params.omics_selector
-            omics_params.omics_platform = params.omics_platform
-        }
-        else {
-            omics_params = null
+        params.findAll { k, v ->
+            k ==~ /omics_/
+        }.each { k, v ->
+            omics_params[k] = v
         }
 
         // We add the key to our cache set
@@ -284,24 +263,28 @@ class ChartController {
                 }
             }
 
-            def highDimConcepts = omicsQueryService.getHighDimensionalConceptSet(result_instance_id1, result_instance_id2)
+            def highDimConcepts = highDimensionQueryService.getHighDimensionalConceptSet(result_instance_id1, result_instance_id2)
             highDimConcepts.each {
-                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, it, result_instance_id1)
-                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, it, result_instance_id2)
+                if (s1) highDimensionQueryService.addHighDimConceptDataToTable(table, it, result_instance_id1)
+                if (s2) highDimensionQueryService.addHighDimConceptDataToTable(table, it, result_instance_id2)
             }
         }
         PrintWriter pw = new PrintWriter(response.getOutputStream());
 
         if (concept_key && !concept_key.isEmpty()) {
 
-            if (omicsQueryService.areValidParams(params)) {
-                def omics_params = [:]
-                omics_params.omics_value_type = params.omics_value_type
-                omics_params.omics_projection_type = params.omics_projection_type
+
+            // We retrieve the highdimension parameters from the client, if they were passed
+            def omics_params = [:]
+            params.findAll { k, v ->
+                k ==~ /omics_/
+            }.each { k, v ->
+                omics_params[k] = v
+            }
+            if (omics_params) {  // empty maps are coerced to false by groovy
                 omics_params.concept_key = concept_key
-                omics_params.omics_selector = params.omics_selector
-                if (s1) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
-                if (s2) omicsQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)
+                if (s1) highDimensionQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
+                if (s2) highDimensionQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)
             }
             else {
                 String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));

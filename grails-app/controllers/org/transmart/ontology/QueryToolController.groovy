@@ -1,12 +1,10 @@
 package org.transmart.ontology
 
 import grails.converters.JSON
-import org.codehaus.groovy.grails.web.json.JSONObject
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.QueryDefinition
 import org.transmartproject.core.users.User
-import org.apache.commons.io.IOUtils
 
 import javax.annotation.Resource
 

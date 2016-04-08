@@ -2,7 +2,7 @@
  * Created by dverbeec on 09/06/2015.
  */
 
-var omics_filter_info;                  // Global variable to hold information on the omics filter
+var omics_filter_info;                  // Global variable to hold information on the highdimension filter
 var omicsFilterValues;                  // List of values for the current selector, used to calculate subject count
 var omicsSliderLowHandleRatio = 0;      // Ratio where low handle bar is
 var omicsSliderHighHandleRatio = 1;     // Ratio where high handle bar is (used when changing projection)
@@ -18,7 +18,7 @@ var omicsAutoCompleteList = [];         // List of results returned by the autoc
  */
 function highDimensionalConceptDropped(node, filter) {
     Ext.Ajax.request({
-        url: pageInfo.basePath + "/omicsFilter/filterInfo",
+        url: pageInfo.basePath + "/highDimensionFilter/filterInfo",
         method: 'GET',
         timeout: '60000',
         params: Ext.urlEncode({
@@ -36,12 +36,13 @@ function omicsFilterInfoReceived(result, request) {
     omics_filter_info = JSON.parse(result.responseText);
     omics_filter_info.filter = (omics_filter_info.filter == "true");
     Ext.Ajax.request({
-        url: pageInfo.basePath + "/omicsFilter/filterDialog",
+        url: pageInfo.basePath + "/highDimensionFilter/filterDialog",
         method: 'GET',
         timeout: '60000',
         params: Ext.urlEncode({
             gpl_id: omics_filter_info.platform.id,
-            filter: omics_filter_info.filter
+            filter: omics_filter_info.filter,
+            concept_key: omics_filter_info.concept_key
         }),
         success: omicsFilterWindowReceived,
         failure: function (result, request) {
@@ -59,11 +60,10 @@ function omicsFilterWindowReceived(result, request) {
     omicsfilterwin.show(viewport);
     omicsfilterwin.setHeight(140); //set height back to old closed
 
-    jQuery("#omics-filter-main").html(result.responseText);
+    jQuery("#highdimension-filter-main").html(result.responseText);
 
     omicsfilterwin.setTitle(omics_filter_info.platform.markerType);
 
-    // add appropriate event handlers based on type of filter
     if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
         addOmicsFilterAutocomplete();
         if (omics_filter_info.filter) {
@@ -71,8 +71,8 @@ function omicsFilterWindowReceived(result, request) {
             addOmicsBinsSlider();
             addOmicsFilterMinMaxInputHandlers();
         }
-        jQuery("[id^=omics-slider-row]").css({'display': 'none'});
-        jQuery("#omics-filter-selector").focus();
+        jQuery("[id^=highdimension-slider-row]").css({'display': 'none'});
+        jQuery("#highdimension-filter-selector").focus();
     }
     else if (omics_filter_info.filter_type == "ACGH") {
 
@@ -95,25 +95,38 @@ function applyOmicsFilterDialog(validation) {
 }
 
 function addOmicsFilterAutocomplete() {
-    var searchbox = jQuery("#omics-filter-selector");
+    var searchbox = jQuery("#highdimension-filter-selector");
     searchbox.autocomplete({
         position:{my:"left top",at:"left bottom",collision:"none"},
         appendTo:"#omicsFilterWindow",
-        source: omics_filter_info.auto_complete_source,
-        minLength:1,
+        source: function(request, response) {
+            jQuery.ajax({
+                url: omics_filter_info.auto_complete_source,
+                dataType: "json",
+                data: {
+                    term : request.term,
+                    concept_key : omics_filter_info.concept_key,
+                    search_property : jQuery("#highdimension-search-property option:selected").val()
+                },
+                success: function(data) {
+                    response(data);
+                }
+            });
+        },
+        minLength:2,
         select: function(event, ui) {
-            jQuery("#omics-filter-selector").val(ui.item.label);
+            jQuery("#highdimension-filter-selector").val(ui.item.label);
             if (omics_filter_info.filter) {
                 showConceptDistributionHistogramForOmicsFilterComplete(null);
                 showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
             }
         },
         focus: function(event, ui) {
-            jQuery("#omics-filter-selector").val(ui.item.label);
+            jQuery("#highdimension-filter-selector").val(ui.item.label);
         },
         close: function(event, ui) {
             if (ui.item) {
-                jQuery("#omics-filter-selector").val(ui.item.label);
+                jQuery("#highdimension-filter-selector").val(ui.item.label);
             }
         },
         response: function(event, ui) {
@@ -134,10 +147,13 @@ function addOmicsFilterAutocomplete() {
             .appendTo(ul);
     };
     jQuery(".ui-autocomplete").css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
+    jQuery("#highdimension-search-property").find('input').click(function() {
+        searchbox.autocomplete('source', omics_filter_info.auto_complete_source + "&search_property=" + encodeURIComponent(jQuery(this).val()));
+    });
 }
 
 function addOmicsRangeSlider() {
-    var slider = jQuery( "#omics-range" );
+    var slider = jQuery( "#highdimension-range" );
     slider.css({width: "130px", margin: "10px"});
     slider.slider({
         range: true,
@@ -151,7 +167,7 @@ function addOmicsRangeSlider() {
 }
 
 function addOmicsBinsSlider() {
-    var slider = jQuery( "#omics-bins" );
+    var slider = jQuery( "#highdimension-bins" );
     slider.css({width: "130px", margin: "10px"});
     slider.slider({
         range: "min",
@@ -159,18 +175,18 @@ function addOmicsBinsSlider() {
         max: 25,
         value: 10,
         slide: function( event, ui ) {
-            jQuery("#omics-amount-bins").val(ui.value);
+            jQuery("#highdimension-amount-bins").val(ui.value);
         },
         stop: function( event, ui ) {
             showConceptDistributionHistogramForOmicsFilterComplete(null);
             showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
         }
     });
-    jQuery("#omics-amount-bins").val(slider.slider('value'));
+    jQuery("#highdimension-amount-bins").val(slider.slider('value'));
 }
 
 function addOmicsFilterMinMaxInputHandlers() {
-    var minbox = jQuery("#omics-amount-min");
+    var minbox = jQuery("#highdimension-amount-min");
     var maxbox = jQuery("#rnaseq-rcnt-amount-max");
     minbox.blur(function(event) {
         var value = minbox.val();
@@ -183,8 +199,8 @@ function addOmicsFilterMinMaxInputHandlers() {
         else if (value > maxbox.val()) {
             minbox.val(maxbox.val());
         }
-        jQuery("#omics-range").slider('values',0,minbox.val());
-        jQuery( "#omics-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
+        jQuery("#highdimension-range").slider('values',0,minbox.val());
+        jQuery( "#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
             .filter(function(el, idx, array) {return el <= maxbox.val();})
             .length)
     });
@@ -200,8 +216,8 @@ function addOmicsFilterMinMaxInputHandlers() {
         else if (value < minbox.val()) {
             maxbox.val(minbox.val());
         }
-        jQuery("#omics-range").slider('values',1,maxbox.val());
-        jQuery( "#omics-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
+        jQuery("#highdimension-range").slider('values',1,maxbox.val());
+        jQuery( "#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
             .filter(function(el, idx, array) {return el <= maxbox.val();})
             .length)
     });
@@ -223,7 +239,7 @@ function addOmicsFilterMinMaxInputHandlers() {
 
 function omicsSliderUpdated(ui) {
     var low, high;
-    var slider = jQuery("#omics-range");
+    var slider = jQuery("#highdimension-range");
     if (ui != null) {
         // called from the slide event, therefore use the ui object to get the value the handle was slid to
         low = ui.values[0];
@@ -238,15 +254,15 @@ function omicsSliderUpdated(ui) {
     var max = slider.slider('option', 'max');
     omicsSliderLowHandleRatio = (low - min) / (max - min);
     omicsSliderHighHandleRatio = (high - min) / (max - min);
-    jQuery("#omics-amount-min").val(low.toFixed(3));
-    jQuery("#omics-amount-max").val(high.toFixed(3));
-    jQuery("#omics-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= low;})
+    jQuery("#highdimension-amount-min").val(low.toFixed(3));
+    jQuery("#highdimension-amount-max").val(high.toFixed(3));
+    jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= low;})
         .filter(function(el, idx, array) {return el <= high;})
         .length)
 }
 
 function omicsProjectionChanged() {
-    if (jQuery("#omics-filter-selector").val() != "" && omics_filter_info.filter) {
+    if (jQuery("#highdimension-filter-selector").val() != "" && omics_filter_info.filter) {
         showConceptDistributionHistogramForOmicsFilterComplete(null);
         showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
     }
@@ -254,15 +270,16 @@ function omicsProjectionChanged() {
 
 function getOmicsFilterParams() {
     if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
-        var slider = omics_filter_info.filter ? jQuery("#omics-range") : null;
+        var slider = omics_filter_info.filter ? jQuery("#highdimension-range") : null;
         return {
             platform: omics_filter_info.platform.id,
-            selector: jQuery("#omics-filter-selector").val(),
+            property: jQuery("#highdimension-search-property").val(),
+            selector: jQuery("#highdimension-filter-selector").val(),
             value: omics_filter_info.filter ? slider.slider('values', 0) + ":" + slider.slider('values', 1) : "",
             operator: omics_filter_info.filter ? "BETWEEN" : "",
-            projection_type: jQuery("input[name=omics-filter-projection]:checked").val(),
+            projection_type: jQuery("#highdimension-filter-projection option:selected").val(),
             type: omics_filter_info.platform.markerType,
-            hist_bins: omics_filter_info.filter ? jQuery("#omics-amount-bins").val() : ""
+            hist_bins: omics_filter_info.filter ? jQuery("#highdimension-amount-bins").val() : ""
         };
     }
     else if (omics_filter_info.filter_type == "ACGH") {
@@ -301,7 +318,8 @@ function omicsFilterDialogComplete(params)
 function setOmicsFilterValue(conceptnode, params)
 {
     conceptnode.setAttribute("setvaluemode","omics_value");
-    conceptnode.setAttribute("selector", params.selector);
+    conceptnode.setAttribute("omicsproperty", params.property);
+    conceptnode.setAttribute("omicsselector", params.selector);
     conceptnode.setAttribute("omicsoperator", params.operator);
     conceptnode.setAttribute("omicsvalue", params.value);
     conceptnode.setAttribute("omicsprojection", params.projection_type);
@@ -359,6 +377,7 @@ function showConceptDistributionHistogramForOmicsFilter(filter_params)
             timeout: '300000',
             params: Ext.urlEncode({
                 concept_key: concept_key,
+                omics_property: filter_params.property,
                 omics_selector: filter_params.selector,
                 omics_platform: filter_params.platform,
                 omics_value_type: filter_params.type,
@@ -370,24 +389,38 @@ function showConceptDistributionHistogramForOmicsFilter(filter_params)
 function showConceptDistributionHistogramForOmicsFilterComplete(result)
 {
     omicsfilterwin.setHeight(430);
-    var slider_rows = jQuery("[id^=omics-slider-row]");
-    var input_fields = jQuery("[id^=omics-amount-m]");
-    var sliders = jQuery("[id^=omics-slider-row] .ui-slider");
-    var projection_radio = jQuery("input[name=omics-filter-projection]:radio");
-    var hist_div = jQuery("[id^=omics-filter-histogram]");
+    var slider_rows = jQuery("[id^=highdimension-slider-row]");
+    var input_fields = jQuery("[id^=highdimension-amount-m]");
+    var sliders = jQuery("[id^=highdimension-slider-row] .ui-slider");
+    var projection_select = jQuery("#highdimension-filter-projection");
+    var hist_div = jQuery("[id^=highdimension-filter-histogram]");
 
     if (result == null) {
         //
         input_fields.prop('disabled', true);
-        projection_radio.prop('disabled', true);
+        projection_select.prop('disabled', true);
         sliders.slider('option','disabled', true);
         return hist_div.html("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
     }
-    var data = JSON.parse(result.responseText);
+    var data = [];
+    try {
+        // grails JSON converter seems to print NaN and Infinity in JSON output, these are not JSON tokens so
+        // we need to quote them
+        var resptext = result.responseText.replace(/NaN/g,'"NaN"');
+        resptext = resptext.replace(/-Infinity/g, '"-Infinity"');
+        resptext = resptext.replace(/ Infinity/g, ' "Infinity"');
+        data = JSON.parse(resptext);
+    }
+    catch (err) {
+        hist_div.html('An error occured parsing the server\'s response.');
+        projection_select.prop('disabled', false);
+        omicsfilterwin.setHeight(175);
+        return;
+    }
     hist_div.html(data['commons']['conceptHisto']);
     slider_rows.css({'display': 'table-row'});
     input_fields.prop('disabled', false);
-    projection_radio.prop('disabled', false);
+    projection_select.prop('disabled', false);
     sliders.slider('option','disabled', false);
     omicsValuesObtained(data['1']['conceptData']);
 }
@@ -396,7 +429,7 @@ function omicsValuesObtained(values) {
     omicsFilterValues = values;
     if (omicsFilterValues.length > 0) {
         omicsFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather than string-based
-        var slider = jQuery("#omics-range");
+        var slider = jQuery("#highdimension-range");
         // make the range slightly bigger to properly include extrema
         slider.slider('option',{'min': omicsFilterValues[0],
                                 'max': omicsFilterValues[omicsFilterValues.length - 1],
@@ -406,19 +439,19 @@ function omicsValuesObtained(values) {
         omicsSliderUpdated(null);
     }
     else {
-        jQuery("[id^=omics-slider-row]").css({'display': 'none'});
-        jQuery( "#omics-amount-min" ).val(0);
-        jQuery( "#omics-amount-max" ).val(0);
-        document.getElementById("omics-filter-histogram").innerHTML = "No data is available for the given gene.";
-        omicsfilterwin.setHeight(140);
+        jQuery("[id^=highdimension-slider-row]").css({'display': 'none'});
+        jQuery( "#highdimension-amount-min" ).val(0);
+        jQuery( "#highdimension-amount-max" ).val(0);
+        document.getElementById("highdimension-filter-histogram").innerHTML = "No data is available for the given gene.";
+        omicsfilterwin.setHeight(175);
     }
 }
 
 function omicsValuesFailed(result) {
-    jQuery("[id^=omics-slider-row]").css({'display': 'none'});
-    jQuery( "#omics-amount-min" ).val(0);
-    jQuery( "#omics-amount-max" ).val(0);
-    document.getElementById("omics-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
+    jQuery("[id^=highdimension-slider-row]").css({'display': 'none'});
+    jQuery( "#highdimension-amount-min" ).val(0);
+    jQuery( "#highdimension-amount-max" ).val(0);
+    document.getElementById("highdimension-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
 }
 
 function applySingleNumericOmicsFilter(validation) {
@@ -447,7 +480,7 @@ function applySingleNumericOmicsFilter(validation) {
         }
 
         // make sure that there is a value set
-        if (validation && (!jQuery.isNumeric(jQuery("#omics-amount-min").val()) || !jQuery.isNumeric(jQuery("#omics-amount-max").val()))) {
+        if (validation && (!jQuery.isNumeric(jQuery("#highdimension-amount-min").val()) || !jQuery.isNumeric(jQuery("#highdimension-amount-max").val()))) {
             alert('You must specify a numeric value.');
         } else {
             if (validation)
@@ -461,7 +494,7 @@ function applySingleNumericOmicsFilter(validation) {
             omicsSliderLowHandleRatio = 0;
             omicsSliderHighHandleRatio = 1;
 
-            document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+            document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
             omicsfilterwin.hide();
         }
     }
@@ -474,9 +507,10 @@ function applySingleNumericOmicsFilter(validation) {
 
         if (validation) {
             resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
-            var omics_params = {omics_selector: params.selector,
+            var omics_params = {omics_property: params.property,
+                omics_selector: params.selector,
                 omics_value_type: omics_filter_info.platform.markerType,
-                omics_projection_type: jQuery("input[name=omics-filter-projection]:checked").val()};
+                omics_projection_type: jQuery("#highdimension-filter-projection option:selected").val()};
             Ext.Ajax.request(
                 {
                     url : pageInfo.basePath+"/chart/analysis",
@@ -486,6 +520,7 @@ function applySingleNumericOmicsFilter(validation) {
                         {
                             charttype : "analysis",
                             concept_key : omics_filter_info.concept_key,
+                            omics_property: omics_params.omics_property,
                             omics_selector : omics_params.omics_selector,
                             omics_value_type: omics_params.omics_value_type,
                             omics_projection_type: omics_params.omics_projection_type,
@@ -507,7 +542,7 @@ function applySingleNumericOmicsFilter(validation) {
             getAnalysisGridData(omics_filter_info.concept_key, omics_params);
         }
 
-        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
         omicsfilterwin.hide();
     }
 }
@@ -518,14 +553,14 @@ function applyACGHOmicsFilter(validation) {
         if (validation) // also check if required fields are filled correctly
             omicsFilterDialogComplete(params);
 
-        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
         omicsfilterwin.hide();
     }
     else {
         if (validation)
             omicsFilterDialogComplete(params);
 
-        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
         omicsfilterwin.hide();
     }
 }
@@ -536,14 +571,14 @@ function applyVCFOmicsFilter(validation) {
         if (validation) // also check if required fields are filled correctly
             omicsFilterDialogComplete(params);
 
-        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
         omicsfilterwin.hide();
     }
     else {
         if (validation)
             omicsFilterDialogComplete(params);
 
-        document.getElementById("omics-filter-main").removeChild(document.getElementById("omics-filter-content"));
+        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
         omicsfilterwin.hide();
     }
 }

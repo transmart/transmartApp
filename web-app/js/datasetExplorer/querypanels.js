@@ -567,7 +567,8 @@ function getQueryPanelItem(item) {
                 .append(jQuery("<omics_value_operator />").html(item.attr('omicsoperator')))
                 .append(jQuery("<omics_value_constraint />").html(item.attr('omicsvalue')))
                 .append(jQuery("<omics_value_type />").html(item.attr('omicsvaluetype')))
-                .append(jQuery("<omics_selector />").html(item.attr('selector')))
+                .append(jQuery("<omics_property />").html(item.attr('omicsproperty')))
+                .append(jQuery("<omics_selector />").html(item.attr('omicsselector')))
                 .append(jQuery("<omics_projection_type />").html(item.attr('omicsprojection')))
     }
 

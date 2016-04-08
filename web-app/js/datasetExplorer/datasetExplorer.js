@@ -929,7 +929,7 @@ Ext.onReady(function () {
                 height: 80,
                 width: 100,
                 split: false,
-                html: '<div id="omics-filter-main"></div>'
+                html: '<div id="highdimension-filter-main"></div>'
             }
         );
 

@@ -29,6 +29,7 @@ import org.jfree.data.statistics.MultiValueCategoryDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jfree.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
+import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 import java.awt.*
 import java.awt.geom.Ellipse2D
@@ -40,7 +41,8 @@ import java.awt.geom.Rectangle2D
 class ChartService {
 
     def i2b2HelperService
-    def omicsQueryService
+    def highDimensionQueryService
+    def highDimensionResourceService
 
     def public keyCache = []
 
@@ -137,7 +139,7 @@ class ChartService {
     def getHighDimensionalConceptsForSubsets(subsets) {
         // We also retrieve all concepts involved in the query
         def concepts = [:]
-        omicsQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).findAll() {
+        highDimensionQueryService.getHighDimensionalConceptSet(subsets[1].instance, subsets[2].instance).findAll() {
             it.concept_key.indexOf("SECURITY") <= -1
         }.each {
             def key = it.concept_key + it.omics_selector + " - " + it.omics_projection_type
@@ -213,7 +215,7 @@ class ChartService {
 
                 }
             }
-        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && omicsQueryService.areValidParams(result.commons.omics_params)) {
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.omics_params) {
 
             result.commons.type = 'value'
             result.commons.conceptName = result.commons.omics_params.omics_selector + " in " + result.commons.conceptName
@@ -222,12 +224,20 @@ class ChartService {
             def conceptHistogramHandle = [:]
             def conceptPlotHandle = [:];
 
+            def resource = highDimensionResourceService.getHighDimDataTypeResourceFromConcept(concept)
+
             result.findAll { n, p ->
                 p.exists
             }.each { n, p ->
 
                 // Getting the concept data
-                p.conceptData = omicsQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.omics_params).toList()
+                //p.conceptData = highDimensionQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.omics_params).toList()
+                p.conceptData = resource.getDistribution(
+                        new ConstraintByOmicsValue(projectionType: ConstraintByOmicsValue.ProjectionType.forValue(result.commons.omics_params.omics_projection_type),
+                                               property      : result.commons.omics_params.omics_property,
+                                               selector      : result.commons.omics_params.omics_selector),
+                        result.commons.conceptCode,
+                        (p.instance == "" ? null : p.instance as Long)).collect {it[1]}
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
                 conceptPlotHandle["Subset $n"] = p.conceptStats
@@ -322,7 +332,14 @@ class ChartService {
         def title = args.title ?: ""
         def xlabel = args.xlabel ?: ""
         def ylabel = args.ylabel ?: ""
-        def bins = args.bins ?: 10
+        def bins = 10
+        if (args.containsKey('bins'))
+            try {
+                bins = args.bins as Integer
+            }
+            catch (Exception e) {
+                log.error "Could not parse provided argument to integer: " + args.bins
+            }
 
         // We retrieve the dimension if provided
         def width = size?.width ?: 300
