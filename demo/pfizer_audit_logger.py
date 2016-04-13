@@ -52,14 +52,17 @@ def send_auditlog_record(line):
         action = user
     else:
         action = msg.get('action') or '|'.join(msg.get(x) for x in ('study', 'subset1', 'subset2', 'analysis', 'query', 'facetQuery', 'clientId') if msg.get(x))
-    browser = httpagentparser.detect(msg['userAgent'])['browser']
     args = dict(action = action,
                 application = msg['program'],
                 appVersion = msg['programVersion'],
                 user = user,
                 task = task,
-                browser = browser['name'] + ' ' + browser['version']
             )
+    if msg['userAgent']:
+        args['browser'] = '<unknown browser>'
+        browser = httpagentparser.detect(msg['userAgent']).get('browser')
+        if browser:
+            args['browser'] = browser['name'] + ' ' + browser['version']
     fullurl = URL + '?' + urllib.parse.urlencode(args)
     #print(fullurl)
     try:
