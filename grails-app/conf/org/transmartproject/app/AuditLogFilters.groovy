@@ -47,10 +47,10 @@ class AuditLogFilters {
                 def studies = studyIdService.getStudyIdsForQueries([result_instance_id1, result_instance_id2])
                 def exportTypes = getExportTypes(params).join('+')
 
-                accessLogService?.report(currentUserBean, 'Data Export',
+                accessLogService.report(currentUserBean, 'Data Export',
                     eventMessage: "User (IP: ${ip}) requested export of data. Http request parameters: ${params}",
                     requestURL: fullUrl)
-                auditLogService?.report("Clinical Data Exported - ${exportTypes}", request,
+                auditLogService.report("Clinical Data Exported - ${exportTypes}", request,
                     study: studies,
                     user: currentUserBean
                 )
@@ -72,7 +72,7 @@ class AuditLogFilters {
                 if (actionName == "childConceptPatientCounts") {
                     task = "Clinical Data Access"
                 }
-                auditLogService?.report(task, request,
+                auditLogService.report(task, request,
                         study: studies,
                         user: currentUserBean,
                         subset1: result_instance_id1,
@@ -89,7 +89,7 @@ class AuditLogFilters {
                 }
                 if (studies == null) return
                 def task = "Clinical Data Access"
-                auditLogService?.report(task, request,
+                auditLogService.report(task, request,
                         study: studies,
                         user: currentUserBean
                 )
@@ -97,7 +97,7 @@ class AuditLogFilters {
         }
         rwg(controller: 'RWG', action: 'getFacetResults') {
             before = { model ->
-                auditLogService?.report("Clinical Data Active Filter", request,
+                auditLogService.report("Clinical Data Active Filter", request,
                         query: params.searchTerms,
                         user: currentUserBean,
                 )
@@ -105,14 +105,14 @@ class AuditLogFilters {
         }
         userlanding(controller: 'userLanding', action: '*', actionExclude:'checkHeartBeat') {
             before = { model ->
-                auditLogService?.report("User Access", request,
+                auditLogService.report("User Access", request,
                         user: currentUserBean,
                 )
             }
         }
         oauth(controller: 'oauth', action: '*') {
             before = { model ->
-                auditLogService?.report("OAuth authentication", request,
+                auditLogService.report("OAuth authentication", request,
                         user: currentUserBean,
                 )
             }
