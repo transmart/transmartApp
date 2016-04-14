@@ -3,8 +3,8 @@
 # Tested with python 3.4
 #
 # This script will read json-encoded auditlog messages from Transmart and send them as HTTP POST messages to
-# metrics.pfizer.com. The input must be provided as json objects separated by newlines. The json objects themselves
-# must not contain unencoded newlines.
+# an URL. The input must be provided as json objects separated by newlines. The json objects themselves must not
+# contain unencoded newlines.
 #
 # This script will make up to THREADS requests in parallel to the metrics server. If a request fails this is noted
 # on stderr, but the request is not retried so in that case the message is lost.
@@ -20,7 +20,7 @@ from urllib.request import Request
 # httpagentparser is not in the standard library, use "pip3 install httpagentparser" to install it
 import httpagentparser
 
-URL = 'http://metrics.pfizer.com/metrics/servlet/RegisterEventServlet'
+URL = 'http://metricsrecorder.example.com/recordMetric'
 # Maximum timeout when waiting on the metrics server
 TIMEOUT = 10 #seconds
 # If there are more than this number of unprocessed messages, further messages will be dropped until the worker

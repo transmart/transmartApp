@@ -1,13 +1,14 @@
 /*
 to build: install go tools,
 > go get github.com/mssola/user_agent
-> go build pfizer_audit_logger.go
+> go build audit_logger.go
 
 This script will read json-encoded auditlog messages from Transmart and send them as HTTP POST messages to
-metrics.pfizer.com. The input must be provided as json objects on stdin. If a request fails this is noted
-on stderr, but the request is not retried so in that case the message is lost. If more than MAX_QUEUE_LENGTH
-http operations are in progress at the same time any further input messages are ignored until some http
-operations finish.
+an URL. The input must be provided as json objects on stdin. If a request fails this is noted on stderr, but the
+request is not retried so in that case the message is lost. If more than MAX_QUEUE_LENGTH http operations are in
+progress at the same time any further input messages are ignored until some http operations finish.
+
+This program does the same as audit_logger.py, but written in a different language for comparison
 */
 
 package main
@@ -26,7 +27,7 @@ import (
 	"github.com/mssola/user_agent"
 )
 
-const URL = "http://metrics.pfizer.com/metrics/servlet/RegisterEventServlet"
+const URL = "http://metricsrecorder.example.com/recordMetric"
 
 // If there are more than this number of unprocessed messages, further messages will be dropped until the server
 // catches up.
