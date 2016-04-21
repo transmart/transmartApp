@@ -2156,6 +2156,9 @@ function isSubsetQueriesChanged(referenceQueries) {
             // check if reference query is the same as the new query
             // return true if it's changed.
             retVal = referenceQueries[i] !== _newQuery ? true : false;
+        } else {
+            // referenceQueries is null or undefined
+            if (_newQuery) return true;
         }
 
         if (retVal) {
