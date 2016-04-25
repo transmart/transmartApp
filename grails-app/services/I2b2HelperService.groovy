@@ -121,13 +121,12 @@ class I2b2HelperService {
     def String getColumnNameFromKey(String concept_key) {
         String[] splits = concept_key.split("\\\\");
         String concept_name = "";
-        if(splits.length>1)
-        {
-            concept_name="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-        }
-        else {
-            concept_name = splits[splits.length - 1];
-        }
+        //if(splits.length>1)
+        //{
+        //	concept_name="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
+        //}
+        //else
+        concept_name = splits[splits.length - 1];
         return concept_name;
     }
 
