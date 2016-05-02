@@ -46,16 +46,13 @@ class GwavaStatusService {
                     sawText = true;
                 }
             }
-        } catch (IOException e1) {
-            errorMessage = e1.message
         } catch (MalformedURLException e) {
-            errorMessage = e.message
-        } catch (IOException e2) {
-            errorMessage = e2.message
+            errorMessage = "MalformedURLException: " + e.message
+        } catch (IOException e1) {
+            errorMessage = "IOException: " + e1.message
         } catch (all) {
             errorMessage = "Unexpected Error"
         }
-        if (sawText) errorMessage = ""
         return sawText
     }
 }

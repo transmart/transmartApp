@@ -21,7 +21,7 @@ class SolrStatusService {
 		// https://lucene.apache.org/solr/5_4_1/solr-solrj/index.html
 
         def solrHost = Holders.config.com.rwg.solr.host
-		def urlString = "http:// "+ solrHost + "/solr/"
+		def urlString = "http://"+ solrHost + "/solr/"
 		def solrQuery = '*:*'
 
 //        CloseableHttpClient httpClient = HttpClientBuilder.create().build()
@@ -73,10 +73,11 @@ class SolrStatusService {
 			solr.ping();
 			return true
 		} catch (SolrServerException ex) {
-			// server not responding
+            // print("server not responding")
 			return false
 		} catch (Exception ex2) {
-			// server responding but does not handle ping
+            // print(ex2)
+            // print("server responding but does not handle ping")
 			return true
 		}
 	}
