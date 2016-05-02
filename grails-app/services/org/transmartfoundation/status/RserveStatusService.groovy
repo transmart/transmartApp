@@ -22,13 +22,14 @@ class RserveStatusService {
     def getStatus() {
 
         def url = Holders.config.RModules.host + ":" + Holders.config.RModules.port
-        RConnection c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port)
 
         def canConnect = false
         def evalSimpleExpression = false
         def librariesOk = false
 
+        RConnection c
         try {
+            c = new RConnection(Holders.config.RModules.host, Holders.config.RModules.port)
             canConnect = connectionExists(c)
             if (canConnect) {
                 evalSimpleExpression = willEvaluateSimpleExpression(c)
@@ -36,9 +37,9 @@ class RserveStatusService {
             }
         } catch (Exception e) {
             lastErrorMessage = "Probe failed with Exception: " + e.message
+        } finally {
+            if (c) closeConnection(c)
         }
-        closeConnection(c)
-
 		def settings = [
              'url'                  : url,
 			'connected'             : canConnect,
