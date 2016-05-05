@@ -940,6 +940,8 @@ class I2b2HelperService {
             modifierList.add(node.code)
         }
 
+        if (modifierList.isEmpty()) return 0
+        
         Sql sql = new Sql(dataSource)
 
         log.trace "For case NOT using result_instance_id"
@@ -1009,7 +1011,7 @@ class I2b2HelperService {
                         select distinct patient_num
                         from qt_patient_set_collection
                         where result_instance_id = ?)
-            ) subjectList
+            ) as subjectList
         """
         sql.eachRow(sqlt, [
                 fullnameLike,
@@ -1187,9 +1189,8 @@ class I2b2HelperService {
         String columntooltip = keyToPath(concept_key).replaceAll('[^a-zA-Z0-9_\\-\\\\]+','_')
 
 
-                if (tablein.getColumn(columnid) == null) {
-                    tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number", columntooltip));
-                }
+        if (leafConceptFlag) {
+            log.debug "----------------- this is a Leaf Node"
 
 
             def valueLeafNodeFlag = isValueConceptKey(concept_key)
