@@ -666,7 +666,7 @@ Ext.onReady(function () {
     if (GLOBAL.dataExportEnabled) {
         resultsTabPanel.add(analysisDataExportPanel);
     }
-    if (GLOBAL.dataeExportJobsEnabled) {
+    if (GLOBAL.dataExportJobsEnabled) {
         resultsTabPanel.add(analysisExportJobsPanel);
     }
     if (GLOBAL.analysisJobsEnabled) {
