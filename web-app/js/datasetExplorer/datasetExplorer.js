@@ -659,13 +659,22 @@ Ext.onReady(function () {
 
     resultsTabPanel.add(queryPanel);
     resultsTabPanel.add(analysisPanel);
-    resultsTabPanel.add(analysisGridPanel);
+    if (GLOBAL.gridViewEnabled) {
+        resultsTabPanel.add(analysisGridPanel);
+    }
     resultsTabPanel.add(dataAssociationPanel);
-    resultsTabPanel.add(analysisDataExportPanel);
-    resultsTabPanel.add(analysisExportJobsPanel);
-    resultsTabPanel.add(analysisJobsPanel);
-    resultsTabPanel.add(workspacePanel);
-
+    if (GLOBAL.dataExportEnabled) {
+        resultsTabPanel.add(analysisDataExportPanel);
+    }
+    if (GLOBAL.dataExportJobsEnabled) {
+        resultsTabPanel.add(analysisExportJobsPanel);
+    }
+    if (GLOBAL.analysisJobsEnabled) {
+        resultsTabPanel.add(analysisJobsPanel);
+    }
+    if (GLOBAL.workspaceEnabled) {
+        resultsTabPanel.add(workspacePanel);
+    }
     if (GLOBAL.sampleExplorerEnabled) {
         resultsTabPanel.add(sampleExplorerPanel);
     }
