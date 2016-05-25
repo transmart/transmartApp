@@ -6,6 +6,7 @@ import groovy.sql.Sql
 import org.hibernate.criterion.Restrictions
 import org.transmartproject.core.dataquery.TabularResult
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
@@ -96,30 +97,27 @@ class HighDimensionQueryService {
         }
 
         def resource = highDimensionResourceService.getHighDimDataTypeResourceFromConcept(concept_key)
-        def concept_code = i2b2HelperService.getConceptCodeFromKey(concept_key)
 
         if (resource != null) {
-            // this is an extra query, however if the cohort selection tab was used to generate the patient set,
-            // this query was already executed to generate the histogram when specifying the limits, so the
-            // results of this query should come from a cache
-            def values = resource.getDistribution(
-                    new ConstraintByOmicsValue(projectionType: ConstraintByOmicsValue.ProjectionType.forValue(omics_constraint.omics_projection_type),
-                                           property      : omics_constraint.omics_property,
-                                           selector      : omics_constraint.omics_selector),
-                    concept_code,
-                    Long.parseLong(result_instance_id))
 
-            values.each { row ->
+            def data = resource.getDistribution(
+                    new ConstraintByOmicsValue(projectionType: ConstraintByOmicsValue.ProjectionType.forValue(omics_constraint.omics_projection_type),
+                            property      : omics_constraint.omics_property,
+                            selector      : omics_constraint.omics_selector),
+                    concept_key,
+                    (result_instance_id == "" ? null : result_instance_id as Long))
+
+            data.each { s, v ->
+                String subject = s.toString() // this is a Long
+                String value = v.toString() // this is a Double
                 /*If I already have this subject mark it in the subset column as belonging to both subsets*/
-                String subject = row[0]
-                Double value = row[1]
                 if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                    tablein.getRow(subject).put(columnid, value.toString());
+                    tablein.getRow(subject).put(columnid, value);
                 } else
                 /*fill the row*/ {
                     ExportRowNew newrow = new ExportRowNew();
                     newrow.put("subject", subject);
-                    newrow.put(columnid, value.toString());
+                    newrow.put(columnid, value);
                     tablein.putRow(subject, newrow);
                 }
             }

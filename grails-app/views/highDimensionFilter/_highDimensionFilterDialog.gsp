@@ -19,7 +19,7 @@
             <tr><td><label for="highdimension-filter-selector">Search term</label></td><td><input type="text" id="highdimension-filter-selector" style="width: 100%"/></td></tr>
             <tr><td>Query on</td>
                 <td>
-                    <select id="highdimension-filter-projection" style="width: 100%">
+                    <select id="highdimension-filter-projection" style="width: 100%" onchange="omicsProjectionChanged()">
                         <g:each in="${projections.keySet().sort()}" var="projection">
                             <option value="${projection}">${projections.get(projection)}</option>
                         </g:each>

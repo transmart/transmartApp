@@ -352,6 +352,9 @@ function conceptRightClick(event)
             id: 'geneexprfiltermenu',
             text: 'Set Filter',
             handler:function() {
+                // set the global variable for repopulating the filter window
+                omicsFilterRepopulateWindow = selectedConcept.attributes;
+
                 // create mock node object for highDimensionalConceptDropped
                 var node = {id: selectedConcept.attributes.conceptid.nodeValue}
                 highDimensionalConceptDropped(node, true);

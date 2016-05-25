@@ -8,6 +8,10 @@ var omicsSliderLowHandleRatio = 0;      // Ratio where low handle bar is
 var omicsSliderHighHandleRatio = 1;     // Ratio where high handle bar is (used when changing projection)
 var omicsSliderSteps = 500;             // Amount of steps between low and high values on the slider
 var omicsAutoCompleteList = [];         // List of results returned by the autocomplete search (for input validation)
+var omicsFilterRepopulateWindow;        // If this is set before omicsFilterWindowReceived() is called, the filter window
+                                        // will be repopulated with the values here. This is a map that should contain
+                                        // the following keys: [conceptid, omicsproperty, omicsselector, omicsoperator,
+                                        // omicsvalue, omicsprojection, omicsvaluetype]
 
 /**
  * Function to be called when a high dimensional concept is dropped. This will look up the high dimensional
@@ -58,7 +62,7 @@ function omicsFilterWindowReceived(result, request) {
 
     omicsfilterwin.setPosition(left, top);
     omicsfilterwin.show(viewport);
-    omicsfilterwin.setHeight(140); //set height back to old closed
+    omicsfilterwin.setHeight(158); //set height back to old closed
 
     jQuery("#highdimension-filter-main").html(result.responseText);
 
@@ -80,6 +84,32 @@ function omicsFilterWindowReceived(result, request) {
     else if (omics_filter_info.filter_type == "VCF") {
 
     }
+
+    repopulateFilterWindow();
+}
+
+function repopulateFilterWindow() {
+    if (omicsFilterRepopulateWindow == null) return;
+
+    jQuery("#highdimension-search-property").val(omicsFilterRepopulateWindow.omicsproperty.nodeValue);
+    jQuery("#highdimension-filter-selector").val(omicsFilterRepopulateWindow.omicsselector.nodeValue);
+    showConceptDistributionHistogramForOmicsFilterComplete(null);
+    showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
+}
+
+function repopulateOmicsFilterRange() {
+    if (omicsFilterRepopulateWindow == null) return;
+
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+        var minbox = jQuery("#highdimension-amount-min");
+        var maxbox = jQuery("#highdimension-amount-max");
+        var values = omicsFilterRepopulateWindow.omicsvalue.nodeValue.split(":");
+        minbox.val(values[0]);
+        minbox.blur();
+        maxbox.val(values[1]);
+        maxbox.blur();
+    }
+    omicsFilterRepopulateWindow = null;
 }
 
 function applyOmicsFilterDialog(validation) {
@@ -187,7 +217,7 @@ function addOmicsBinsSlider() {
 
 function addOmicsFilterMinMaxInputHandlers() {
     var minbox = jQuery("#highdimension-amount-min");
-    var maxbox = jQuery("#rnaseq-rcnt-amount-max");
+    var maxbox = jQuery("#highdimension-amount-max");
     minbox.blur(function(event) {
         var value = minbox.val();
         if (!jQuery.isNumeric(value)) {
@@ -200,7 +230,7 @@ function addOmicsFilterMinMaxInputHandlers() {
             minbox.val(maxbox.val());
         }
         jQuery("#highdimension-range").slider('values',0,minbox.val());
-        jQuery( "#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
+        jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
             .filter(function(el, idx, array) {return el <= maxbox.val();})
             .length)
     });
@@ -217,7 +247,7 @@ function addOmicsFilterMinMaxInputHandlers() {
             maxbox.val(minbox.val());
         }
         jQuery("#highdimension-range").slider('values',1,maxbox.val());
-        jQuery( "#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
+        jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
             .filter(function(el, idx, array) {return el <= maxbox.val();})
             .length)
     });
@@ -388,7 +418,7 @@ function showConceptDistributionHistogramForOmicsFilter(filter_params)
 
 function showConceptDistributionHistogramForOmicsFilterComplete(result)
 {
-    omicsfilterwin.setHeight(430);
+    omicsfilterwin.setHeight(445);
     var slider_rows = jQuery("[id^=highdimension-slider-row]");
     var input_fields = jQuery("[id^=highdimension-amount-m]");
     var sliders = jQuery("[id^=highdimension-slider-row] .ui-slider");
@@ -430,13 +460,13 @@ function omicsValuesObtained(values) {
     if (omicsFilterValues.length > 0) {
         omicsFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather than string-based
         var slider = jQuery("#highdimension-range");
-        // make the range slightly bigger to properly include extrema
         slider.slider('option',{'min': omicsFilterValues[0],
                                 'max': omicsFilterValues[omicsFilterValues.length - 1],
                                 'step': (omicsFilterValues[omicsFilterValues.length - 1] - omicsFilterValues[0]) / omicsSliderSteps});
         slider.slider('values', 0, omicsFilterValues[0] + omicsSliderLowHandleRatio * (omicsFilterValues[omicsFilterValues.length - 1] - omicsFilterValues[0]));
         slider.slider('values', 1, omicsFilterValues[0] + omicsSliderHighHandleRatio * (omicsFilterValues[omicsFilterValues.length - 1] - omicsFilterValues[0]));
         omicsSliderUpdated(null);
+        repopulateOmicsFilterRange();
     }
     else {
         jQuery("[id^=highdimension-slider-row]").css({'display': 'none'});
@@ -524,6 +554,7 @@ function applySingleNumericOmicsFilter(validation) {
                             omics_selector : omics_params.omics_selector,
                             omics_value_type: omics_params.omics_value_type,
                             omics_projection_type: omics_params.omics_projection_type,
+                            omics_platform: omics_filter_info.platform.id,
                             result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
                             result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
                         }

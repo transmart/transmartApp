@@ -122,6 +122,8 @@ class HighDimensionFilterController {
 
     static Map<String, String> searchableProjectionsDictionary =
             ['logIntensity': 'Log Intensity',
+             'rawIntensity': 'Raw Intensity',
+             'zscore': 'Z-Score',
              'logNormalizedReadcount': 'Log Normalized Readcount',
              'reference': 'Reference',
              'variant': 'Variant',

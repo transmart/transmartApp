@@ -2910,7 +2910,9 @@ function getAnalysisGridData(concept_key, omics_params) {
                 concept_key : concept_key,
                 omics_selector : omics_params.omics_selector,
                 omics_value_type: omics_params.omics_value_type,
+                omics_property: omics_params.omics_property,
                 omics_projection_type: omics_params.omics_projection_type,
+                omics_platform: omics_filter_info.platform.id,
                 result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
                 result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
             });

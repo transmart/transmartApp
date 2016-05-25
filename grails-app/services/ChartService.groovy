@@ -29,6 +29,9 @@ import org.jfree.data.statistics.MultiValueCategoryDataset
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jfree.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
+import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
+import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
+import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 import java.awt.*
@@ -43,8 +46,6 @@ class ChartService {
     def i2b2HelperService
     def highDimensionQueryService
     def highDimensionResourceService
-
-    def public keyCache = []
 
     def getSubsetsFromRequest(params) {
 
@@ -231,13 +232,14 @@ class ChartService {
             }.each { n, p ->
 
                 // Getting the concept data
-                //p.conceptData = highDimensionQueryService.getConceptDistributionDataForHighDimensionConceptFromCode(result.commons.conceptCode, p.instance, result.commons.omics_params).toList()
-                p.conceptData = resource.getDistribution(
+                p.conceptData =
+                        resource.getDistribution(
                         new ConstraintByOmicsValue(projectionType: ConstraintByOmicsValue.ProjectionType.forValue(result.commons.omics_params.omics_projection_type),
                                                property      : result.commons.omics_params.omics_property,
                                                selector      : result.commons.omics_params.omics_selector),
-                        result.commons.conceptCode,
-                        (p.instance == "" ? null : p.instance as Long)).collect {it[1]}
+                        concept,
+                        (p.instance == "" ? null : p.instance as Long)).collect {k, v -> v}
+
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
                 conceptPlotHandle["Subset $n"] = p.conceptStats
