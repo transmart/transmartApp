@@ -741,10 +741,6 @@ Ext.onReady(function () {
     loadPlugin('dalliance-plugin', '/Dalliance/loadScripts', function () {
         loadDalliance(resultsTabPanel);
     }, true);
-    loadPlugin('transmart-metacore-plugin', '/MetacoreEnrichment/loadScripts', function () {
-        loadMetaCoreEnrichment(resultsTabPanel);
-    }, true);
-
     /* load the tabs registered with the extension mechanism */
     (function loadAnalysisTabExtensions() {
         GLOBAL.analysisTabExtensions.forEach(function(tabExtension) {
