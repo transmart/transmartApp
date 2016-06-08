@@ -87,8 +87,6 @@
             SNPType: '',
             basePath: pageInfo.basePath,
             sampleExplorerEnabled: ${!grailsApplication.config.ui.tabs.sampleExplorer.hide},
-            metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
-            metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
             AnalysisHasBeenRun: false,
             ResultSetRegionParams: {},
             currentReportCodes: [],
