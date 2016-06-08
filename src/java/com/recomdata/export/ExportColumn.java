@@ -40,7 +40,7 @@ public class ExportColumn {
         json.put("name", id);
         json.put("header", label);
         json.put("tooltip", tooltip);
-        if (type != null && type.toLowerCase() == "number")
+        if (type != null && type.toLowerCase().equals("number"))
             json.put("type", "float");
         else
             json.put("type", "string");

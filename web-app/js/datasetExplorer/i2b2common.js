@@ -1675,6 +1675,24 @@ function isSubsetEmpty(subset)
     return flag;
 }
 
+function isSubsetOnlyExclude(subset) {
+
+    var allExcludes = true;
+    var count = 0;
+    for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
+    {
+        var queryDiv=Ext.get("queryCriteriaDiv"+subset+'_'+d);
+        if (queryDiv.dom.childNodes.length>0) {
+            count++;
+            var isInclude = (queryDiv.dom.className.indexOf("queryGroupInclude") > -1);
+            if (isInclude) allExcludes = false;
+        }
+    }
+    allExcludes = (count > 0) && allExcludes;
+
+    return allExcludes;
+}
+
 function showConceptDistributionHistogram(){
 
     var concept_key = selectedConcept.getAttribute('conceptid');

@@ -45,7 +45,11 @@ grails.project.dependency.resolution = {
             mavenCentral()
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
-            mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
+
+            // -- Genome Browser plugin --
+            //   to inclue the plugin, uncomment the following line
+            //   and see related comment block below 
+            // mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -58,7 +62,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:1.2.2-SNAPSHOT'
+        compile 'org.transmartproject:transmart-core-api:16.1'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -75,6 +79,10 @@ grails.project.dependency.resolution = {
         compile 'net.sf.ehcache:ehcache:2.9.0'
         compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile 'org.apache.httpcomponents:httpcore:4.4.1'
+
+        compile 'org.apache.httpcomponents:httpclient:4.2.4'
+        compile 'org.apache.solr:solr-solrj:5.4.1'
+        compile 'org.apache.solr:solr-core:5.4.1'
 
         /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
         compile "javax.servlet:servlet-api:$grails.servlet.version" /* delete from the WAR afterwards */
@@ -132,27 +140,30 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:1.2.5-Beta-SNAPSHOT'
-            runtime ':transmart-core:1.2.2-SNAPSHOT'
-            compile ':transmart-gwas:1.2.2-SNAPSHOT'
+            compile ':rdc-rmodules:16.1'
+            runtime ':transmart-core:16.1'
+            compile ':transmart-gwas:16.1'
             //// already included in transmart-gwas
-            //compile ':transmart-legacy-db:1.2.2-SNAPSHOT'
+            //compile ':transmart-legacy-db:16.1'
             //// already included in transmart-gwas
-            //compile ':folder-management:1.2.2-SNAPSHOT'
+            //compile ':folder-management:16.1'
             //// already included in transmart-gwas, folder-management
-            //compile ':search-domain:1.2.2-SNAPSHOT'
+            //compile ':search-domain:16.1'
             //// already included in search-domain, transmart-gwas,
             //                       folder-management
-            //compile ':biomart-domain:1.2.2-SNAPSHOT'
+            //compile ':biomart-domain:16.1'
             //// already included in biomart-domain
-            //compile ':transmart-java:1.2.2-SNAPSHOT'
-            runtime ':dalliance-plugin:0.2-SNAPSHOT'
-            runtime ':transmart-mydas:0.1-SNAPSHOT'
-            runtime ':transmart-rest-api:1.2.2-SNAPSHOT'
-            runtime ':blend4j-plugin:1.2.2-SNAPSHOT'
-            runtime ':transmart-metacore-plugin:1.2.2-SNAPSHOT'
+            //compile ':transmart-java:16.1'
+            // -- Genome Browser plugin --
+            //   to inclue the plugin, uncomment the following two lines
+            //   and see related comment block above 
+            // runtime ':dalliance-plugin:unknown'
+            // runtime ':transmart-mydas:unknown'
+            runtime ':transmart-rest-api:16.1'
+            runtime ':blend4j-plugin:16.1'
+            runtime ':transmart-metacore-plugin:16.1'
 
-            test ':transmart-core-db-tests:1.2.2-SNAPSHOT'
+            test ':transmart-core-db-tests:16.1'
         } else {
             dm.internalDependencies delegate
         }
