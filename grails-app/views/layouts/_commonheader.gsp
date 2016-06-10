@@ -59,9 +59,9 @@
                         <g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>
                     </g:if>
 
-                    <g:if test="${!grailsApplication.config.ui.tabs.uploadData.hide}">
-                        <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload Data</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="uploadData">Upload Data</g:link></th></g:else>
+                    <g:if test="${grailsApplication.config.ui.tabs.uploadData.show}">
+                        <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload GWAS</th></g:if>
+                        <g:else><th class="menuLink"><g:link controller="uploadData">Upload GWAS</g:link></th></g:else>
                     </g:if>
 
                     <sec:ifAnyGranted roles="ROLE_ADMIN">
@@ -100,3 +100,6 @@
 	    });
    });
 </r:script>
+<!-- The below script fragment provided by JIRA to report bugs at jira.transmartfoundation.org -->
+<script type="text/javascript" src="https://jira.transmartfoundation.org/s/8c444fcd9d47fdf56ca2f75ec1e9fd15-T/en_GBh7pwdp/70120/0cff1430a886a90ec539aa112db8aee1/2.0.8/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-GB&collectorId=8d56c6a7"></script>
+
