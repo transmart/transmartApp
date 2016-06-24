@@ -1,12 +1,10 @@
 package org.transmart.ontology
 
 import grails.converters.JSON
-import org.transmart.authorization.CurrentUserBeanProxyFactory
+import org.transmart.marshallers.QueryResultConverter
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.QueryDefinition
 import org.transmartproject.core.users.User
-
-import javax.annotation.Resource
 
 class QueryToolController {
 
@@ -27,7 +25,7 @@ class QueryToolController {
 
         def result = queriesResourceAuthorizationDecorator.runQuery(
                 definition, username)
-        render result as JSON
+        render QueryResultConverter.convert(result) as JSON
     }
 
     /**
