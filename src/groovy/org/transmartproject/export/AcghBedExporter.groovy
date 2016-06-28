@@ -27,7 +27,7 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
                 //white
                 (CopyNumberState.INVALID):             [255, 255, 255],
                 //light blue
-                (CopyNumberState.HOMOZYGOUS_DELETION): [0, 0, 255],
+               // (CopyNumberState.HOMOZYGOUS_DELETION): [0, 0, 255],
                 //blue
                 (CopyNumberState.LOSS):                [0, 0, 205],
                 //gray
