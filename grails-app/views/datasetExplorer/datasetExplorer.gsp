@@ -152,8 +152,6 @@
             basePath: pageInfo.basePath,
             hideAcrossTrialsPanel: '${grailsApplication.config.com.recomdata.datasetExplorer.hideAcrossTrialsPanel}',
             sampleExplorerEnabled: ${!grailsApplication.config.ui.tabs.sampleExplorer.hide},
-            metacoreAnalyticsEnabled: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable}',
-            metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
             AnalysisHasBeenRun: false,
             ResultSetRegionParams: {},
             currentReportCodes: [],

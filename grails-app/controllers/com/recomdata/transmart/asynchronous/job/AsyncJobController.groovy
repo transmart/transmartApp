@@ -89,7 +89,7 @@ class AsyncJobController {
      * Shows the job status window
      */
     def showJobStatus = {
-        render(view: "/genePattern/workflowStatus")
+        render(view: "/genePattern/workflowStatus", model: [:])
     }
 
     /**
