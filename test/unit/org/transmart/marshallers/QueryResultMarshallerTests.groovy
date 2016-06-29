@@ -13,13 +13,6 @@ import static org.hamcrest.Matchers.*
 @TestMixin(GrailsUnitTestMixin)
 class QueryResultMarshallerTests {
 
-    QueryResultMarshaller testee
-
-    @Before
-    void before() {
-        testee = new QueryResultMarshaller()
-    }
-
     @Test
     void basicTest() {
         def value = [
@@ -31,7 +24,7 @@ class QueryResultMarshallerTests {
                 getUsername    : { 'bogus_user_name' }
         ] as QueryResult
 
-        def out = testee.convert(value)
+        def out = QueryResultConverter.convert(value)
         assertThat out, allOf(
                 hasEntry('errorMessage', 'error message'),
                 hasEntry('id', -1L),

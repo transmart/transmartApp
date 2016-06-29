@@ -1,3 +1,4 @@
+<%@ page import="grails.plugin.springsecurity.SpringSecurityUtils" %>
 <g:if test="${debug}">
     <div id="search-explain" class="overlay">
         <b>Search Explainer</b>
@@ -24,50 +25,29 @@
                 </div>
             </g:if>
         </th>
+        <g:set var="extensionsRegistry" bean="transmartExtensionsRegistry"/>
         <th class="menuBar" style="text-align: left;">
             <!-- menu links -->
             <table class="menuDetail" id="menuLinks" style="width: 1px;"
                    align="right"><!-- Use minimum possible width -->
                 <tr>
                     <th width="150">&nbsp;</th>
-                    <%--See Config.groovy--%>
-                    <g:if test="${grailsApplication.config.ui.tabs.search.show}">
-                        <g:if test="${'search'==app}"><th class="menuVisited">Search</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="search">Search</g:link></th></g:else>
-                    </g:if>
+                    <g:set var="tabs" value="${extensionsRegistry.getTabs([
+                            [id: 'search', title: 'Search', controller: 'search', display: grailsApplication.config.ui.tabs.search.show],
+                            [id: 'rwg', title: 'Browse', controller: 'RWG', display: !grailsApplication.config.ui.tabs.browse.hide],
+                            [id: 'datasetExplorer', title: 'Analyze', controller: 'datasetExplorer'],
+                            [id: 'sampleexplorer', title: 'Sample Explorer', controller: 'sampleExplorer', display: !grailsApplication.config.ui.tabs.sampleExplorer.hide],
+                            [id: 'genesignature', title: 'Gene&nbsp;Signature/Lists', controller: 'geneSignature', display: !grailsApplication.config.ui.tabs.geneSignature.hide],
+                            [id: 'gwas', title: 'GWAS', controller: 'GWAS', display: !grailsApplication.config.ui.tabs.gwas.hide],
+                            [id: 'uploaddata', title: 'Upload Data', controller: 'uploadData', display: !grailsApplication.config.ui.tabs.uploadData.hide],
+                            [id: 'accesslog', title: 'Admin', controller: 'accessLog', display: SpringSecurityUtils.ifAnyGranted('ROLE_ADMIN')]
 
-                    <g:if test="${!grailsApplication.config.ui.tabs.browse.hide}">
-                        <g:if test="${'rwg' == app}"><th class="menuVisited">Browse</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="RWG">Browse</g:link></th></g:else>
-                    </g:if>
-                    <%--Analyze tab is always visible--%>
-                    <g:if test="${'datasetExplorer' == app}"><th class="menuVisited">Analyze</th></g:if>
-                    <g:else><th class="menuLink"><g:link controller="datasetExplorer">Analyze</g:link></th></g:else>
-
-                    <g:if test="${!grailsApplication.config.ui.tabs.sampleExplorer.hide}">
-                        <g:if test="${'sampleexplorer' == app}"><th class="menuVisited">Sample Explorer</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="sampleExplorer">Sample Explorer</g:link></th></g:else>
-                    </g:if>
-
-                    <g:if test="${!grailsApplication.config.ui.tabs.geneSignature.hide}">
-                        <g:if test="${'genesignature' == app}"><th class="menuVisited">Gene&nbsp;Signature/Lists</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="geneSignature">Gene&nbsp;Signature/Lists</g:link></th></g:else>
-                    </g:if>
-
-                    <g:if test="${!grailsApplication.config.ui.tabs.gwas.hide}">
-                        <g:if test="${'gwas' == app}"><th class="menuVisited">GWAS</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="GWAS">GWAS</g:link></th></g:else>
-                    </g:if>
-
-                    <g:if test="${grailsApplication.config.ui.tabs.uploadData.show}">
-                        <g:if test="${'uploaddata' == app}"><th class="menuVisited">Upload GWAS</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="uploadData">Upload GWAS</g:link></th></g:else>
-                    </g:if>
-
-                    <sec:ifAnyGranted roles="ROLE_ADMIN">
-                        <g:if test="${'accesslog' == app}"><th class="menuVisited">Admin</th></g:if>
-                        <g:else><th class="menuLink"><g:link controller="accessLog">Admin</g:link></th></g:else>
-                    </sec:ifAnyGranted>
+                    ])}"/>
+                    <g:each in="${tabs}" var="tab">
+                        <g:if test="${tab.get('display', true)}">
+                            <g:render template="/layouts/headertab" model="[id: tab.id, title: tab.title, controller: tab.controller, app: app]"/>
+                        </g:if>
+                    </g:each>
 
                     <tmpl:/layouts/utilitiesMenu/>
                 </tr>
