@@ -48,7 +48,7 @@ grails.project.dependency.resolution = {
 
             // -- Genome Browser plugin --
             //   to inclue the plugin, uncomment the following line
-            //   and see related comment block below 
+            //   and see related comment block below
             // mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
@@ -62,7 +62,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:16.1'
+        compile 'org.transmartproject:transmart-core-api:16.2-SNAPSHOT'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -137,30 +137,30 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            compile ':rdc-rmodules:16.1'
-            runtime ':transmart-core:16.1'
-            compile ':transmart-gwas:16.1'
+            compile ':rdc-rmodules:16.2-SNAPSHOT'
+            runtime ':transmart-core:16.2-SNAPSHOT'
+            compile ':transmart-gwas:16.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':transmart-legacy-db:16.1'
+            //compile ':transmart-legacy-db:16.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':folder-management:16.1'
+            //compile ':folder-management:16.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
-            //compile ':search-domain:16.1'
+            //compile ':search-domain:16.2-SNAPSHOT'
             //// already included in search-domain, transmart-gwas,
             //                       folder-management
-            //compile ':biomart-domain:16.1'
+            //compile ':biomart-domain:16.2-SNAPSHOT'
             //// already included in biomart-domain
-            //compile ':transmart-java:16.1'
+            //compile ':transmart-java:16.2-SNAPSHOT'
             // -- Genome Browser plugin --
             //   to inclue the plugin, uncomment the following two lines
-            //   and see related comment block above 
+            //   and see related comment block above
             // runtime ':dalliance-plugin:unknown'
             // runtime ':transmart-mydas:unknown'
-            runtime ':transmart-rest-api:16.1'
-            runtime ':blend4j-plugin:16.1'
-            runtime ':transmart-metacore-plugin:16.1'
+            runtime ':transmart-rest-api:16.2-SNAPSHOT'
+            runtime ':blend4j-plugin:16.2-SNAPSHOT'
+            runtime ':transmart-metacore-plugin:16.2-SNAPSHOT'
 
-            test ':transmart-core-db-tests:16.1'
+            test ':transmart-core-db-tests:16.2-SNAPSHOT'
         } else {
             dm.internalDependencies delegate
         }
