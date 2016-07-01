@@ -1,5 +1,5 @@
 /**
- * Created by dverbeec on 09/06/2015.
+ * Author: Denny Verbeeck (dverbeec@its.jnj.com)
  */
 
 var omics_filter_info;                  // Global variable to hold information on the highdimension filter
@@ -68,7 +68,7 @@ function omicsFilterWindowReceived(result, request) {
 
     omicsfilterwin.setTitle(omics_filter_info.platform.markerType);
 
-    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC" || omics_filter_info.filter_type == "ACGH") {
         addOmicsFilterAutocomplete();
         if (omics_filter_info.filter) {
             addOmicsRangeSlider();
@@ -78,14 +78,11 @@ function omicsFilterWindowReceived(result, request) {
         jQuery("[id^=highdimension-slider-row]").css({'display': 'none'});
         jQuery("#highdimension-filter-selector").focus();
     }
-    else if (omics_filter_info.filter_type == "ACGH") {
-
-    }
     else if (omics_filter_info.filter_type == "VCF") {
 
     }
 
-    repopulateFilterWindow();
+    repopulateFilterWindow(); // this checks if the user did an 'edit filter', if so it repopulates the values in the window
 }
 
 function repopulateFilterWindow() {
@@ -113,11 +110,8 @@ function repopulateOmicsFilterRange() {
 }
 
 function applyOmicsFilterDialog(validation) {
-    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC" || omics_filter_info.filter_type == "ACGH") {
         applySingleNumericOmicsFilter(validation);
-    }
-    else if (omics_filter_info.filter_type == "ACGH") {
-        applyACGHOmicsFilter(validation);
     }
     else if (omics_filter_info.filter_type == "VCF") {
         applyVCFOmicsFilter(validation);
@@ -299,28 +293,18 @@ function omicsProjectionChanged() {
 }
 
 function getOmicsFilterParams() {
-    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC" || omics_filter_info.filter_type == "ACGH") {
         var slider = omics_filter_info.filter ? jQuery("#highdimension-range") : null;
         return {
             platform: omics_filter_info.platform.id,
             property: jQuery("#highdimension-search-property").val(),
             selector: jQuery("#highdimension-filter-selector").val(),
-            value: omics_filter_info.filter ? slider.slider('values', 0) + ":" + slider.slider('values', 1) : "",
+            value: omics_filter_info.filter ? jQuery("#highdimension-amount-min").val() + ":" + jQuery("#highdimension-amount-max").val() : "",
             operator: omics_filter_info.filter ? "BETWEEN" : "",
             projection_type: jQuery("#highdimension-filter-projection option:selected").val(),
             type: omics_filter_info.platform.markerType,
             hist_bins: omics_filter_info.filter ? jQuery("#highdimension-amount-bins").val() : ""
         };
-    }
-    else if (omics_filter_info.filter_type == "ACGH") {
-        return {
-            platform: omics_filter_info.platform.id,
-            selector: "DUMMY",
-            value: "",
-            operator: "BETWEEN",
-            projection_type: "COMPLEX",
-            type: omics_filter_info.platform.markerType
-        }
     }
     else if (omics_filter_info.filter_type == "VCF") {
         return {
@@ -372,6 +356,7 @@ function getOmicsFilterValueText(params)
         case "RNASEQ_RCNT":
         case "PROTEOMICS":
         case "MIRNA_QPCR":
+        case "Chromosomal":
             switch (params.operator) {
                 case "BETWEEN":
                     var thresholds = params.value.split(":");
@@ -379,13 +364,10 @@ function getOmicsFilterValueText(params)
                         result = "";
                     }
                     else {
-                        result = thresholds[0] + " <= " + params.selector + " <= " + thresholds[1];
+                        result = thresholds[0] + " <= " + params.projection_type + " for " + params.selector + " <= " + thresholds[1];
                     }
                     break;
             }
-            break;
-        case "Chromosomal":
-            result = "Dummy ACGH filter";
             break;
         case "VCF":
             result = "Dummy VCF filter";
@@ -572,24 +554,6 @@ function applySingleNumericOmicsFilter(validation) {
 
             getAnalysisGridData(omics_filter_info.concept_key, omics_params);
         }
-
-        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
-        omicsfilterwin.hide();
-    }
-}
-
-function applyACGHOmicsFilter(validation) {
-    var params = getOmicsFilterParams();
-    if (omics_filter_info.filter) {
-        if (validation) // also check if required fields are filled correctly
-            omicsFilterDialogComplete(params);
-
-        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
-        omicsfilterwin.hide();
-    }
-    else {
-        if (validation)
-            omicsFilterDialogComplete(params);
 
         document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
         omicsfilterwin.hide();

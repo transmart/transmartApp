@@ -19,7 +19,7 @@ import org.transmartproject.db.dataquery.highdim.mrna.DeSubjectMicroarrayDataCor
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
 /**
- * Created by dverbeec on 18/03/2015.
+ * Author: Denny Verbeeck (dverbeec@its.jnj.com)
  */
 class HighDimensionQueryService {
 
@@ -101,7 +101,7 @@ class HighDimensionQueryService {
         if (resource != null) {
 
             def data = resource.getDistribution(
-                    new ConstraintByOmicsValue(projectionType: ConstraintByOmicsValue.ProjectionType.forValue(omics_constraint.omics_projection_type),
+                    new ConstraintByOmicsValue(projectionType: omics_constraint.omics_projection_type,
                             property      : omics_constraint.omics_property,
                             selector      : omics_constraint.omics_selector),
                     concept_key,

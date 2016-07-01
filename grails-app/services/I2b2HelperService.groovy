@@ -5156,7 +5156,7 @@ class I2b2HelperService {
                             selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
                             projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
                             pw.write(selector)
-                            if (value_type.equals("Gene Expression") || value_type.equals("RNASEQ_RCNT")) {
+                            if (value_type.equals("Gene Expression") || value_type.equals("RNASEQ_RCNT") || value_type.equals("Chromosomal")) {
                                 pw.write(" - " + projection + " " + operator + " ")
                                 if (operator.equals("BETWEEN")) {
                                     String[] bounds = constraints.split(":")

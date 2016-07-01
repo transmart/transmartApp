@@ -29,7 +29,7 @@
             </tbody>
         </table>
 
-        <g:if test="${filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.SINGLE_NUMERIC}">
+        <g:if test="${filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.SINGLE_NUMERIC || filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.ACGH}">
             <table>
                 <tbody>
                 <tr id="highdimension-slider-row1"><td colspan="3">Number of subjects selected: <span id="highdimension-filter-subjectcount">0</span></td></tr>
@@ -45,9 +45,6 @@
                 </tbody>
             </table>
         </g:if>
-        <g:elseif test="${filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.ACGH}">
-            <span>ACGH Data type</span>
-        </g:elseif>
         <g:elseif test="${filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.VCF}">
 
         </g:elseif>

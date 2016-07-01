@@ -234,7 +234,7 @@ class ChartService {
                 // Getting the concept data
                 p.conceptData =
                         resource.getDistribution(
-                        new ConstraintByOmicsValue(projectionType: ConstraintByOmicsValue.ProjectionType.forValue(result.commons.omics_params.omics_projection_type),
+                        new ConstraintByOmicsValue(projectionType: result.commons.omics_params.omics_projection_type,
                                                property      : result.commons.omics_params.omics_property,
                                                selector      : result.commons.omics_params.omics_selector),
                         concept,

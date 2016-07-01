@@ -1,10 +1,11 @@
 import grails.converters.JSON
+import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 import org.transmartproject.db.dataquery.highdim.DeGplInfo
 import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping
 
 /**
- * Created by dverbeec on 31/08/2015.
+ * Author: Denny Verbeeck (dverbeec@its.jnj.com)
  */
 class HighDimensionFilterController {
 
@@ -120,12 +121,19 @@ class HighDimensionFilterController {
              'referenceAllele': 'Reference Allele',
              'detector': 'miRNA Symbol']
 
-    static Map<String, String> searchableProjectionsDictionary =
-            ['logIntensity': 'Log Intensity',
-             'rawIntensity': 'Raw Intensity',
-             'zscore': 'Z-Score',
-             'logNormalizedReadcount': 'Log Normalized Readcount',
-             'reference': 'Reference',
-             'variant': 'Variant',
-             'variantType': 'Variant Type']
+    static Map<String, String> searchableProjectionsDictionary = [
+            (Projection.LOG_INTENSITY_PROJECTION): 'Log Intensity',
+            (Projection.DEFAULT_REAL_PROJECTION) : 'Raw Intensity',
+            (Projection.ZSCORE_PROJECTION)       : 'Z-Score',
+            (Projection.LOG_NORMALIZED_READ_COUNT_PROJECTION): 'Log Normalized Readcount',
+            (Projection.REF_ALT)                 : 'Reference',
+            (Projection.VAR_CLASS)               : 'Variant',
+            (Projection.VAR_TYPE)                : 'Variant Type',
+            (Projection.PROB_LOSS)               : 'Probability of Loss',
+            (Projection.PROB_AMP)                : 'Probability of Amplification',
+            (Projection.CHIP_COPYNUMBER_VALUE)   : 'Chip Copy Number Value',
+            (Projection.SEGMENT_COPY_NUMBER_VALUE): 'Segment Copy Number Value',
+            (Projection.PROB_NORM)               : 'Probability of Normal',
+            (Projection.PROB_GAIN)               : 'Probablity of Gain'
+    ]
 }
