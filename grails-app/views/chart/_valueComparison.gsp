@@ -4,7 +4,7 @@
     <tbody>
     <tr>
         <td width="30%" style="text-align: center">
-            <b>Sex</b>
+            <b>Age</b>
         </td>
     </tr>
     <tr>
