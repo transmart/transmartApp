@@ -96,8 +96,8 @@ class ChartService {
         }
 
         // Lets build our age diagrams now that we have all the points in
-        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle)
-        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle)
+        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle, title: "Age")
+        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle, title: " ")
 
         subsets
     }
