@@ -3,7 +3,12 @@
 <table width="80%">
     <tbody>
     <tr>
-        <td width="30%" style="text-align: right">
+        <td width="30%" style="text-align: center">
+            <b>Age</b>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%" style="text-align: center">
             ${subsets?.commons?."${prefix}Histo" ?: ''}
         </td>
         <g:each in="${subsets}" var="s">
