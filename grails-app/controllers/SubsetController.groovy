@@ -14,17 +14,35 @@ class SubsetController {
     def getQueryForSubset = {
         def subsetId = params["subsetId"];
         Subset subset = Subset.get(subsetId);
-        def result = []
+        def result = [:]
 
         // We have to bypass core-api implementation tests for user permission
         // But we still need to be coherent in who can retrieve what
         // Publicity and user checks are still necessary
         if (!subset.deletedFlag && (subset.publicFlag || subset.creatingUser == springSecurityService.getPrincipal().username)) {
-            def query1 = queriesResourceService.getQueryDefinitionForResult(queriesResourceService.getQueryResultFromId(subset.queryID1))
-            def query2 = queriesResourceService.getQueryDefinitionForResult(queriesResourceService.getQueryResultFromId(subset.queryID2))
 
-            result = [query1: queryDefinitionXmlService.toXml(query1), query2: queryDefinitionXmlService.toXml(query2)]
+            if (subset.queryID1 && subset.queryID1 >= 0)
+                result["query1"] = queryDefinitionXmlService.toXml(queriesResourceService.getQueryDefinitionForResult(queriesResourceService.getQueryResultFromId(subset.queryID1)))
+            if (subset.queryID2 && subset.queryID2 >= 0)
+                result["query2"] = queryDefinitionXmlService.toXml(queriesResourceService.getQueryDefinitionForResult(queriesResourceService.getQueryResultFromId(subset.queryID2)))
+
         }
+
+        render result as JSON
+    }
+
+    def getQueryForResultInstance = {
+
+        def result = [:]
+
+        // We have to bypass core-api implementation tests for user permission
+        // But we still need to be coherent in who can retrieve what
+        // Publicity and user checks are still necessary
+
+        if (params["1"] && params["1"].toLong() >= 0)
+            result["query1"] = queryDefinitionXmlService.toXml(queriesResourceService.getQueryDefinitionForResult(queriesResourceService.getQueryResultFromId(params["1"].toLong())))
+        if (params["2"] && params["2"].toLong() >= 0)
+            result["query2"] = queryDefinitionXmlService.toXml(queriesResourceService.getQueryDefinitionForResult(queriesResourceService.getQueryResultFromId(params["2"].toLong())))
 
         render result as JSON
     }

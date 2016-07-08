@@ -111,7 +111,7 @@ class AuthUserController {
 
         bindData person, params, [ include: [
             'enabled', 'username', 'userRealName', 'email',
-            'description', 'emailShow', 'authorities'
+            'description', 'emailShow', 'authorities', 'changePassword'
         ]]
 
         // We have to make that check at the user creation since the RModules check over this.

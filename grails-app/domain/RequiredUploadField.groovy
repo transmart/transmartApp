@@ -5,7 +5,7 @@ public class RequiredUploadField {
     String field;
 
     static mapping = {
-        table 'CZ_REQUIRED_UPLOAD_FIELD'
+        table 'SEARCH_REQUIRED_UPLOAD_FIELD'
         version false
         id column: 'REQUIRED_UPLOAD_FIELD_ID'
         type column: 'TYPE'

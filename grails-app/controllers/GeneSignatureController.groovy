@@ -9,6 +9,8 @@ import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.GeneSignature
 import org.transmart.searchapp.GeneSignatureFileSchema
+import org.transmart.searchapp.SearchKeyword
+import org.transmart.searchapp.SearchKeywordTerm
 
 import javax.servlet.ServletOutputStream
 
@@ -18,6 +20,9 @@ import javax.servlet.ServletOutputStream
  * @version $Revision: 11258 $
  */
 class GeneSignatureController {
+
+    private static final String GENERIC_OTHER_BIO_CONCEPT_CODE = 'OTHER'
+    private static final String GENERIC_OTHER_CODE_TYPE_NAME = 'OTHER'
 
     // service injections
     def geneSignatureService
@@ -83,16 +88,30 @@ class GeneSignatureController {
         // break into owned and public
         def myItems = []
         def pubItems = []
+        def myListItems = []
+        def pubListItems = []
 
         signatures.each {
-            if (user.id == it.createdByAuthUser.id) {
-                myItems.add(it)
-            } else {
-                pubItems.add(it)
+            if(it.uniqueId?.startsWith("GENESIG") )
+            {
+                if (user.id == it.createdByAuthUser.id) {
+                    myItems.add(it)
+                } else {
+                    pubItems.add(it)
+                }
+            }
+            else
+            {
+                if(user.id==it.createdByAuthUser.id) {
+                    myListItems.add(it)
+                } else {
+                    pubListItems.add(it)
+                }
             }
         }
 
-        render(view: "list", model: [user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems, ctMap: ctMap])
+	render(view: "list", model:[user: user, adminFlag: bAdmin, myItems: myItems, pubItems: pubItems,
+                                    myListItems: myListItems, pubListItems: pubListItems, ctMap: ctMap])
     }
 
     /**
@@ -113,6 +132,27 @@ class GeneSignatureController {
         session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
 
         redirect(action: "create1")
+    }
+
+    /**
+     * initialize session for the create gs wizard
+     */
+    def createListWizard = {
+        // initialize session model data
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+
+        // initialize new gs inst
+        def geneSigInst = new GeneSignature();
+        geneSigInst.properties.createdByAuthUser = user;
+        geneSigInst.properties.publicFlag = false;
+        geneSigInst.properties.deletedFlag = false;
+        geneSigInst.properties.list = true;
+
+        // initialize session
+        def newWizard = new WizardModelDetails(loggedInUser: user, geneSigInst: geneSigInst);
+        session.setAttribute(WIZ_DETAILS_ATTRIBUTE, newWizard)
+
+        redirect(action:'createList')
     }
 
     /**
@@ -259,6 +299,31 @@ class GeneSignatureController {
         render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
     }
 
+    def createList = {
+        def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
+
+        // bind params
+        bindGeneSigData(params, wizard.geneSigInst)
+
+        render(view: "wizard_list", model:[wizard: wizard])
+    }
+
+    def editList = {
+        // initialize session model data
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+
+        // initialize new gs inst
+        def geneSigInst = GeneSignature.get(params.id);
+        // initialize session
+        def wizard = new WizardModelDetails(loggedInUser: user, geneSigInst: geneSigInst);
+        session.setAttribute(WIZ_DETAILS_ATTRIBUTE, wizard)
+
+        // bind params
+        bindGeneSigData(params, wizard.geneSigInst)
+        wizard.wizardType = 1;
+        render(view: "wizard_list", model:[wizard: wizard, gs: wizard.geneSigInst, isEdit: true])
+    }
+
     /**
      * edit gs in page 1 of wizard
      */
@@ -380,6 +445,116 @@ class GeneSignatureController {
             render(view: "wizard3", model: [wizard: wizard, existingValues: existingValues])
         }
     }
+
+    /**
+     * save new gene list
+     */
+    def saveList = {
+        def wizard = session.getAttribute(WIZ_DETAILS_ATTRIBUTE)
+        def gs = wizard.geneSigInst
+        gs.properties.list = true
+        if (!params.boolean('isEdit')) {
+            assert null == gs.properties.id
+        }
+        else {
+            def currentListItems = GeneSignatureItem.createCriteria().list {
+                eq('geneSignature', gs)
+            }
+            for (i in currentListItems) {
+                i.delete();
+            }
+            gs.geneSigItems.clear()
+        }
+        // species
+        gs.speciesConceptCode =  ConceptCode.findByCodeTypeNameAndBioConceptCode("OTHER", "OTHER")
+
+        // technology platforms
+        gs.techPlatform = BioAssayPlatform.findByName("Multiple or Unknown")
+
+        // p value cutoffs
+        gs.pValueCutoffConceptCode =  ConceptCode.findByCodeTypeNameAndBioConceptCode(P_VAL_CUTOFF_CATEGORY, "UNDEFINED")
+
+        // file schemas
+        gs.fileSchema =  GeneSignatureFileSchema.findByName("Gene Symbol <tab> Metric Indicator")
+
+        // fold change metrics
+        gs.foldChgMetricConceptCode = ConceptCode.findByCodeTypeNameAndBioConceptCode(FOLD_CHG_METRIC_CATEGORY, "NOT_USED")
+
+        // bind params
+        bindData(gs, params)
+
+        // get file
+        def file = request.getFile('uploadFile')
+        gs.properties.name = request.getParameter('name')
+
+        // load file contents, if clone check for file presence
+        boolean bLoadFile = (file!=null && file.getOriginalFilename().trim() !="")
+        if(!bLoadFile) file = null
+        if(bLoadFile) {
+            gs.properties.uploadFile = file.getOriginalFilename()
+
+            // check for empty file
+            if(file.empty) {
+                flash.message = "The file:'${gs.properties.uploadFile}' you uploaded is empty"
+                return render(view: "wizard_list", model:[wizard: wizard])
+            }
+
+            // validate file format
+            def metricType = "NOT_USED"
+            def schemaColCt = 2
+
+            try {
+                geneSignatureService.verifyFileFormat(file, schemaColCt, metricType)
+            } catch (FileSchemaException e) {
+                flash.message = e.getMessage()
+                return render(view: "wizard_list", model:[wizard: wizard])
+            }
+
+        } else {
+            gs.properties.uploadFile = "Manual Item Entry"
+            // load items from list rather than file
+            Iterator iter = params.entrySet().iterator()
+            SortedSet invalidSymbols = new TreeSet();
+            while(iter.hasNext()) {
+                def param = iter.next()
+                def key = param.getKey().trim()
+                def val = param.getValue()
+                List<String> markers = []
+                if(key.startsWith("biomarker_") && val != null && val != "") {
+                    markers.add(val.trim())
+
+                }
+                def gsItems = geneSignatureService.loadGeneSigItemsFromList(markers)
+                def geneSigUniqueIds = gs.geneSigItems*.bioDataUniqueId
+                gsItems.each {
+                    if (!geneSigUniqueIds?.contains(it.bioDataUniqueId)) {
+                        gs.addToGeneSigItems(it)
+                    }
+                }
+            }
+        }
+
+        // good to go, call save service
+        try {
+            gs = geneSignatureService.saveWizard(gs, file)
+
+            // clean up session
+            wizard = null
+            session.setAttribute(WIZ_DETAILS_ATTRIBUTE, wizard)
+
+            // send message to user
+            flash.message = "GeneSignature '${gs.name}' was " + (params.boolean('isEdit') ? "edited" : "created") + " on: ${gs.dateCreated}"
+            redirect(action:'list')
+
+        } catch (FileSchemaException fse) {
+            flash.message = fse.getMessage()
+            render(view: "wizard_list", model:[wizard: wizard])
+        } catch (RuntimeException re) {
+            flash.message = "Runtime exception "+re.getClass().getName()+":<br>"+re.getMessage()
+            render(view: "wizard_list", model:[wizard: wizard])
+        }
+    }
+
 
     /**
      * update gene signature and the associated items (new file only)
@@ -794,13 +969,9 @@ class GeneSignatureController {
                 break;
 
             case 2:
-                // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(1)
-
                 // sources
                 wizard.sources = ConceptCode.findAllByCodeTypeName(SOURCE_CATEGORY, [sort: "bioConceptCode"])
-                if (otherConceptItem != null)
-                    wizard.sources.add(otherConceptItem);
+                wizard.sources.add(genericOtherConceptCode)
                 //WizardModelDetails.addOtherItem(wizard.sources, "other")
 
                 // owners
@@ -831,20 +1002,17 @@ class GeneSignatureController {
                 break;
 
             case 3:
-                // 'other' concept code item
-                def otherConceptItem = ConceptCode.get(1)
-
                 // normalization methods
                 wizard.normMethods = ConceptCode.findAllByCodeTypeName(NORM_METHOD_CATEGORY, [sort: "bioConceptCode"])
-                wizard.normMethods.add(otherConceptItem);
+                wizard.normMethods.add(genericOtherConceptCode)
 
                 // analytic categories
                 wizard.analyticTypes = ConceptCode.findAllByCodeTypeName(ANALYTIC_TYPE_CATEGORY, [sort: "bioConceptCode"])
-                wizard.analyticTypes.add(otherConceptItem)
+                wizard.analyticTypes.add(genericOtherConceptCode)
 
                 // analysis methods
                 wizard.analysisMethods = ConceptCode.findAllByCodeTypeName(ANALYSIS_METHOD_CATEGORY, [sort: "bioConceptCode"])
-                wizard.analysisMethods.add(otherConceptItem);
+                wizard.analysisMethods.add(genericOtherConceptCode)
 
                 // file schemas
                 wizard.schemas = GeneSignatureFileSchema.findAllBySupported(true, [sort: "name"])
@@ -859,6 +1027,16 @@ class GeneSignatureController {
             default:
                 log.warn "invalid page requested!"
         }
+    }
+
+    private ConceptCode getGenericOtherConceptCode() {
+        def res = ConceptCode.findByBioConceptCodeAndCodeTypeName(
+                GENERIC_OTHER_BIO_CONCEPT_CODE,
+                GENERIC_OTHER_CODE_TYPE_NAME)
+        if (!res) {
+            throw new IllegalStateException('Database does not contain generic \'other\' concept')
+        }
+        res
     }
 
     /**
@@ -908,6 +1086,19 @@ class GeneSignatureController {
                 log.warn "invalid page requested!"
         }
         return existingValues
+    }
+
+    def checkGene = {
+        def paramMap = params
+        //SearchKeyword skt = SearchKeyword.findByKeyword(params.geneName?.toUpperCase());
+        SearchKeywordTerm skt = SearchKeywordTerm.findByKeywordTerm(params.geneName?.toUpperCase());
+        SearchKeyword sk = skt.searchKeyword;
+        if (sk && (sk?.dataCategory?.equals('GENE') || sk?.dataCategory?.equals('SNP'))) {
+            render '{"found": "' + sk.dataCategory + '"}'
+        }
+        else {
+            render '{"found": "none"}'
+        }
     }
 }
 

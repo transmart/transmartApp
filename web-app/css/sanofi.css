@@ -291,6 +291,7 @@ table.menuDetail th.menuVisited {
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
 .greybutton.close { background-image: url('../images/small_cross.png'); }
 .greybutton.deletefolder { background-image: url('../images/bin_closed.png'); }
+.greybutton.uploadfiles { background-image: url('../images/text.png'); } 
 
 .greybutton.disabled {
 	cursor: default;
@@ -468,7 +469,6 @@ textarea#description, textarea#longDescription, input#description, input#longDes
 
 .overlay {
 	position: absolute;
-	z-index: 10000;	
 	border: 8px solid #DDDEE6;
 	border-radius: 16px;
 	box-shadow: #DDD 11px 11px 8px -7px;
@@ -525,6 +525,13 @@ textarea#description, textarea#longDescription, input#description, input#longDes
 	height: 80%;
 }
 
+#uploadFilesOverlay {
+  top: 10%;
+  left: 20%;
+  width: 60%;
+  height: 80%;
+} 
+
 #filter-browser {
 	font-size: 8pt;
 	font-family: Verdana, Arial, sans-serif;
@@ -576,7 +583,6 @@ textarea#description, textarea#longDescription, input#description, input#longDes
     padding: 4px;
     max-width: 90%;
     max-height: 90%;
-    z-index:2001;
 }
 
 /* hidden overlay div, display with visibility toggle (let window size to content)*/

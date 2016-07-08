@@ -98,9 +98,11 @@ class ChartService {
 
             // Getting the age data
             p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance).toList()
-            p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.ageData)
-            ageHistogramHandle["Subset $n"] = p.ageData
-            agePlotHandle["Subset $n"] = p.ageStats
+            if (p.ageData) {
+                p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.ageData)
+                ageHistogramHandle["Subset $n"] = p.ageData
+                agePlotHandle["Subset $n"] = p.ageStats
+            }
 
             // Sex chart has to be generated for each subset
             p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance)
@@ -304,6 +306,8 @@ class ChartService {
                     result.commons.testmessage = 'No χ² test calculated: these are the same subsets'
                 else if (result[1].conceptData.size() != result[2].conceptData.size())
                     result.commons.testmessage = 'No χ² test calculated: subsets have different sizes'
+                else if (result[1].conceptData.size() < 2)
+                    result.commons.testmessage = 'No χ² test calculated: insufficient dimension'
                 else {
 
                     def long [][] counts = [result[1].conceptData.values(), result[2].conceptData.values()]
@@ -393,15 +397,9 @@ class ChartService {
         // Depending on the type of chart we proceed
         switch (type) {
             case 'histogram':
-
-                def min = null
-                def max = null
                 set = new HistogramDataset()
-                data.each { k, v ->
-                    min = min != null ? (v.min() != null && min > v.min() ? v.min() : min) : v.min()
-                    max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
-                }.each { k, v ->
-                    if (k) set.addSeries(k, (double [])v.toArray(), bins, min ?: 0, max ?: 0)
+                data.findAll { it.key && it.value }.each { k, v ->
+                    set.addSeries(k, (double [])v.toArray(), bins)
                 }
 
                 chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)

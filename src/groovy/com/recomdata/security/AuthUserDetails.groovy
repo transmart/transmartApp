@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority
 
 class AuthUserDetails extends GrailsUser {
 
+    private static final long serialVersionUID = 1L
+
     final String userRealName
 
     AuthUserDetails(String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired,

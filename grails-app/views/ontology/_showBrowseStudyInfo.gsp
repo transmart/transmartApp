@@ -1,10 +1,12 @@
 <%@ page import="org.transmart.biomart.BioData; org.transmart.biomart.ConceptCode; com.recomdata.util.*; annotation.* " %>
 <%-- TODO This is a copy and paste from folderDetail - turn this into a template! --%>
 
-<g:if test="${metaDataTagItems && metaDataTagItems.size() > 0}">
+<g:if test="${browseStudyInfo.metaDataTagItems}">
+    <br/>
+    <h2><g:message code="show.browse.study.header" default="Browse information"/>:</h2>
     <table class="detail" style="width: 515px;">
         <tbody>
-        <g:each in="${metaDataTagItems}" status="i" var="amTagItem">
+        <g:each in="${browseStudyInfo.metaDataTagItems}" status="i" var="amTagItem">
             <g:if test="${amTagItem.viewInGrid}">
                 <tr class='prop'>
                     <!-- TODO: If active -->
@@ -13,9 +15,9 @@
                     <td valign="top" align="left" class="value" width="60%">
 
                     <!-- FIXED -->
-                        <g:if test="${amTagItem.tagItemType == 'FIXED' && amTagItem.tagItemAttr != null ? bioDataObject?.hasProperty(amTagItem.tagItemAttr) : false}">
+                        <g:if test="${amTagItem.tagItemType == 'FIXED' && amTagItem.tagItemAttr != null ? browseStudyInfo.bioDataObject?.hasProperty(amTagItem.tagItemAttr) : false}">
                             <g:set var="fieldValue"
-                                   value="${fieldValue(bean: bioDataObject, field: amTagItem.tagItemAttr)}"/>
+                                   value="${browseStudyInfo.bioDataObject[amTagItem.tagItemAttr]}"/>
                             <g:if test="${amTagItem.tagItemSubtype == 'PICKLIST'}">
                             <%-- Split multiple values by pipe --%>
                                 <g:set var="terms" value="${fieldValue.split('\\|')}"/>
@@ -54,7 +56,7 @@
                         </g:if>
                         <g:else>
                             <g:set var="tagValues"
-                                   value="${AmTagDisplayValue.findAllDisplayValue(folder.getUniqueId(), amTagItem.id)}"/>
+                                   value="${AmTagDisplayValue.findAllDisplayValue(browseStudyInfo.folder.getUniqueId(), amTagItem.id)}"/>
                             <g:if test="${tagValues != null}">
                                 <g:each var="tagValue" status="k" in="${tagValues}">
                                     <g:if test="${k > 0 && tagValue.displayValue}">,</g:if>

@@ -35,7 +35,7 @@ class ExportService {
         newJob.jobStatus = jobStatus
         newJob.save()
 
-        def jobName = userName.replaceAll(/[^0-9A-Za-z]*/, "") + "-" + analysis + "-" + newJob.id
+        def jobName = userName + "-" + analysis + "-" + newJob.id
         newJob.jobName = jobName
         newJob.altViewerURL = 'Test'
         newJob.save()
@@ -104,8 +104,11 @@ class ExportService {
 
             if (checkboxItem.dataTypeId) {
                 //Second item is the data type.
-                String currentDataType = checkboxItem.dataTypeId.trim()
-                subsetSelectedFilesMap.get(currentSubset)?.push(currentDataType)
+                String selectedFile = checkboxItem.dataTypeId.trim()
+                if (!(checkboxItem.fileType in ['.TSV', 'TSV'])) {
+                    selectedFile += checkboxItem.fileType
+                }
+                subsetSelectedFilesMap.get(currentSubset)?.push(selectedFile)
             }
         }
 
@@ -211,10 +214,6 @@ class ExportService {
 
         jobResultsService[params.jobName]["StatusList"] = statusList
         asyncJobService.updateStatus(params.jobName, statusList[0])
-
-        def al = new AccessLog(username: userName, event: "${params.analysis}, Job: ${params.jobName}",
-                eventmessage: "", accesstime: new java.util.Date())
-        al.save()
 
         //TODO get the required input parameters for the job and validate them
         def rID1 = RequestValidator.nullCheck(params.result_instance_id1)

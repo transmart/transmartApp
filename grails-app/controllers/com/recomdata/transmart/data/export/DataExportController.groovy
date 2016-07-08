@@ -3,6 +3,7 @@ package com.recomdata.transmart.data.export
 import grails.converters.JSON
 import org.transmartproject.core.exceptions.AccessDeniedException
 import org.transmartproject.core.exceptions.InvalidArgumentsException
+import org.transmartproject.core.users.User
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -12,7 +13,7 @@ class DataExportController {
     def exportService
     def exportMetadataService
     def springSecurityService
-    def currentUserBean
+    User currentUserBean
     def dataExportService
 
     private static final String ROLE_ADMIN = 'ROLE_ADMIN'
@@ -77,7 +78,7 @@ class DataExportController {
     def runDataExport() {
         checkRightsToExport(parseResultInstanceIds())
 
-        def jsonResult = exportService.exportData(params, springSecurityService.getPrincipal().username)
+        def jsonResult = exportService.exportData(params, currentUserBean.username)
 
         response.setContentType("text/json")
         response.outputStream << jsonResult.toString()

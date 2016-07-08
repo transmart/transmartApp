@@ -3,7 +3,9 @@ package org.transmartproject.export
 import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
 import org.transmartproject.core.dataquery.highdim.acgh.CopyNumberState
+import org.transmartproject.core.dataquery.highdim.chromoregion.RegionRow
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.db.dataquery.highdim.chromoregion.RegionRowImpl
 
@@ -23,15 +25,17 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
 
     private static final Map<CopyNumberState, List<Integer>> FLAG_TO_RGB_DEFAULT_MAP = [
                 //white
-                (CopyNumberState.INVALID):         [255, 255, 255],
+                (CopyNumberState.INVALID):             [255, 255, 255],
+                //light blue
+                (CopyNumberState.HOMOZYGOUS_DELETION): [0, 0, 255],
                 //blue
-                (CopyNumberState.LOSS):            [0, 0, 205],
+                (CopyNumberState.LOSS):                [0, 0, 205],
                 //gray
-                (CopyNumberState.NORMAL):          [169, 169, 169],
+                (CopyNumberState.NORMAL):              [169, 169, 169],
                 //red
-                (CopyNumberState.GAIN):            [205, 0, 0],
+                (CopyNumberState.GAIN):                [205, 0, 0],
                 //dark red
-                (CopyNumberState.AMPLIFICATION):   [88, 0, 0],
+                (CopyNumberState.AMPLIFICATION):       [88, 0, 0],
         ]
 
     private Map<Integer, String> prepareFlagToRgbStringMap() {
@@ -63,7 +67,7 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
     }
 
     @Override
-    protected calculateRow(RegionRowImpl datarow, AssayColumn assay) {
+    protected calculateRow(RegionRow datarow, AssayColumn assay) {
         Map cell = datarow[assay]
         int flag = cell['flag']
 
@@ -72,7 +76,9 @@ class AcghBedExporter extends AbstractChromosomalRegionBedExporter {
                 datarow.start,
                 datarow.end,
                 //Name of the BED line
-                datarow.bioMarker ?: datarow.name,
+                datarow instanceof BioMarkerDataRow ?
+                        datarow.bioMarker ?: datarow.name
+                        : datarow.name,
                 //Score
                 flag,
                 //Strand. We do not use strand information

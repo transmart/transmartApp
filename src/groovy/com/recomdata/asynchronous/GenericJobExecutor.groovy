@@ -7,6 +7,7 @@ import grails.util.Holders
 import groovy.util.logging.Log4j
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringUtils
+import org.codehaus.groovy.grails.support.PersistenceContextInterceptor
 import org.quartz.Job
 import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
@@ -79,11 +80,16 @@ class GenericJobExecutor implements Job {
         quartzSpringScope."${CurrentUserBeanProxyFactory.SUB_BEAN_QUARTZ}" =
                 userInContext
 
+        PersistenceContextInterceptor interceptor
         try {
+            interceptor = Holders.applicationContext.persistenceInterceptor
+            interceptor.init()
             doExecute(jobExecutionContext.jobDetail)
         } finally {
             // Thread will be reused, need to clear user in context
             quartzSpringScope.clear()
+            interceptor.flush()
+            interceptor.destroy()
         }
     }
 
@@ -386,6 +392,10 @@ class GenericJobExecutor implements Job {
 
     def boolean isJobCancelled(jobName) {
         boolean jobCancelled = false
+
+        //if no job has been submitted, it cannot be cancelled
+        if (! jobName) return false
+
         //log.debug("Checking to see if the user cancelled the job")
         if (jobResultsService[jobName]["Status"] == "Cancelled") {
             log.warn("${jobName} has been cancelled")

@@ -16,7 +16,7 @@
             <tbody>
 
             <tr class="prop">
-                <td valign="top" class="name">WWID:</td>
+                <td valign="top" class="name">ID:</td>
                 <td valign="top" class="value">${person.id}</td>
             </tr>
 
@@ -93,6 +93,12 @@
                                         id="${soa.secureObject.id}">${soa.getObjectAccessName()}</g:link></li>
                         </g:each>
                     </ul>
+                </td>
+            </tr>
+            <tr class="prop">
+                <td valign="top" class="name">Force user to change the password:</td>
+                <td valign="top" class="value">
+                    ${person.changePassword ? 'Yes' : 'No'}
                 </td>
             </tr>
             </tbody>

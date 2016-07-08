@@ -3,6 +3,8 @@ package org.transmartproject.export
 import groovy.util.logging.Log4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.transmartproject.core.dataquery.highdim.AssayColumn
+import org.transmartproject.core.dataquery.highdim.BioMarkerDataRow
+import org.transmartproject.core.dataquery.highdim.chromoregion.RegionRow
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.db.dataquery.highdim.chromoregion.RegionRowImpl
 
@@ -30,14 +32,16 @@ class RnaSeqBedExporter extends AbstractChromosomalRegionBedExporter {
     }
 
     @Override
-    protected calculateRow(RegionRowImpl datarow, AssayColumn assay) {
+    protected calculateRow(RegionRow datarow, AssayColumn assay) {
         int readcount = datarow[assay]['readcount']
         [
                 datarow.chromosome,
                 datarow.start,
                 datarow.end,
                 //Name of the BED line
-                datarow.bioMarker ?: datarow.name,
+                datarow instanceof BioMarkerDataRow ?
+                        datarow.bioMarker ?: datarow.name
+                        : datarow.name,
                 //Score
                 readcount
         ]

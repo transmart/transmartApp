@@ -1,6 +1,24 @@
 
 Ext.override(Ext.grid.GridPanel, {
 
+    getPatientIDs: function() {
+        var ret = []
+        var cm = this.getColumnModel();
+
+        // get the whole data store
+        var contentRows = this.store.data.items;
+        // except .. when user has selected some rows in the grid
+        if (this.getSelectionModel().getSelections().length > 0) {
+            contentRows = this.getSelectionModel().getSelections();
+        }
+
+        var index = cm.getIndexById('patient')
+        for (var i = 0, l = contentRows.length; i < l; i++) {
+            ret.push(contentRows[i].data[cm.getDataIndex(index)]);
+        }
+        Ext.MessageBox.alert('Patient IDs', ret.join(", "));
+    },
+
     getExcelXml: function(includeHidden) {
         var worksheet = this.createWorksheet(includeHidden);
         var totalWidth = this.getColumnModel().getTotalWidth(includeHidden);
@@ -154,8 +172,12 @@ Ext.override(Ext.grid.GridPanel, {
             for (var j = 0; j < cm.getColumnCount(); j++) {
                 if (includeHidden || !cm.isHidden(j)) {
                     var v = r[cm.getDataIndex(j)];
-                    t += '<ss:Cell ss:StyleID="' + cellClass + cellTypeClass[k] + '"><ss:Data ss:Type="' + cellType[k] + '">';
-                    if (cellType[k] == 'DateTime') {
+                    // Set the cellType to String in case of an empty cell to prevent that empty cells show up with default values in Excel
+                    // (e.g. an empty cell of Number type shows up as 0 in Excel)
+                    // Beware that when v equals 0, v=="" evaluates to true, which we want to prevent.
+                    var cType = (v == null || v.toString() == "") ? "String" : cellType[k];
+                    t += '<ss:Cell ss:StyleID="' + cellClass + cellTypeClass[k] + '"><ss:Data ss:Type="' + cType + '">';
+                    if (cType == 'DateTime') {
                         t += v.format('Y-m-d');
                     } else {
                         t += v;
@@ -268,7 +290,8 @@ function buildColumnModel(fields) {
         c.id = f.name;
         c.dataIndex = f.name;
         c.header = f.header;
-        c.tooltip = f.name;
+        c.tooltip = f.tooltip;
+        c.type = f.type;
         c.width = f.width;
         c.sortable = f.sortable;
         c.menuDisabled = false;

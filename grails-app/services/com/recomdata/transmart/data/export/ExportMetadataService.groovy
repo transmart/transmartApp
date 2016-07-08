@@ -15,17 +15,15 @@ class ExportMetadataService {
     def highDimExporterRegistry
     def queriesResourceService
 
-    def Map createJSONFileObject(fileType, dataFormat, patientsNumber) {
+    def Map createJSONFileObject(fileData, patientsNumber) {
         def file = [:]
-        if (dataFormat != null) {
-            file['dataFormat'] = dataFormat
-        }
-        if (fileType != null) {
-            file['fileType'] = fileType
-        }
         if (patientsNumber != null) {
             file['patientsNumber'] = patientsNumber
         }
+        file['dataTypeHasCounts'] = true
+        file['exporters'] = fileData.collect { [format: it.key, description: it.value] }
+        file['ontologyTermKeys'] = ''
+
         return file
     }
 
@@ -143,17 +141,14 @@ class ExportMetadataService {
             dataType['dataTypeName'] = value
             //TODO replace 2 with subsetLen
             for (i in 1..2) {
-                def files = []
                 if (key == 'SNP') {
-                    files.add(createJSONFileObject('.PED, .MAP & .CNV', 'Processed Data', finalMap["subset${i}"][key]))
-                    files.add(createJSONFileObject('.CEL', 'Raw Data', finalMap["subset${i}"][key + '_CEL']))
+                    dataType['subset' + i] = createJSONFileObject([".PED, .MAP & .CNV": "Processed Data", ".CEL": "Raw Data", ".TXT": 'Text'], finalMap["subset${i}"][key])
                 }
                 if ((null != finalMap["subset${i}"][key] && finalMap["subset${i}"][key] > 0))
                     dataTypeHasCounts = true;
 
                 dataType['subsetId' + i] = "subset" + i
                 dataType['subsetName' + i] = "Subset " + i
-                dataType['subset' + i] = files
                 dataType.isHighDimensional = true
             }
             if (dataTypeHasCounts) rows.add(dataType)
@@ -240,8 +235,9 @@ class ExportMetadataService {
         highDimensionalData.collect { highDimRow ->
             // Determine the types of files that can be exported for this 
             // datatype
-            Set<HighDimExporter> exporters = highDimExporterRegistry.getExportersForDataType(
-                    highDimRow.datatype.dataTypeName);
+            def exporters = highDimExporterRegistry
+                    .findExporters(dataType: highDimRow.datatype.dataTypeName)
+                    .sort { it.format }
 
             [
                     subsetId1        : "subset1",

@@ -191,7 +191,7 @@ function hideQuery(){
 	jQuery(workspaceQueryDisplayDialog).dialog("close");
 }
 
-function applySubsets(subsetId, study){
+function applySubsets(subsetId){
 	var overrideCurrentSubsets = true;
 	if(!isSubsetEmpty(1) || !isSubsetEmpty(2)){
 		overrideCurrentSubsets = confirm("This will override the criteria you have selected on the comparison tab.");
@@ -227,6 +227,20 @@ function clearWorkspaceSelections(){
 
 function linkifySubsets(link){
 	jQuery(workspaceLinkDisplayDialog).data("displayData",link).dialog("open");
+}
+
+function mailComparison(link, comparisonId) {
+	var subject = 'Link to Saved comparison' + (comparisonId ? ' ID=' + comparisonId : '');
+	var body = 'The following is a link to the saved comparison in tranSMART.';
+
+	var a = document.createElement('a');
+	a.href = 'mailto:?subject=' + encodeURIComponent(subject) +
+		'&body=' + encodeURIComponent(body) +
+		' ' + encodeURIComponent(link);
+	a.setAttribute('type', 'hidden');
+	document.body.appendChild(a);
+	a.click();
+	jQuery(a).remove();
 }
 
 function deleteSubset(subsetId){

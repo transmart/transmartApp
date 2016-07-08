@@ -352,7 +352,7 @@ DataExport.prototype.createSelectBoxHtml = function (file, subset, dataTypeId) {
     outStr += ' name="file_type" ' + (file.patientsNumber < 1 || file.exporters.length < 2 ? 'disabled' : '') +'>';
     if(file.exporters) {
         jQuery.each(file.exporters, function (index, exporter) {
-            outStr += '<option value="{subset: ' + subset + ', dataTypeId: ' + dataTypeId + ', fileType: ' + exporter.format + '}">' + exporter.format + '</option>';
+            outStr += '<option value="{subset: ' + subset + ', dataTypeId: \'' + dataTypeId + '\', fileType: \'' + exporter.format + '\'}">' + exporter.format + '</option>';
         })
     }
     outStr += '</select><br/>';

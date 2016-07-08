@@ -68,8 +68,7 @@
                 return false;
             }
 
-            var protoForm = $('editMetadataForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#editMetadataForm').serialize();
             jQuery('#savemetadatabutton').addClass('buttonloading').html("&nbsp;");
 
             jQuery.ajax({
@@ -101,8 +100,7 @@
         });
 
         jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function () {
-            var protoForm = $('createAssayForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createAssayForm').serialize();
             jQuery('#saveassaybutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveAssayURL + "?" + serializedForm,
@@ -135,8 +133,7 @@
         });
 
         jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function () {
-            var protoForm = $('createFolderForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createFolderForm').serialize();
             jQuery('#savefolderbutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveFolderURL + "?" + serializedForm,
@@ -169,8 +166,7 @@
         });
 
         jQuery("#createStudyOverlay").on('click', '#savestudybutton', function () {
-            var protoForm = $('createStudyForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createStudyForm').serialize();
             jQuery('#savestudybutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveStudyURL + "?" + serializedForm,
@@ -203,8 +199,7 @@
 
         jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function () {
 
-            var protoForm = $('createProgramForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createProgramForm').serialize();
             jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveProgramURL + "?" + serializedForm,
@@ -236,8 +231,7 @@
 
         jQuery("#createAnalysisOverlay").on('click', '#saveanalysisbutton', function () {
 
-            var protoForm = $('createAnalysisForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createAnalysisForm').serialize();
             jQuery('#saveanalysisbutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveAnalysisURL + "?" + serializedForm,
@@ -485,6 +479,7 @@
 <tmpl:createFolderOverlay/>
 <tmpl:createStudyOverlay/>
 <tmpl:createProgramOverlay/>
+<g:render template="/uploadFiles/uploadFilesOverlay" plugin="folderManagement"/>
 <div id="divBrowsePopups" style="width:800px; display: none;">
 
 </div>

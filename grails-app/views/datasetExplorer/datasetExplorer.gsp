@@ -1,4 +1,5 @@
 <%@ page language="java" import="java.util.*" %>
+<%@ page language="java" import="grails.converters.JSON" %>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -17,10 +18,12 @@
     </g:if>
 
     <!-- Include jQuery, Ext and app-specific scripts: -->
-    <g:javascript library="jquery" />    
+    <g:javascript library="jquery" />
     <r:require module="analyseTab" />
     <r:layoutResources/>
     <tmpl:/RWG/urls/>
+    <link rel="stylesheet" type="text/css" href="${resource(dir:'css', file:'folderManagement.css', plugin: 'folder-management')}">
+    <script type="text/javascript" src="${resource(dir:'js', file:'folderManagementDE.js', plugin: 'folder-management')}"></script>
 
     <script type="text/javascript">
 
@@ -58,9 +61,7 @@
             IsAdmin: ${admin},
             Tokens: "${tokens}",
             InitialSecurity: ${initialaccess},
-            RestoreComparison: ${restorecomparison},
-            RestoreQID1: "${qid1}",
-            RestoreQID2: "${qid2}",
+            restoreSubsetId: '${params.sId}',
             resulttype: 'applet',
             searchType: "${grailsApplication.config.com.recomdata.search.genepathway}",
             DefaultCohortInfo: '',
@@ -95,8 +96,7 @@
             currentReportStudy: [],
             currentSubsetsStudy: '',
             isGridViewLoaded: false,
-            galaxyEnabled: '${grailsApplication.config.com.galaxy.blend4j.galaxyEnabled}',
-            galaxyUrl: "${grailsApplication.config.com.galaxy.blend4j.galaxyURL}"
+            analysisTabExtensions: ${grailsApplication.mainContext.getBean('transmartExtensionsRegistry').analysisTabExtensions as JSON}
         };
 
         var sessionSearch = "${rwgSearchFilter}";
@@ -127,7 +127,7 @@
 <tmpl:/RWG/filterBrowser/>
 
 <div id="modifierValueDiv" title="Modifier Value Selection" style="display:none;">
-     <g:render template="/layouts/modifierValueForm" />
+    <g:render template="/layouts/modifierValueForm" />
 </div>
 
 <div id="sidebartoggle">&nbsp;</div>

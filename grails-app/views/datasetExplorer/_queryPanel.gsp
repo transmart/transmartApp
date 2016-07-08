@@ -74,4 +74,7 @@
 <script type="text/javascript">
     prepareQueryPanels();
     setupDragAndDrop();
+    if (GLOBAL.restoreSubsetId) {
+        applySubsets(GLOBAL.restoreSubsetId);
+    }
 </script>
