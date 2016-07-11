@@ -539,7 +539,7 @@
 
 </div>
 
-<!--  Another DIV for the manhattan plot options. -->
+<!--  Note: this div, for the Manhattan Plot options dialog, has been moved to the transmart-gwas plugin -->
 <div id="divPlotOptions" style="width:300px; display: none;">
     <table class="columndetail">
         <tr>

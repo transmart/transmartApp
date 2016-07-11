@@ -36,7 +36,9 @@ public class FileSchemaException extends RuntimeException {
      * @return
      */
     public static void ThrowInvalidGenesFileSchemaException(Collection<String> invalidGenes) throws FileSchemaException {
-        StringBuffer msg = new StringBuffer("The following gene symbols could not be mapped, please fix or remove:<br><br>");
+        StringBuffer msg = new StringBuffer("The following gene symbols could not be mapped; " +
+                "it is possible that they are not known in the selected platform (meta-data); " +
+                "please fix or remove:<br><br>");
         msg.append("<ul style='list-style-type: disc; list-style-position: inside;'>");
         Iterator<String> it = invalidGenes.iterator();
         while (it.hasNext()) {

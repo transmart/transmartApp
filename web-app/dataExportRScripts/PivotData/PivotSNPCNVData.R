@@ -96,6 +96,8 @@ subjectsStr, delimiter, filesPath, platformName
   
   #Write the final data file, rename temp to something more meaningful.
   if (finalDataExists) {
-    write.matrix(finalData,paste(platformName, ".CNV", sep=""),sep = "\t")
+    # write.matrix(finalData,paste(platformName, ".CNV", sep=""),sep = "\t")
+    # Using write.table because write.matrix writes out trailing whitespace - see JIRA item TRANSREL-24
+    write.table(finalData,filename, sep = "\t", quote = FALSE, row.names = FALSE)
   }
 }
