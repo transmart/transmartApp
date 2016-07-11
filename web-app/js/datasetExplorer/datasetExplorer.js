@@ -659,13 +659,22 @@ Ext.onReady(function () {
 
     resultsTabPanel.add(queryPanel);
     resultsTabPanel.add(analysisPanel);
-    resultsTabPanel.add(analysisGridPanel);
+    if (GLOBAL.gridViewEnabled) {
+        resultsTabPanel.add(analysisGridPanel);
+    }
     resultsTabPanel.add(dataAssociationPanel);
-    resultsTabPanel.add(analysisDataExportPanel);
-    resultsTabPanel.add(analysisExportJobsPanel);
-    resultsTabPanel.add(analysisJobsPanel);
-    resultsTabPanel.add(workspacePanel);
-
+    if (GLOBAL.dataExportEnabled) {
+        resultsTabPanel.add(analysisDataExportPanel);
+    }
+    if (GLOBAL.dataExportJobsEnabled) {
+        resultsTabPanel.add(analysisExportJobsPanel);
+    }
+    if (GLOBAL.analysisJobsEnabled) {
+        resultsTabPanel.add(analysisJobsPanel);
+    }
+    if (GLOBAL.workspaceEnabled) {
+        resultsTabPanel.add(workspacePanel);
+    }
     if (GLOBAL.sampleExplorerEnabled) {
         resultsTabPanel.add(sampleExplorerPanel);
     }
@@ -2108,6 +2117,18 @@ function runAllQueries(callback, panel) {
             panel.body.unmask();
         }
         Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
+        return;
+    }
+
+    panel.body.unmask();
+    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
+        if (isSubsetOnlyExclude(i)) {
+            if (panel) {
+                panel.body.unmask();
+            }
+            Ext.Msg.alert('Subset is only exclude', 'Subset ' + i + ' contains only EXCLUDE caluses. Please add at least one INCLUDE clause.');
+            return;
+        }
     }
 
     // setup the number of subsets that need running
@@ -2170,6 +2191,9 @@ function isSubsetQueriesChanged(referenceQueries) {
             // check if reference query is the same as the new query
             // return true if it's changed.
             retVal = referenceQueries[i] !== _newQuery ? true : false;
+        } else {
+            // referenceQueries is null or undefined
+            if (_newQuery) return true;
         }
 
         if (retVal) {

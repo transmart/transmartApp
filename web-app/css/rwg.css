@@ -1021,17 +1021,17 @@ select.multiselect {
     margin: 4px 0 4px 0;
 }
 
-.foldericon.add {
+.foldericon.addcart {
     border: none;
-    background: transparent url('../images/exportfile.png');
+    background: transparent url('../images/exportfile.png')  no-repeat;
 }
-.foldericon.delete {
+.foldericon.deletefile {
     border: none;
-    background: transparent url('../images/bin_closed.png') 0px 50%;
+    background: transparent url('../images/bin_closed.png') no-repeat 0px 50%;
 }
 .foldericon.addall {
     border: none;
-    background: transparent url('../images/exportfolder.png');
+    background: transparent url('../images/exportfolder.png') no-repeat;
 }
 .foldericon.view {
     border: none;
