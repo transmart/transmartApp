@@ -90,6 +90,8 @@ function repopulateFilterWindow() {
 
     jQuery("#highdimension-search-property").val(omicsFilterRepopulateWindow.omicsproperty.nodeValue);
     jQuery("#highdimension-filter-selector").val(omicsFilterRepopulateWindow.omicsselector.nodeValue);
+    jQuery("#highdimension-filter-projection").val(omicsFilterRepopulateWindow.omicsprojection.nodeValue);
+
     showConceptDistributionHistogramForOmicsFilterComplete(null);
     showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
 }
@@ -97,7 +99,7 @@ function repopulateFilterWindow() {
 function repopulateOmicsFilterRange() {
     if (omicsFilterRepopulateWindow == null) return;
 
-    if (omics_filter_info.filter_type == "SINGLE_NUMERIC") {
+    if (omics_filter_info.filter_type == "SINGLE_NUMERIC" || omics_filter_info.filter_type == "ACGH") {
         var minbox = jQuery("#highdimension-amount-min");
         var maxbox = jQuery("#highdimension-amount-max");
         var values = omicsFilterRepopulateWindow.omicsvalue.nodeValue.split(":");
@@ -106,7 +108,6 @@ function repopulateOmicsFilterRange() {
         maxbox.val(values[1]);
         maxbox.blur();
     }
-    omicsFilterRepopulateWindow = null;
 }
 
 function applyOmicsFilterDialog(validation) {
@@ -130,7 +131,7 @@ function addOmicsFilterAutocomplete() {
                 data: {
                     term : request.term,
                     concept_key : omics_filter_info.concept_key,
-                    search_property : jQuery("#highdimension-search-property option:selected").val()
+                    search_property : jQuery("#highdimension-search-property").find("option:selected").val()
                 },
                 success: function(data) {
                     response(data);
@@ -223,10 +224,14 @@ function addOmicsFilterMinMaxInputHandlers() {
         else if (value > maxbox.val()) {
             minbox.val(maxbox.val());
         }
-        jQuery("#highdimension-range").slider('values',0,minbox.val());
+        var slider = jQuery("#highdimension-range");
+        slider.slider('values',0,minbox.val());
         jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
             .filter(function(el, idx, array) {return el <= maxbox.val();})
-            .length)
+            .length);
+        var min = slider.slider('option', 'min');
+        var max = slider.slider('option', 'max');
+        omicsSliderLowHandleRatio = (minbox.val() - min) / (max - min);
     });
 
     maxbox.blur(function(event) {
@@ -240,10 +245,14 @@ function addOmicsFilterMinMaxInputHandlers() {
         else if (value < minbox.val()) {
             maxbox.val(minbox.val());
         }
-        jQuery("#highdimension-range").slider('values',1,maxbox.val());
+        var slider = jQuery("#highdimension-range");
+        slider.slider('values',1,maxbox.val());
         jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
             .filter(function(el, idx, array) {return el <= maxbox.val();})
-            .length)
+            .length);
+        var min = slider.slider('option', 'min');
+        var max = slider.slider('option', 'max');
+        omicsSliderHighHandleRatio = (maxbox.val() - min) / (max - min);
     });
 
     // let the enter key blur the text fields, thus updating the slider and subject counts
@@ -301,7 +310,8 @@ function getOmicsFilterParams() {
             selector: jQuery("#highdimension-filter-selector").val(),
             value: omics_filter_info.filter ? jQuery("#highdimension-amount-min").val() + ":" + jQuery("#highdimension-amount-max").val() : "",
             operator: omics_filter_info.filter ? "BETWEEN" : "",
-            projection_type: jQuery("#highdimension-filter-projection option:selected").val(),
+            projection_type: jQuery("#highdimension-filter-projection").find("option:selected").val(),
+            projection_pretty_name: jQuery("#highdimension-filter-projection").find("option:selected").val(),
             type: omics_filter_info.platform.markerType,
             hist_bins: omics_filter_info.filter ? jQuery("#highdimension-amount-bins").val() : ""
         };
@@ -364,7 +374,7 @@ function getOmicsFilterValueText(params)
                         result = "";
                     }
                     else {
-                        result = thresholds[0] + " <= " + params.projection_type + " for " + params.selector + " <= " + thresholds[1];
+                        result = thresholds[0] + " <= " + params.projection_pretty_name + " for " + params.selector + " <= " + thresholds[1];
                     }
                     break;
             }
@@ -457,6 +467,9 @@ function omicsValuesObtained(values) {
         document.getElementById("highdimension-filter-histogram").innerHTML = "No data is available for the given gene.";
         omicsfilterwin.setHeight(175);
     }
+
+    // this is the last step in populating or repopulating the filter window, so let's clear the repopulate variables
+    omicsFilterRepopulateWindow = null;
 }
 
 function omicsValuesFailed(result) {
@@ -486,7 +499,7 @@ function applySingleNumericOmicsFilter(validation) {
             }
 
             if (!in_list) {
-                alert("Please select a gene from the list.")
+                alert("Please select a gene from the list.");
                 return;
             }
         }
@@ -522,7 +535,7 @@ function applySingleNumericOmicsFilter(validation) {
             var omics_params = {omics_property: params.property,
                 omics_selector: params.selector,
                 omics_value_type: omics_filter_info.platform.markerType,
-                omics_projection_type: jQuery("#highdimension-filter-projection option:selected").val()};
+                omics_projection_type: jQuery("#highdimension-filter-projection").find("option:selected").val()};
             Ext.Ajax.request(
                 {
                     url : pageInfo.basePath+"/chart/analysis",

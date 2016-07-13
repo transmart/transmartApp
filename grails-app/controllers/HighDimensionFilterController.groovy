@@ -45,11 +45,10 @@ class HighDimensionFilterController {
 
         def model = [gpl_id: platform.id,
                      marker_type: platform.markerType,
-                     selector_name: "Gene",
                      filter_type: resource.getHighDimensionFilterType(),
                      searchable_properties: resource.getSearchableAnnotationProperties().collectEntries {[it, searchableAnnotationPropertiesDictionary.get(it, it)]},
                      filter: filter,
-                     projections: resource.getSearchableProjections().collectEntries {[it, searchableProjectionsDictionary.get(it, it)]}] // info.allowed_projections.collectEntries {[it.name(), it.value]}]
+                     projections: resource.getSearchableProjections().collectEntries {[it, Projection.prettyNames.get(it, it)]}]
 
         render(template: template, model: model)
     }
@@ -120,20 +119,4 @@ class HighDimensionFilterController {
              'rsId': 'RSID',
              'referenceAllele': 'Reference Allele',
              'detector': 'miRNA Symbol']
-
-    static Map<String, String> searchableProjectionsDictionary = [
-            (Projection.LOG_INTENSITY_PROJECTION): 'Log Intensity',
-            (Projection.DEFAULT_REAL_PROJECTION) : 'Raw Intensity',
-            (Projection.ZSCORE_PROJECTION)       : 'Z-Score',
-            (Projection.LOG_NORMALIZED_READ_COUNT_PROJECTION): 'Log Normalized Readcount',
-            (Projection.REF_ALT)                 : 'Reference',
-            (Projection.VAR_CLASS)               : 'Variant',
-            (Projection.VAR_TYPE)                : 'Variant Type',
-            (Projection.PROB_LOSS)               : 'Probability of Loss',
-            (Projection.PROB_AMP)                : 'Probability of Amplification',
-            (Projection.CHIP_COPYNUMBER_VALUE)   : 'Chip Copy Number Value',
-            (Projection.SEGMENT_COPY_NUMBER_VALUE): 'Segment Copy Number Value',
-            (Projection.PROB_NORM)               : 'Probability of Normal',
-            (Projection.PROB_GAIN)               : 'Probablity of Gain'
-    ]
 }
