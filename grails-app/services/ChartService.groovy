@@ -249,7 +249,8 @@ class ChartService {
 
             // Lets build our concept diagrams now that we have all the points in
             result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize,
-                                                      xlabel: args.omics_params.omics_projection_type, ylabel: "", bins: args.omics_params.omics_hist_bins ?: 10)
+                                                      xlabel: Projection.prettyNames.get(args.omics_params.omics_projection_type, args.omics_params.omics_projection_type),
+                                                      ylabel: "", bins: args.omics_params.omics_hist_bins ?: 10)
             result.commons.conceptPlot = getSVGChart(type: 'boxplot-and-points', data: conceptHistogramHandle, boxplotdata: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible

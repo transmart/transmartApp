@@ -8,7 +8,7 @@ import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.SecureAccessLevel
 import org.transmart.searchapp.SecureObjectPath
-import org.transmartproject.core.concept.ConceptFullName
+import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
 import org.transmartproject.db.querytool.QtPatientSetCollection
@@ -5182,7 +5182,7 @@ class I2b2HelperService {
                             projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
                             pw.write(selector)
                             if (value_type.equals("Gene Expression") || value_type.equals("RNASEQ_RCNT") || value_type.equals("Chromosomal")) {
-                                pw.write(" - " + projection + " " + operator + " ")
+                                pw.write(" - " + Projection.prettyNames.get(projection, projection) + " " + operator + " ")
                                 if (operator.equals("BETWEEN")) {
                                     String[] bounds = constraints.split(":")
                                     if (bounds.length != 2) {

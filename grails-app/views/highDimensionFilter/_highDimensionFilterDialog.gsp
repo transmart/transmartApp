@@ -11,7 +11,7 @@
             <tr><td>Search in</td>
                 <td>
                 <select id="highdimension-search-property" style="width: 100%">
-                <g:each in="${searchable_properties.keySet().sort()}" var="prop_key">
+                <g:each in="${searchable_properties.keySet().sort {a, b -> searchable_properties.get(a) <=> searchable_properties.get(b)}}" var="prop_key">
                     <option value="${prop_key}">${searchable_properties.get(prop_key)}</option>
                 </g:each>
                 </select>
@@ -20,7 +20,7 @@
             <tr><td>Query on</td>
                 <td>
                     <select id="highdimension-filter-projection" style="width: 100%" onchange="omicsProjectionChanged()">
-                        <g:each in="${projections.keySet().sort()}" var="projection">
+                        <g:each in="${projections.keySet().sort {a, b -> projections.get(a) <=> projections.get(b)}}" var="projection">
                             <option value="${projection}">${projections.get(projection)}</option>
                         </g:each>
                     </select>
