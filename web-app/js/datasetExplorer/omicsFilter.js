@@ -138,7 +138,7 @@ function addOmicsFilterAutocomplete() {
                 }
             });
         },
-        minLength:2,
+        delay: 500,
         select: function(event, ui) {
             jQuery("#highdimension-filter-selector").val(ui.item.label);
             if (omics_filter_info.filter) {
