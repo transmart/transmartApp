@@ -18,7 +18,8 @@ class GenericJobController {
 
         def newJob = new AsyncJob(lastRunOn: new Date())
         newJob.save()
-        def jobName = userName.replaceAll(/[^0-9A-Za-z]*/, "") + "-" + analysis + "-" + newJob.id
+
+        def jobName = userName + "-" + analysis + "-" + newJob.id
         newJob.jobName = jobName
         newJob.jobStatus = jobStatus
         newJob.jobType = analysis

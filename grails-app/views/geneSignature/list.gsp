@@ -4,80 +4,80 @@
     <meta name="layout" content="genesigmain" />
     <title>Gene Signature Search</title>
 
-    <!-- override main.css -->
-    <style type="text/css">
-    .detail td a {
-        padding-left: 10px;
-        vertical-align: top;
-    }
+<!-- override main.css -->
+<style type="text/css">
+.detail td a {
+    padding-left: 10px;
+    vertical-align: top;
+}
 
-    .detail td a:hover {
-        white-space: normal;
-    }
-    </style>
+.detail td a:hover {
+    white-space: normal;
+}
+</style>
 
-    <script language="javascript" type="text/javascript">
+<script language="javascript" type="text/javascript">
 
-        function handleActionItem(actionItem, id) {
-            var action = actionItem.value;
-            var url
-            if(action=="") return false;
+    function handleActionItem(actionItem, id) {
+        var action = actionItem.value;
+        var url
+        if(action=="") return false;
 
-            // clone existing object and bring into edit wizard
-            if(action=="clone") {
-                url = "${createLink(action: 'cloneWizard')}/"+id+"";
-            }
-
-            // set delete flag
-            if(action=="delete") {
-                var del=confirm("Are you sure you want to delete?")
-
-                if(del) {
-                    url="${createLink(action: 'delete')}/"+id;
-                    window.location.href=url;
-                } else {
-                    return false;
-                }
-            }
-
-            // edit wizard
-            if(action=="edit") {
-                url = "${createLink(action: 'editWizard')}/"+id+"";
-            }
-
-            if(action=="showEditItems") {
-                url = "${createLink(action: 'showEditItems')}/"+id+"";
-            }
-
-            // export to Excel
-            if(action=="export") {
-                url = "${createLink(action: 'downloadExcel')}/"+id+"";
-            }
-
-            // get GMT file
-            if(action=="gmt") {
-                url = "${createLink(action: 'downloadGMT')}/"+id+"";
-            }
-
-            // public action
-            if(action=="public") {
-                url = "${createLink(action: 'makePublic')}/"+id;
-            }
-
-            // private action
-            if(action=="private") {
-                url = "${createLink(action: 'makePrivate')}/"+id;
-            }
-
-            // send to url
-            window.location.href=url;
+        // clone existing object and bring into edit wizard
+        if(action=="clone") {
+            url = "${createLink(action: 'cloneWizard')}/"+id+"";
         }
 
-    </script>
+        // set delete flag
+        if(action=="delete") {
+            var del=confirm("Are you sure you want to delete?")
+
+            if(del) {
+                url="${createLink(action: 'delete')}/"+id;
+                window.location.href=url;
+            } else {
+                return false;
+            }
+        }
+
+        // edit wizard
+        if(action=="edit") {
+            url = "${createLink(action: 'editWizard')}/"+id+"";
+        }
+
+        if(action=="showEditItems") {
+            url = "${createLink(action: 'showEditItems')}/"+id+"";
+        }
+
+        // export to Excel
+        if(action=="export") {
+            url = "${createLink(action: 'downloadExcel')}/"+id+"";
+        }
+
+        // get GMT file
+        if(action=="gmt") {
+            url = "${createLink(action: 'downloadGMT')}/"+id+"";
+        }
+
+        // public action
+        if(action=="public") {
+            url = "${createLink(action: 'makePublic')}/"+id;
+        }
+
+        // private action
+        if(action=="private") {
+            url = "${createLink(action: 'makePrivate')}/"+id;
+        }
+
+        // send to url
+        window.location.href=url;
+    }
+
+</script>
     <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
-    <script language="javascript">
-        helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
-    </script>
+<script language="javascript">
+    helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
+</script>
 </head>
 <body>
 <div class="body">

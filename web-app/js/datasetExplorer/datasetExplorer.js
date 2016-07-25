@@ -391,21 +391,6 @@ Ext.onReady(function () {
         ]
     });
 
-    GalaxyPanel = new Ext.Panel({
-        id: 'GalaxyPanel',
-        title: 'Galaxy Export',
-        region: 'center',
-        split: true,
-        height: 90,
-        layout: 'fit',
-        listeners: {
-            activate: function(p) {
-                getJobsDataForGalaxy(p);
-            }
-        },
-        collapsible: true
-    });
-
     // **************
     // Grid view tab
     // **************
@@ -769,10 +754,6 @@ Ext.onReady(function () {
         });
     })();
 
-
-    if (GLOBAL.galaxyEnabled === 'true') {
-       resultsTabPanel.add(GalaxyPanel);
-    }
 
     southCenterPanel = new Ext.Panel({
         id: 'southCenterPanel',
@@ -1268,12 +1249,6 @@ function projectDialogComplete() {
     //Now that the ont tree has been set up, call the initial search
     showSearchResults();
 
-    if (GLOBAL.RestoreComparison) {
-        refillQueryPanels ({
-            1: GLOBAL.RestoreQID1,
-            2: GLOBAL.RestoreQID2
-        })
-    }
     if (GLOBAL.Tokens.indexOf("EXPORT") === -1 && !GLOBAL.IsAdmin) {
         //Ext.getCmp("exportbutton").disable();
     }
@@ -2888,13 +2863,28 @@ function storeLoaded(jsonStore, rows, paramsObject) {
                     text: 'Export to Excel',
                     listeners: {
                         click: function () {
-                            window.location = 'data:application/vnd.ms-excel;base64,' +
-                            Base64.encode(grid.getExcelXml());
+                            var a = document.createElement('a');
+                            a.href = 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
+                                + Base64.encode(grid.getExcelXml());
+                            a.setAttribute('type', 'hidden');
+                            a.download = 'grid_view.xls';
+                            document.body.appendChild(a);
+                            a.click();
+                            jQuery(a).remove();
                             jQuery.post(pageInfo.basePath + '/chart/reportGridTableExport', paramsObject.params);
                         }
                     }
                 });
                 bbar.add(exportButton);
+                var patientIDsButton = new Ext.Button ({
+                    text: 'Get patient IDs',
+                    listeners: {
+                        click: function () {
+                            grid.getPatientIDs()
+                        }
+                    }
+                });
+                bbar.add(patientIDsButton);
             }
         });
     }

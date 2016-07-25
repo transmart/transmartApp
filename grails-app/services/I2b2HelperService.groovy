@@ -1015,7 +1015,7 @@ class I2b2HelperService {
                         select distinct patient_num
                         from qt_patient_set_collection
                         where result_instance_id = ?)
-            ) subjectList
+            ) as subjectList
         """
         log.trace(sqlt);
         sql.eachRow(sqlt, [

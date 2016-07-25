@@ -2,12 +2,12 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
-            
+
             node.isModifier = false;
             if (nodeType('iconCls_modifier',node.attributes.iconCls) != ""){
                 node.isModifier = true;
             }
-            
+
             //TODO: This is fugly.
             if(!node.isModifier) {
                 this.transId = Ext.Ajax.request({
@@ -20,20 +20,20 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     argument: {callback: callback, node: node},
                     timeout: '120000' //2 minutes
                 });
-                
+
             } else {
                 this.transId = Ext.Ajax.request({
                     method: 'GET',
                     url: pageInfo.basePath + "/concepts/getModifierChildren",
                     params: { modifier_key: node.id,
-                                applied_path: node.attributes.applied_path,
-                                qualified_term_key: node.attributes.qualified_term_key},
+                        applied_path: node.attributes.applied_path,
+                        qualified_term_key: node.attributes.qualified_term_key},
                     success: this.handleResponse,
                     failure: this.handleFailure,
                     scope: this,
                     argument: {callback: callback, node: node},
                     timeout: '120000' //2 minutes
-                });                
+                });
             }
         } else {
             // if the load is cancelled, make sure we notify
@@ -47,28 +47,10 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     processResponse: function (response, node, callback) {
         node.beginUpdate();
         this.parseJson(response, node);
-        //getChildConceptPatientCounts(node);
-	if(node.attributes.cls == 'fileFolderNode') {
-            FM.addFileNodes(this, response, node, callback);
-            node.endUpdate();
-	    if (typeof callback == "function") {
-	        callback(this, node);
-	    }
-    	}
-    	else {
-	    if (node.attributes.level == 1) {
-	        FM.handleFolderHasFilesRequest(this, response, node, callback);
-	    }
-	        
-	    else {
-                //parseJson(response, node);
-	        getChildConceptPatientCounts(node);
-		//this.endAppending(node, callback);
-	    }
-	    node.endUpdate();
-	    if (typeof callback == "function") {
-	        callback(this, node);
-	    }
+        getChildConceptPatientCounts(node);
+        node.endUpdate();
+        if (typeof callback == "function") {
+            callback(this, node);
         }
     },
 
@@ -96,11 +78,11 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     continue;
                 }
             }
-            
+
             if(nodeType("visualattributes_modifier", c.attributes.visualattributes) != "") {
                 c = extendTreeNodeForModifier(c, concepts[i]);
             }
-            
+
             //If the node has been disabled, ignore all children
             if (!node.disabled) {
                 node.appendChild(c);
@@ -126,64 +108,12 @@ function getConceptPatientCount(node) {
         });
 }
 
-function parseJson (response, node) {
-        // shorthand
-        var Tree = Ext.tree;
-
-        var concepts = Ext.decode(response.responseText)
-
-        var matchList = GLOBAL.PathToExpand.split(",");
-        for (i = 0; i < concepts.length; i++) {
-            var c = getTreeNodeFromJsonNode(concepts[i]);
-            if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
-            //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
-            if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
-                //However, don't filter studies/top folders out if a higher-level match exists
-                var highLevelMatchFound = false;
-                for (var j = 0; j < matchList.length -1; j++) { //-1 here - leave out last result (trailing comma)
-                    if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
-                        highLevelMatchFound = true;
-                        break;
-                    }
-                }
-                if (!highLevelMatchFound) {
-                    continue;
-                }
-            }
-   		 
-            //If the node has been disabled, ignore all children
-            if (!node.disabled) {
-                node.appendChild(c);
-            }
-        }
-        
- }
-
- function handleFolderHasFilesRequest (source, originalResponse, node, callback) {
-
-    Ext.Ajax.request({
-        url: pageInfo.basePath+"/fmFolder/getFolderHasFiles",
-        method: 'GET',
-        success: function(response) {
-            if (response.responseText == "true") {
-                node.appendChild(getFileFolderNode(node));
-            }
-            //parseJson(originalResponse, node);
-            //source.endAppending(node, callback);
-        },
-        timeout: '120000', //2 minutes
-        params: {accession: node.attributes.accession}
-    });
-
-
-}
-
 function getConceptPatientCountComplete(result, node) {
     node.setText(node.text + " <b>(" + result.responseText + ")</b>");
 }
 
 function getChildConceptPatientCounts(node) {
-	
+
     var params = Ext.urlEncode({
         charttype: "childconceptpatientcounts",
         concept_key: node.attributes.id
@@ -216,8 +146,8 @@ function getChildConceptPatientCountsComplete(result, node) {
         }
 
         if ((access != undefined && access != 'Locked') ||
-                key.indexOf('\\\\xtrials\\') === 0 || // across trials node should never be locked
-                GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+            key.indexOf('\\\\xtrials\\') === 0 || // across trials node should never be locked
+            GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
         {
             //leave node unlocked must have some read access
         }

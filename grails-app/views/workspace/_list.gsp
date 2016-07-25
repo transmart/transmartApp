@@ -81,7 +81,8 @@
             </td>
 
             <td style="padding:5px 20px 5px 30px;"><a id="emailSubset${subset.id}" class="ui-icon ui-icon-mail-closed"
-                                                      href="${subset.emailLink}"
+                                                      href="javascript:void(0)"
+                                                      onclick="mailComparison(location.origin + pageInfo.basePath + '/datasetExplorer/index?sId=${subset.id}', ${subset.id})"
                                                       onmouseenter="handleMouseEnter('emailSubset${subset.id}');"
                                                       OnFocus="handleMouseEnter('emailSubset${subset.id}');"
                                                       onmouseout="handleMouseOut('emailSubset${subset.id}');"
@@ -89,12 +90,12 @@
             </td>
 
             <td style="padding:5px 20px 5px 30px;"><a id="linkifySubset${subset.id}" class="ui-icon ui-icon-link"
-                                                      href="#"
+                                                      href="javascript:void(0)"
                                                       onmouseenter="handleMouseEnter('linkifySubset${subset.id}');"
                                                       OnFocus="handleMouseEnter('linkifySubset${subset.id}');"
                                                       onmouseout="handleMouseOut('linkifySubset${subset.id}');"
                                                       OnBlur="handleMouseOut('linkifySubset${subset.id}');"
-                                                      onclick="linkifySubsets('${subset.link}')"></a>
+                                                      onclick="linkifySubsets(location.origin + pageInfo.basePath +'/datasetExplorer/index?sId=${subset.id}')"></a>
             </td>
 
             <td>${subset.creatingUser}</td>

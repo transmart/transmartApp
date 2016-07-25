@@ -56,6 +56,14 @@ class AuditLogFilters {
                 )
             }
         }
+        dataExport(controller: 'dataExport', action:'downloadFile') {
+            after = { model ->
+                def ip = request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr
+                accessLogService.report(currentUserBean, 'Data Export',
+                        eventMessage: "User (IP: ${ip}) downloaded an exported file.",
+                        requestURL: "${request.forwardURI}${request.queryString ? '?' + request.queryString : ''}")
+            }
+        }
         chart(controller: 'chart', action: '*', actionExclude:'clearGrid|displayChart|childConceptPatientCounts') {
             before = { model ->
                 if (!auditLogService.enabled) return
@@ -64,7 +72,7 @@ class AuditLogFilters {
                 def studies = ''
                 if (params.concept_key) {
                     studies = studyIdService.getStudyIdForConceptKey(params.concept_key) ?: ''
-                }
+    }
                 if (studies.empty) {
                     studies = studyIdService.getStudyIdsForQueries([result_instance_id1, result_instance_id2])
                 }
