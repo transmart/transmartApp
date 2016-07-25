@@ -26,8 +26,7 @@ function showSaveSubsetsDialog(){
 				txtSubsetDescription: "Required"
 			}
 	});
-	jQuery( "#saveSubsetsDialog" ).dialog({title: 'Save Subsets', modal:true});
-	jQuery( "#saveSubsetsDialog" ).dialog("open");
+	jQuery( "#saveSubsetsDialog" ).dialog({title: 'Save Subsets', modal:true}).dialog("open").find( "input[type=submit]" ).button();
 }
 
 function saveSubsets(subsetDescription, isSubsetPublic){
@@ -192,30 +191,29 @@ function hideQuery(){
 	jQuery(workspaceQueryDisplayDialog).dialog("close");
 }
 
-function applySubsets(subsetId, study){
+function applySubsets(subsetId){
 	var overrideCurrentSubsets = true;
 	if(!isSubsetEmpty(1) || !isSubsetEmpty(2)){
 		overrideCurrentSubsets = confirm("This will override the criteria you have selected on the comparison tab.");
 	}
 	if(overrideCurrentSubsets){
-		jQuery.get(pageInfo.basePath + '/subset/getQueryIdsForSubset', {subsetId:subsetId}, function(data){
-			resetQuery();
-			getPreviousQueryFromID(1, data.queryId1);
-			if(data.queryId2!=-1){
-				getPreviousQueryFromID(2, data.queryId2);
+		jQuery.get(pageInfo.basePath + '/subset/getQueryForSubset', {subsetId:subsetId}, function(data){
+
+			var _obj = {}
+			if (data.query1) {
+				_obj[1] = data.query1
 			}
+			if (data.query2) {
+				_obj[2] = data.query2
+			}
+
+			resultsTabPanel.setActiveTab("queryPanel");
+			refillQueryPanels(_obj)
+
 			// Refresh the global subset study variable.
-            // TODO review this, it depends on a variable not anymore retrived
-            // TODO see getChildren() in transmart-core
-			/*
-            GLOBAL.currentSubsetsStudy=study;
-            if (study == "")
-                ontTabPanel.setActiveTab("acrossTrialTreePanel");
-            else
-                ontTabPanel.setActiveTab("navigateTermsPanel");
-            */
-            resultsTabPanel.setActiveTab("queryPanel");
-			//Refresh the global workspace subset variable.
+			// TODO review this, it depends on a variable not anymore retrived
+			// TODO see getChildren() in transmart-core
+
 			GLOBAL.selectedWorkspaceSubsetId=subsetId;
 		});
 	}

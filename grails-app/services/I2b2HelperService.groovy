@@ -133,15 +133,8 @@ class I2b2HelperService {
      */
     def String getShortNameFromKey(String concept_key) {
         String[] splits = concept_key.split("\\\\");
-        String concept_name = "";
-        if (splits.length > 2) {
-            concept_name = "...\\" + splits[splits.length - 3] + "\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
-        } else if (splits.length > 1) {
-            concept_name = "...\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
-        } else {
-            concept_name = splits[splits.length - 1]
-        };
-        return concept_name;
+        
+        return splits[splits.length - 1]
     }
 
     /**
@@ -348,10 +341,9 @@ class I2b2HelperService {
      * Gets the data associated with a value type concept from observation fact table
      * for display in a distribution histogram
      */
-    def getConceptDistributionDataForValueConcept(String concept_key) {
-        log.trace("Getting concept distribution data for value concept: " + concept_key);
+    def getConceptDistributionDataForValueConcept(String concept_cd) {
+        log.trace("Getting concept distribution data for value concept: " + concept_cd);
         Sql sql = new Sql(dataSource);
-        String concept_cd = getConceptCodeFromKey(concept_key);
         ArrayList<Double> values = new ArrayList<Double>();
         sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], { row ->
             if (row.NVAL_NUM != null) {
@@ -428,7 +420,7 @@ class I2b2HelperService {
         ArrayList<Double> returnvalues = new ArrayList<Double>(values.size());
         if (result_instance_id == "") {
             log.debug("getConceptDistributionDataForValueConceptFromCode called with no result_istance_id");
-            return returnvalues;
+            return getConceptDistributionDataForValueConcept(concept_cd);
         }
         log.trace("Getting concept distribution data for value concept code:" + concept_cd);
         Sql sql = new Sql(dataSource);

@@ -264,10 +264,10 @@ function gridViewCellFormating(value)
 }
 
 function buildColumnModel(fields) {
-    var size = fields.size();
-    var con = new Array();
+    var size = fields.length;
+    var con = [];
     for (var i = 0; i < size; i++) {
-        var c = new Object();
+        var c = {};
         var f = fields[i];
         c.id = f.name;
         c.dataIndex = f.name;

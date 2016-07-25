@@ -2,23 +2,39 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
-
-            if(node.attributes.cls == 'fileFolderNode') {
-                this.transId = FM.handleFolderFilesRequest(this, node, callback);
+            
+            node.isModifier = false;
+            if (nodeType('iconCls_modifier',node.attributes.iconCls) != ""){
+                node.isModifier = true;
             }
-            else {
-	        this.transId = Ext.Ajax.request({
-	            method: 'GET',
-	            url: pageInfo.basePath + "/concepts/getChildren",
-	            params: { concept_key: node.id },
-	            success: this.handleResponse,
-	            failure: this.handleFailure,
-	            scope: this,
-	            argument: {callback: callback, node: node},
-	            timeout: '120000' //2 minutes
-	        });
+            
+            //TODO: This is fugly.
+            if(!node.isModifier) {
+                this.transId = Ext.Ajax.request({
+                    method: 'GET',
+                    url: pageInfo.basePath + "/concepts/getChildren",
+                    params: { concept_key: node.id },
+                    success: this.handleResponse,
+                    failure: this.handleFailure,
+                    scope: this,
+                    argument: {callback: callback, node: node},
+                    timeout: '120000' //2 minutes
+                });
+                
+            } else {
+                this.transId = Ext.Ajax.request({
+                    method: 'GET',
+                    url: pageInfo.basePath + "/concepts/getModifierChildren",
+                    params: { modifier_key: node.id,
+                                applied_path: node.attributes.applied_path,
+                                qualified_term_key: node.attributes.qualified_term_key},
+                    success: this.handleResponse,
+                    failure: this.handleFailure,
+                    scope: this,
+                    argument: {callback: callback, node: node},
+                    timeout: '120000' //2 minutes
+                });                
             }
-
         } else {
             // if the load is cancelled, make sure we notify
             // the node that we are done
@@ -30,7 +46,6 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
     processResponse: function (response, node, callback) {
         node.beginUpdate();
-        //node.appendChild(nodes);
         this.parseJson(response, node);
         //getChildConceptPatientCounts(node);
 	if(node.attributes.cls == 'fileFolderNode') {
@@ -81,7 +96,11 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     continue;
                 }
             }
-   		 
+            
+            if(nodeType("visualattributes_modifier", c.attributes.visualattributes) != "") {
+                c = extendTreeNodeForModifier(c, concepts[i]);
+            }
+            
             //If the node has been disabled, ignore all children
             if (!node.disabled) {
                 node.appendChild(c);
@@ -121,7 +140,7 @@ function parseJson (response, node) {
             if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
                 //However, don't filter studies/top folders out if a higher-level match exists
                 var highLevelMatchFound = false;
-                for (var j = 0; j < matchList.size()-1; j++) { //-1 here - leave out last result (trailing comma)	
+                for (var j = 0; j < matchList.length -1; j++) { //-1 here - leave out last result (trailing comma)
                     if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
                         highLevelMatchFound = true;
                         break;
@@ -165,43 +184,35 @@ function getConceptPatientCountComplete(result, node) {
 
 function getChildConceptPatientCounts(node) {
 	
-var params =	Ext.urlEncode({charttype:"childconceptpatientcounts",
-		   concept_key: node.attributes.id});
+    var params = Ext.urlEncode({
+        charttype: "childconceptpatientcounts",
+        concept_key: node.attributes.id
+    });
 
-// Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
-jQuery.ajax({
-            url: pageInfo.basePath + "/chart/childConceptPatientCounts",
-            method: 'POST',
-    	        success: function(result){getChildConceptPatientCountsComplete(result, node);},
-    	        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
-        });
+    // Ext AJAX has intermittent failure to pass parameters when many AJAX requests are made in a short space of time - switched to jQuery here
+    jQuery.ajax({
+        url: pageInfo.basePath + "/chart/childConceptPatientCounts",
+        method: 'POST',
+        success: function(result){getChildConceptPatientCountsComplete(result, node);},
+        data: {charttype: "childconceptpatientcounts", concept_key: node.attributes.id}
+    });
 }
 
 function getChildConceptPatientCountsComplete(result, node) {
-    /* eval the response and look up in loop*/
-//var childaccess=Ext.util.JSON.decode(result.responseText).accesslevels;
-//var childcounts=Ext.util.JSON.decode(result.responseText).counts;
-var mobj=result;
+    var mobj = result;
     var childaccess = mobj.accesslevels;
     var childcounts = mobj.counts;
-    /*var cca=new Array();
-     var size=childcounts.size();
-     for(var i=0;i<size;i++)
-     {
-     cca[childcounts[i].concept]=childcounts[i].count;
-     }*/
-    var blah = node;
     node.beginUpdate();
     var children = node.childNodes;
-    var size2 = children.size();
+    var size2 = children.length;
     for (var i = 0; i < size2; i++) {
         var key = children[i].attributes.id;
         var fullname = key.substr(key.indexOf("\\", 2), key.length);
-        var count = childcounts[fullname];
-        var access = childaccess[fullname];
+        var count = childcounts != null ? childcounts[fullname] : undefined;
+        var access = childaccess != null ? childaccess[fullname] : undefined;
         var child = children[i];
         if (count != undefined) {
-            child.setText(child.text + " (" + count + ")");
+            child.setText(child.text + "<em> (" + count + ")</em>");
         }
 
         if ((access != undefined && access != 'Locked') ||

@@ -155,22 +155,7 @@ function createCenterPanel()
 		        autoLoad: centerPanelURL,
 				collapsible : true,
 				titleCollapse : false,
-				animCollapse : false,
-				bbar: new Ext.StatusBar({
-					// Status bar to show the progress of generating heatmap and other advanced workflows
-			        id: 'asyncjob-statusbar',
-			        defaultText: 'Ready',
-			        defaultIconCls: 'default-icon',
-			        text: 'Ready',
-			        statusAlign: 'right',
-			        iconCls: 'ready-icon',
-			        items: [{
-			        	xtype: 'button',
-			        	id: 'cancjob-button',
-			        	text: 'Cancel',
-			        	hidden: true
-			        }]				        
-			    })
+				animCollapse : false
 			}
 	);
 	

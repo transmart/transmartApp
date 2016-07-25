@@ -71,12 +71,14 @@ grails.project.dependency.resolution = {
         compile "org.apache.lucene:lucene-highlighter:2.4.0"
         compile 'commons-net:commons-net:3.3' // used for ftp transfers
         compile 'org.apache.commons:commons-math:2.2' //>2MB lib briefly used in ChartController
-        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.1', {
-            excludes 'groovy', 'nekohtml'
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.5.2', {
+            excludes 'groovy', 'nekohtml', 'httpclient', 'httpcore'
         }
         compile 'org.rosuda:Rserve:1.7.3'
-        compile 'com.google.guava:guava:14.0.1'
+        compile 'com.google.guava:guava:18.0'
         compile 'net.sf.ehcache:ehcache:2.9.0'
+        compile 'org.apache.httpcomponents:httpclient:4.4.1'
+        compile 'org.apache.httpcomponents:httpcore:4.4.1'
 
         compile 'org.apache.httpcomponents:httpclient:4.2.4'
         compile 'org.apache.solr:solr-solrj:5.4.1'
@@ -116,11 +118,11 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        build ':release:3.0.1'
-        build ':rest-client-builder:2.0.1'
-        build ':tomcat:7.0.52.1'
+        build ':release:3.1.1'
+        build ':tomcat:7.0.54'
 
-        compile ':hibernate:3.6.10.16'
+        compile ':hibernate:3.6.10.19'
+        compile ':rest-client-builder:2.1.1'
         compile ':cache-ehcache:1.0.5'
         compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
@@ -130,7 +132,8 @@ grails.project.dependency.resolution = {
         compile ':spring-security-oauth2-provider:2.0-RC4'
 
         runtime ':prototype:1.0'
-        runtime ':jquery:1.7.1'
+        runtime ':jquery:1.11.1'
+        runtime ':jquery-ui:1.10.4'
         runtime ':resources:1.2.1'
 
         // support for static code analysis - see codenarc.reports property below

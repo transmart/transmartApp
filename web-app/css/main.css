@@ -984,7 +984,7 @@ select.jubselect {
 .search-item h3 {font:inherit;font-weight:bold;color:#202020;}
 .search-item span {font-size:10px;}
 
-.filter-item {font:normal 12px;color:#505050;}
+.filter-item {color:#505050;font-weight:normal; font-size: 12px}
 .filter-item-compound {color:#660099;font-weight:bold;} /* purple */
 .filter-item-disease {color:#cc0099;font-weight:bold;} /* magenta */
 .filter-item-gene {color:#468528;font-weight:bold;} /* green */

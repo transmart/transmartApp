@@ -1,17 +1,13 @@
 package org.transmart.marshallers
-
 import org.transmartproject.core.ontology.OntologyTerm
-import org.transmartproject.db.ontology.MetadataSelectQuerySpecification
 
+//import org.transmartproject.core.ontology.BoundModifier
 class OntologyTermMarshaller {
 
     static targetType = OntologyTerm
 
     def convert(OntologyTerm term) {
-        MetadataSelectQuerySpecification spec =
-                ((MetadataSelectQuerySpecification) term)
-
-        return [
+        def ret = [
                 key               : term.key,
                 level             : term.level,
                 fullName          : term.fullName,
@@ -26,9 +22,16 @@ class OntologyTermMarshaller {
                  * the terms map to patient sets.
                  * Unfortunately, that is not the way the frontend is setup
                  * right now, as right now it needs this data */
-                dimensionCode     : spec.dimensionCode,
-                dimensionTableName: spec.dimensionTableName,
+                dimensionCode     : term.dimensionCode,
+                dimensionTableName: term.dimensionTableName,
         ]
+
+/*        if (term instanceof BoundModifier) {
+            ret['applied_path'] = term.appliedPath
+            ret['qualified_term_key'] = term.qualifiedTerm.key
+        }
+*/
+        ret
     }
 
 }

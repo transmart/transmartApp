@@ -1,7 +1,7 @@
 STATE = {
-		Dragging: false,
-		Target: null,
-		QueryRequestCounter: 0
+    Dragging: false,
+    Target: null,
+    QueryRequestCounter: 0
 };
 
 // list of supported platform
@@ -45,20 +45,22 @@ function toggleRBMDisplayElements (ele, eleGpl, eleTissue, eleRbmpanel, platform
     }
 }
 
-function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes)
+function Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode)
 {
-	this.name=name;
-	this.key=key;
-	this.level=level;
-	this.tooltip=tooltip;
-	this.tablename=tablename;
-	this.dimcode=dimcode;
-	this.comment=comment;
-	this.normalunits=normalunits;
-	this.oktousevalues=oktousevalues;
-	this.value=value;
-	this.nodeType = nodeType;
+    this.name=name;
+    this.key=key;
+    this.level=level;
+    this.tooltip=tooltip;
+    this.tablename=tablename;
+    this.dimcode=dimcode;
+    this.comment=comment;
+    this.normalunits=normalunits;
+    this.oktousevalues=oktousevalues;
+    this.value=value;
+    this.nodeType = nodeType;
     this.visualattributes = visualattributes;
+    this.applied_path    = applied_path || '@';
+    this.modifiedNode    = modifiedNode;
 }
 
 function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
@@ -108,411 +110,381 @@ function Value(mode, operator, highlowselect, lowvalue, highvalue, units)
 
 function convertNodeToConcept(node)
 {
-	var value=new Value();
-	var level=node.attributes.level;
-	var name=node.text;
-	var key=node.id;
-	var tooltip=node.attributes.qtip;
-	var tablename=node.attributes.tablename;
-	var dimcode=node.attributes.dimcode;
-	var comment=node.attributes.comment;
-	var normalunits=node.attributes.normalunits;
-	var oktousevalues=node.attributes.oktousevalues;
-	var visualattributes=node.attributes.visualattributes;
+    var value = new Value();
+    var level = node.attributes.level;
+    var name = jQuery('<span>' + node.text + '</span>').find("em").remove().end().html().trim();
+    var key = node.id;
+    var tooltip = node.attributes.qtip;
+    var tablename = node.attributes.tablename;
+    var dimcode = node.attributes.dimcode;
+    var comment = node.attributes.comment;
+    var normalunits = node.attributes.normalunits;
+    var oktousevalues = node.attributes.oktousevalues;
+    var visualattributes = node.attributes.visualattributes;
+    var applied_path = node.attributes.applied_path;
 
-	//Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
-	var nodeType = node.attributes.iconCls;
-	
-	if(oktousevalues=="Y"){value.mode="novalue";} //default to novalue
-	
-	var myConcept=new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes);
-	return myConcept;
+    //Each node has a type (Categorical, Continuous, High Dimensional Data) that we need to populate. For now we will use the icon class.
+    var nodeType = node.attributes.iconCls;
+    var modifiedNode = {};
+    
+    modifiedNode.path = node.attributes.modifiedNodePath;
+    modifiedNode.id = node.attributes.modifiedNodeId;
+    modifiedNode.level = node.attributes.modifiedNodeLevel;
+
+    if(oktousevalues === "Y") {
+       value.mode="novalue";
+    }
+
+    return new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode);
 }
 function createPanelItemNew(panel, concept)
 {
-	var li=document.createElement('div'); //was li
-	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
-	li.setAttribute('conceptname',concept.name);
-	li.setAttribute('conceptid', concept.key);
-	li.setAttribute('conceptlevel',concept.level);
-	li.setAttribute('concepttooltip', concept.tooltip);
-	li.setAttribute('concepttablename',concept.tablename);
-	li.setAttribute('conceptdimcode',concept.dimcode);
-	li.setAttribute('conceptcomment', concept.comment);
-	li.setAttribute('normalunits',concept.normalunits);
-	li.setAttribute('setvaluemode',concept.value.mode);
-	li.setAttribute('setvalueoperator',concept.value.operator);
-	li.setAttribute('setvaluehighlowselect',concept.value.highlowselect);
-	li.setAttribute('setvaluehighvalue',concept.value.highvalue);
-	li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
-	li.setAttribute('setvalueunits',concept.value.units);
-	li.setAttribute('oktousevalues',concept.oktousevalues);
-	li.setAttribute('setnodetype',concept.nodeType);
-	li.setAttribute('visualattributes',concept.visualattributes);
-	li.className="conceptUnselected";
-	
-	//Create a shortname
-	var splits=concept.key.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
-	else shortname=splits[splits.length-1];
-	li.setAttribute('conceptshortname',shortname);
-	
-	//Create a setvalue description
-	var valuetext="";
-	if(typeof(concept.value.mode)!="undefined")
-		{
-		valuetext=getSetValueText(concept.value.mode, concept.value.operator, concept.value.highlowselect, concept.value.highvalue, concept.value.lowvalue, concept.value.units);
-		li.setAttribute('conceptsetvaluetext',valuetext);
-		}
-	else
-		{
-		li.setAttribute('conceptsetvaluetext','');
-		}	
-	//Create the node
-	var text=document.createTextNode(shortname+" "+valuetext); //used to be name
-	li.appendChild(text);
-	panel.appendChild(li);
-	Ext.get(li).addListener('click',conceptClick);
-	Ext.get(li).addListener('contextmenu',conceptRightClick);
-	new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
-	li.concept=concept;
-	//return the node
+    var li=document.createElement('div'); //was li
+    //convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
+    li.setAttribute('conceptname',concept.name);
+    li.setAttribute('conceptid', concept.key);
+    li.setAttribute('conceptlevel',concept.level);
+    li.setAttribute('concepttooltip', concept.tooltip);
+    li.setAttribute('concepttablename',concept.tablename);
+    li.setAttribute('conceptdimcode',concept.dimcode);
+    li.setAttribute('conceptcomment', concept.comment);
+    li.setAttribute('normalunits',concept.normalunits);
+    li.setAttribute('setvaluemode',concept.value.mode);
+    li.setAttribute('setvalueoperator',concept.value.operator);
+    li.setAttribute('setvaluehighlowselect',concept.value.highlowselect);
+    li.setAttribute('setvaluehighvalue',concept.value.highvalue);
+    li.setAttribute('setvaluelowvalue',concept.value.lowvalue);
+    li.setAttribute('setvalueunits',concept.value.units);
+    li.setAttribute('oktousevalues',concept.oktousevalues);
+    li.setAttribute('setnodetype',concept.nodeType);
+    li.setAttribute('visualattributes',concept.visualattributes);
+    li.setAttribute('applied_path',concept.applied_path);
+    li.setAttribute('modifiedNodePath',concept.modifiedNode.path);
+    li.setAttribute('modifiedNodeId',concept.modifiedNode.id);
+    li.setAttribute('modifiedNodeLevel',concept.modifiedNode.level);    
+    li.className="panelBoxListItem x-tree-node-collapsed";
+    
+    //Create a setvalue description
+    var valuetext="";
+    if(typeof(concept.value.mode)!="undefined")
+        {
+        valuetext=getSetValueText(concept.value.mode, concept.value.operator, concept.value.highlowselect, concept.value.highvalue, concept.value.lowvalue, concept.value.units);
+        li.setAttribute('conceptsetvaluetext',valuetext);
+        }
+    else
+        {
+        li.setAttribute('conceptsetvaluetext','');
+        }
 
-    // Invalidate only when something dropped to the subset panel
-    if (panel.id.indexOf("queryCriteriaDiv") > -1) {
-        var subset=getSubsetFromPanel(panel);
-        invalidateSubset(subset);
+    //Find out the icon (this is a copy&paste from getTreeFromJSON
+    var iconCls = false
+
+    if (concept.oktousevalues != "N") {
+        iconCls = "valueicon";
     }
+    if (concept.visualattributes.indexOf('LEAF') != -1 ||
+        concept.visualattributes.indexOf('MULTIPLE') != -1) {
+        if (concept.oktousevalues == "N")
+            iconCls = "alphaicon";
+        // Yet another hack to get icon working seemlessly
+        li.className += " x-tree-node-leaf"
+    }
+    if (concept.visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
+        iconCls = 'hleaficon';
+    }
+    if (concept.visualattributes.indexOf('EDITABLE') != -1) {
+        iconCls = 'eleaficon';
+    }
+    if (concept.visualattributes.indexOf('PROGRAM') != '-1') {
+        iconCls = "programicon";
+    }
+    if (concept.visualattributes.indexOf('STUDY') != '-1') {
+        iconCls = "studyicon";
+    }
+    
+    if(concept.visualattributes.indexOf('MODIFIER_LEAF') != -1)
+    {
+        iconCls            = "modifiericon";
+        li.setAttribute('ismodifier',"Y");
+        
+        shortname = createShortNameFromPath(concept.modifiedNode.id);
+        
+        shortname += " [" + concept.name + "]"
+    }
+    else
+    {
+        shortname = concept.name;
+    }
+    li.setAttribute('conceptshortname',shortname);
+    
+    //Create the node
+    var iconElem=document.createElement('span')
+    var textElem=document.createElement('span')
+    iconElem.className = "x-tree-node-icon " + (iconCls ? iconCls : '')
+    textElem.appendChild(document.createTextNode(shortname+" "+valuetext)); //used to be name
+    textElem.className = "concept-text"
+    li.appendChild(iconElem);
+    li.appendChild(textElem);
+    panel.appendChild(li);
+    Ext.get(li).addListener('click',conceptClick);
+    Ext.get(li).addListener('contextmenu',conceptRightClick);
+    new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
+    li.concept=concept;
+    //return the node
 
-	return li;
+    invalidateSubset(jQuery('#' + panel.id).attr('subset'));
+
+    return li;
 }
 
 function getSubsetFromPanel(panel)
 {
-    return panel.id.substr(16,1);
+    return jQuery('#' + panel.id).closest(".panelModel").attr('subset');
 }
-
-function createPanelItem(subset,panelNumber, level, name, key, tooltip, tablename, dimcode, comment, normalunits, oktousevalues,
-	setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluelowvalue, setvaluehighvalue, setvalueunits)
-{
-var panel=document.getElementById("queryCriteriaDiv"+subset+"_"+panelNumber);
-var li=document.createElement('div'); //was li
-	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
-	li.setAttribute('conceptname',name);
-	li.setAttribute('conceptid', key);
-	li.setAttribute('conceptlevel',level);
-	li.setAttribute('concepttooltip', tooltip);
-	li.setAttribute('concepttablename',tablename);
-	li.setAttribute('conceptdimcode',dimcode);
-	li.setAttribute('conceptcomment', comment);
-	li.setAttribute('normalunits',normalunits);
-	if(typeof(setvaluemode)!="undefined")
-		li.setAttribute('setvaluemode',setvaluemode);
-	if(typeof(setvalueoperator)!="undefined")
-		li.setAttribute('setvalueoperator',setvalueoperator);
-	if(typeof(setvaluehighlowselect)!="undefined")
-		li.setAttribute('setvaluehighlowselect',setvaluehighlowselect);
-	if(typeof(setvaluehighvalue)!="undefined")
-		li.setAttribute('setvaluehighvalue',setvaluehighvalue);
-	if(typeof(setvaluelowvalue)!="undefined")
-		li.setAttribute('setvaluelowvalue',setvaluelowvalue);
-	if(typeof(setvalueunits)!="undefined")
-		li.setAttribute('setvalueunits',setvalueunits);
-	if(typeof(oktousevalues)!="undefined")
-		li.setAttribute('oktousevalues', oktousevalues);
-	li.className="conceptUnselected";
-	
-	//Create a shortname
-	var splits=tooltip.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
-	else shortname=splits[splits.length-1];
-	li.setAttribute('conceptshortname',shortname);
-	
-	//Create a setvalue description
-	var valuetext="";
-	if(typeof(setvaluemode)!="undefined")
-		{
-		valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
-		li.setAttribute('conceptsetvaluetext',valuetext);
-		}
-	else
-		{
-		li.setAttribute('conceptsetvaluetext','');
-		}	
-	//Create the node
-	var text=document.createTextNode(shortname+" "+valuetext); //used to be name
-	li.appendChild(text);
-	panel.appendChild(li);
-	Ext.get(li).addListener('click',conceptClick);
-	Ext.get(li).addListener('contextmenu',conceptRightClick);
-	new Ext.ToolTip({ target:li, html:key, dismissDelay:10000 });
-	invalidateSubset(subset);
-	return li;
-}	
 
 function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, units)
 {
 var highlowselecttext;
 switch(highlowselect)
-	{
-	case "H":
-		highlowselecttext="HIGH";
-		break;
-	case "L":
-		highlowselecttext="LOW";
-		break;
-	case "N":
-		highlowselecttext="NORMAL";
-		break;
-	}
-	
+    {
+    case "H":
+        highlowselecttext="HIGH";
+        break;
+    case "L":
+        highlowselecttext="LOW";
+        break;
+    case "N":
+        highlowselecttext="NORMAL";
+        break;
+    }
+    
 var text=" ";
-	if(mode=='numeric')
-		{
-		if(operator!='BETWEEN')
-		 {
-			switch (operator)
-			{
-			case "LT":
-			  text=text+"<";
-			  break;
-			case "LE":
-			 text=text+"<=";
-			  break;
-			case "EQ":
-			  text=text+"=";
-			  break;
-			case "GT":
-			  text=text+">";
-			  break;
-			case "GE":
-			 text=text+">=";
-			  break;
-		 	}
-		text=text+lowvalue;
-		}
-		else 
-		{
-		 text=text+"between "+lowvalue+" and "+highvalue;
-		}
-	  }
-	  else if(mode=='highlow')
-	  	{
-	  text=text+"High/Low-"+highlowselecttext;  
-	  	}
-	  else 
-	  	{
-	  	text="";
-	  	}
-	return text;
+    if(mode=='numeric')
+        {
+        if(operator!='BETWEEN')
+         {
+            switch (operator)
+            {
+            case "LT":
+              text=text+" < ";
+              break
+            case "LE":
+             text=text+" <= ";
+              break
+            case "EQ":
+              text=text+" = ";
+              break
+            case "GT":
+              text=text+" > ";
+              break
+            case "GE":
+             text=text+" >= ";
+              break
+             }
+        text=text+lowvalue;
+        }
+        else 
+        {
+         text=text+" BETWEEN "+lowvalue+" AND "+highvalue
+        }
+      }
+      else if(mode=='highlow')
+          {
+      text=text+" "+highlowselecttext;
+          }
+      else 
+          {
+          text="";
+          }
+    return text.trim().length > 0 ? '<em> ' + text + '</em>' : '';
 }
 
-
-function resetQuery()
-{
-	for(var s=1;s<=GLOBAL.NumOfSubsets;s++)
-	{
-		for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-		{
- 		clearGroup(s,d);
-		}
-	}
-	hideCriteriaGroups();
-}
 function resetSelected()
 {
-	for(var s=1;s<=GLOBAL.NumOfSubsets;s++)
-	{
-		for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-		{
- 		clearSelected(s,d);
-		}
-	}
-}
-
-function clearSelected(subset, panel)
-{
-	var sdiv=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
-	for(var i=0;i<sdiv.dom.childNodes.length;i++)
-	{
-  		sdiv.dom.childNodes[i].className="conceptUnselected";
-	}
-}
-
-
-
-
-
-function clearGroup(subset, panel)
-{
-	//clear button 
-	var el=document.getElementById("btnExcludeGroup"+subset+"_"+panel);
-	el.firstChild.nodeValue="Exclude";
-
-	//clar the div
-	var qc=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
-	for(var i=qc.dom.childNodes.length-1;i>=0;i--)
-		{
-		var child=qc.dom.childNodes[i];
-		qc.dom.removeChild(child);
-		}	
-	//reset the class
-	qc.dom.className="queryGroupInclude";
-	invalidateSubset(subset);
-}
-
-function excludeGroup(btn,subset, panel)
-{
-var el=Ext.get("queryCriteriaDiv"+subset+"_"+panel);
-var button=Ext.get("btnExcludeGroup"+subset+"_"+panel).dom;
-if(el.dom.className=="queryGroupInclude")
-	{
-	el.dom.className="queryGroupExclude";
-	button.firstChild.nodeValue="Include";
-	}
-	else
-	{
-	el.dom.className="queryGroupInclude";
-	button.firstChild.nodeValue="Exclude";
-	}
-	invalidateSubset(subset);
+    selectedConcept = null
+    jQuery(".panelBoxListItem").each(function (){
+        jQuery(this).removeClass("selected")
+    })
 }
 
 function conceptClick(event)
 {
-selectConcept(this.dom);
+    selectConcept(this.dom);
+    event.stopPropagation()
 }
 
 function selectConcept(concept)
 {
-resetSelected(); //clear any selected concept in any panel in any subset
-selectedConcept=concept; //select this one
-selectedDiv=concept.parentNode;
-selectedConcept.className="conceptSelected";
+    if (jQuery('#' + concept.getAttribute('id')).hasClass("selected")) {
+        resetSelected()
+        if (arguments && arguments.length > 1 && !arguments[1])
+            return;
+    }
+    resetSelected()
+    selectedConcept=concept; //select this one
+    selectedDiv=concept.parentNode;
+    selectedConcept.className=selectedConcept.className+" selected";
 }
 
 function conceptRightClick(event)
 {
-	var conceptnode=this.dom;
-	selectConcept(conceptnode);
-	var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
-	var comment=this.dom.attributes.conceptcomment.nodeValue;
+    var conceptnode=this.dom;
+    selectConcept(conceptnode, true);
+    var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
+    var comment=this.dom.attributes.conceptcomment.nodeValue;
 
-	if (!this.contextMenuConcepts) {
-	this.contextMenuConcepts = new Ext.menu.Menu({
-	id: 'contextMenuConcepts',
-	items: [{
-	text: 'Delete', handler: function(){
-										selectedDiv.removeChild(selectedConcept);
-										invalidateSubset(getSubsetFromPanel(selectedDiv));
-										
-										}
-	},{id: 'setvaluemenu', text: 'Set Value', handler:function(){showSetValueDialog();}},
-	{
-	text: 'Show Definition', handler:function(){ showConceptInfoDialog(conceptid, conceptid, comment);}
-	}
-	]
-	}); 
-	}
-	var xy = event.getXY();
-	this.contextMenuConcepts.showAt(xy);
-	var m=Ext.getCmp('setvaluemenu');
-	if(this.dom.attributes.oktousevalues.nodeValue!='Y')
-		m.hide(); 
-		//alert('you cant set value');
-	else 
-		m.show();
-	return false;
+    if (!this.contextMenuConcepts) {
+    this.contextMenuConcepts = new Ext.menu.Menu({
+        id: 'contextMenuConcepts',
+        items: [{
+            text: 'Delete', handler: function() {
+                selectedDiv.removeChild(selectedConcept);
+                removeUselessPanels()
+                invalidateSubset(getSubsetFromPanel(selectedDiv));
+            }
+        },{
+            id: 'setvaluemenu',
+            text: 'Set Value',
+            handler:function() {
+                showSetValueDialog();
+            }
+        }, {
+            text: 'Show Definition',
+            handler: function() {
+                showConceptInfoDialog(conceptid, conceptid, comment);}
+            }]
+        }); 
+    }
+    var xy = event.getXY();
+    this.contextMenuConcepts.showAt(xy);
+    var m=Ext.getCmp('setvaluemenu');
+    if(this.dom.attributes.oktousevalues.nodeValue!='Y')
+        m.hide(); 
+        //alert('you cant set value');
+    else 
+        m.show();
+    return false;
 }
 
 function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits)
 {
-	conceptnode.setAttribute('setvaluemode',setvaluemode);
-	conceptnode.setAttribute('setvalueoperator',setvalueoperator);
-	conceptnode.setAttribute('setvaluehighlowselect',setvaluehighlowselect);
-	conceptnode.setAttribute('setvaluehighvalue',setvaluehighvalue);
-	conceptnode.setAttribute('setvaluelowvalue',setvaluelowvalue);
-	conceptnode.setAttribute('setvalueunits',setvalueunits);
-	var valuetext="";
-	valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
-	conceptnode.setAttribute('conceptsetvaluetext',valuetext);
-	var conceptshortname=conceptnode.getAttribute("conceptshortname");
-	//alert(conceptshortname+" "+valuetext);
-	Ext.get(conceptnode.id).update(conceptshortname+" "+valuetext);
-	//conceptnode.update(conceptshortname+" "+valuetext);
-	var subset=getSubsetFromPanel(conceptnode.parentNode);
-	invalidateSubset(subset);
+    conceptnode.setAttribute('setvaluemode',setvaluemode);
+    conceptnode.setAttribute('setvalueoperator',setvalueoperator);
+    conceptnode.setAttribute('setvaluehighlowselect',setvaluehighlowselect);
+    conceptnode.setAttribute('setvaluehighvalue',setvaluehighvalue);
+    conceptnode.setAttribute('setvaluelowvalue',setvaluelowvalue);
+    conceptnode.setAttribute('setvalueunits',setvalueunits);
+    var valuetext="";
+    valuetext=getSetValueText(setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits);
+    conceptnode.setAttribute('conceptsetvaluetext',valuetext);
+    var conceptname=conceptnode.getAttribute("conceptname");
+    jQuery('#' + conceptnode.id + " .concept-text").html(conceptname + " " + valuetext)
+    var subset=getSubsetFromPanel(conceptnode.parentNode);
+    invalidateSubset(subset);
+}
+
+function applySetValueDialog(validation) {
+
+    var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
+    var highvalue = document.getElementById("setValueHighValue").value;
+    var lowvalue = document.getElementById("setValueLowValue").value;
+    var units = document.getElementById("setValueUnits").value;
+    var operator = document.getElementById("setValueOperator").value;
+    var highlowselect = document.getElementById("setValueHighLowSelect").value;
+
+    // make sure that there is a value set
+    if (validation && mode=="numeric" && operator == "BETWEEN" && (highvalue == "" || lowvalue== "")){
+        alert('You must specify a low and a high value.');
+    } else if (validation && mode=="numeric" && lowvalue == "") {
+        alert('You must specify a value.');
+    } else {
+
+        if (validation)
+            setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
+        else
+            setValueDialogComplete(setvaluewin.mode, setvaluewin.operator, setvaluewin.highlowselect, setvaluewin.highvalue, setvaluewin.lowvalue, setvaluewin.units);
+
+        if (STATE.Dragging) {
+            jQuery('#' + selectedConcept.id).remove()
+            removeUselessPanels()
+        }
+
+        setvaluewin.hide();
+    }
 }
 
 function showSetValueDialog()
-{		
-		var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
-		setvaluewin.setHeight(200); //set height back to old closed
-		setvaluewin.setPosition(100, 100);
-		Ext.get("setvaluechartsPanel1").update("");
-		Ext.get("setvaluechartsPanel2").update("");
+{
+        var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
+        setvaluewin.setHeight(180); //set height back to old closed
+
+        var top = jQuery("#resultsTabPanel").offset().top + jQuery("#resultsTabPanel").height() / 2 - setvaluewin.height / 1.5
+        var left = jQuery("#resultsTabPanel").offset().left + jQuery("#resultsTabPanel").width() / 2 - setvaluewin.width / 2
+
+        setvaluewin.setPosition(left, top);
+        Ext.get("setvaluechartsPanel1").update("");
+        Ext.get("setvaluechartsPanel2").update("");
         setvaluewin.show(viewport);
         var mode=conceptnode.getAttribute('setvaluemode');
         var test=document.getElementsByName("setValueMethod");
-        if(mode!=null)
-       		{
-				setCheckedValue(test, mode);
-        		setValueMethodChanged(mode);
-        	}
-        else //default to numeric
-        {	
-        	if(test.length>0)
-        		{
-				setCheckedValue(test, "numeric"); //numeric
-        		setValueMethodChanged("numeric");
-        		}
-        	}
-        
-        var highvalue=conceptnode.getAttribute('setvaluehighvalue');
-        if(highvalue!=null)
-        		document.getElementById("setValueHighValue").value=highvalue;
-        else
-        	document.getElementById("setValueHighValue").value="";
-        		
+        if(mode!=null) {
+            setCheckedValue(test, mode);
+            setValueMethodChanged(mode);
+        } else {
+            if(test.length>0) {
+                setCheckedValue(test, "numeric"); //numeric
+                setValueMethodChanged("numeric");
+            }
+        }
+
+        var highvalue = conceptnode.getAttribute('setvaluehighvalue');
+        if (highvalue != null) {
+                document.getElementById("setValueHighValue").value=highvalue;
+        } else {
+            document.getElementById("setValueHighValue").value="";
+        }
+
         var lowvalue=conceptnode.getAttribute('setvaluelowvalue');
         var blah=document.getElementById("setValueLowValue");
-        if(lowvalue!=null)
-        		blah.value=lowvalue;
-        else
-        	blah.value="";
-        		
+        if (lowvalue != null) {
+            blah.value=lowvalue;
+        } else {
+            blah.value = "";
+        }
+
         var units=conceptnode.getAttribute('setvalueunits');
         if(units!=null)
-        		document.getElementById("setValueUnits").value=units;
-        		
+                document.getElementById("setValueUnits").value=units;
+
         var operator=conceptnode.getAttribute('setvalueoperator');
         if(operator!=null)
-        		{
-        		document.getElementById("setValueOperator").value=operator;
-        		setValueOperatorChanged(operator);
-        		}
-        		
+                {
+                document.getElementById("setValueOperator").value=operator;
+                setValueOperatorChanged(operator);
+                }
+
         else
-        	{
-        		document.getElementById("setValueOperator").value="LT";
-        		setValueOperatorChanged("LT");
-        		}
-       
+            {
+                document.getElementById("setValueOperator").value="LT";
+                setValueOperatorChanged("LT");
+                }
+
         var highlowselect=conceptnode.getAttribute('setvaluehighlowselect');
         if(highlowselect!=null)
-        		document.getElementById("setValueHighLowSelect").value=highlowselect;
-        		
-      	var unitsinput=document.getElementById("setValueUnits");
-      	var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));  
-      	unitsinput.options[0]=option;   
+                document.getElementById("setValueHighLowSelect").value=highlowselect;
+
+          var unitsinput=document.getElementById("setValueUnits");
+          var option = new Option(conceptnode.getAttribute('normalunits'),conceptnode.getAttribute('normalunits'));
+          unitsinput.options[0]=option;
+
+    setvaluewin.mode = mode;
+    setvaluewin.operator = operator;
+    setvaluewin.highlowselect = highlowselect;
+    setvaluewin.highvalue = highvalue;
+    setvaluewin.lowvalue = lowvalue;
+    setvaluewin.units = units;
+
+    setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
 }
 
 
@@ -522,27 +494,25 @@ function setValueDialogComplete(mode, operator, highlowselect, highvalue, lowval
 var conceptnode=selectedConcept;
 setValue(conceptnode, mode, operator, highlowselect, highvalue, lowvalue, units);
 if(STATE.Dragging==true){
-	STATE.Dragging=false;
-	moveSelectedConceptFromHoldingToTarget();
-	}
+    STATE.Dragging=false;
+    moveSelectedConceptFromHoldingToTarget();
+    }
 }
 
 function moveSelectedConceptFromHoldingToTarget()
 {
-	var node=selectedConcept;
-	STATE.Target.appendChild(node);
-	var subset=STATE.Target.id.substr(16,1);
-	invalidateSubset(subset);
-	STATE.Target=null;	
+    var subset=jQuery('#' + selectedConcept.id).closest(".panelModel").attr("subset")
+    invalidateSubset(subset);
+    STATE.Target=null;
 }
 
 function invalidateSubset(subset)
 {
 if(GLOBAL.CurrentSubsetIDs[subset]!=null) //check if its already been invalidated so i dont call again (otherwise I clear ap and grid too many times)
-	{
-	GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
-	clearAnalysisPanel();
-	}
+    {
+    GLOBAL.CurrentSubsetIDs[subset]=null; //invalidate the subset
+    clearAnalysisPanel();
+    }
 }
 
 function clearAnalysisPanel()
@@ -560,139 +530,139 @@ updateAnalysisPanel(cleartxt, false);
 function clearGrid()
 {
 Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/clearGrid",
-    	        method: 'POST',
+            {
+                url: pageInfo.basePath+"/chart/clearGrid",
+                method: 'POST',
                 defaultHeaders: { 'Content-Type': 'text/plain' },
                 //success: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        //failure: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"cleargrid"})
-    	    });
-    	    if(typeof(grid)!='undefined')
-    	    { 
-    	   	if(grid!=null){ 
-    	    	grid.destroy();
-    	    	grid=null;
-    	    }
-    	   }
+                //failure: function(result, request){showConceptDistributionHistogramComplete(result);},
+                timeout: '300000',
+                params: Ext.urlEncode({charttype:"cleargrid"})
+            });
+            if(typeof(grid)!='undefined')
+            { 
+               if(grid!=null){ 
+                grid.destroy();
+                grid=null;
+            }
+           }
 }
 
 function createNClusterSelector() {
-	alert("Heatmap type: " + GLOBAL.HeatmapType);
-	if (GLOBAL.HeatmapType == 'KMeans') {
-		GLOBAL.nClusters = 2;
-		var nclusters = new Ext.form.NumberField({
-			allowDecimals: false,
-			allowNegative: false,
-			minValue: 1,
-			maxValue: 100,
-			name: "Number of clusters",
-			value: 2,
-			applyTo: 'nClusters'
-		});
-		nclusters.on('change', 
-					 function(r) {
-						GLOBAL.nClusters = r.getValue();
-					 });
-		nclusters.show();
-		return nclusters;
-	}
+    alert("Heatmap type: " + GLOBAL.HeatmapType);
+    if (GLOBAL.HeatmapType == 'KMeans') {
+        GLOBAL.nClusters = 2;
+        var nclusters = new Ext.form.NumberField({
+            allowDecimals: false,
+            allowNegative: false,
+            minValue: 1,
+            maxValue: 100,
+            name: "Number of clusters",
+            value: 2,
+            applyTo: 'nClusters'
+        });
+        nclusters.on('change', 
+                     function(r) {
+                        GLOBAL.nClusters = r.getValue();
+                     });
+        nclusters.show();
+        return nclusters;
+    }
 }
 
 function createNClustersBox(){
-	GLOBAL.nClusters = 2;
-	var nclusters = new Ext.form.NumberField({
-		allowDecimals: false,
-		allowNegative: false,
-		minValue: 1,
-		maxValue: 100,
-		name: "Number of clusters",
-		value: 2,
-		applyTo: 'nClusters',
-		validator: function(value)
-		{
-	        if(value < 1) 
-	        {
-	            return 'You must choose at least 1 cluster.';
-	        } 
-	        else if(value > 100)
-	        {
-	        	return 'You must choose less than 100 clusters.';
-	        }
-	        else 
-	        {
-	            return true;
-	        }
-	    }
-	});
-	nclusters.on('change', 
-			function(r) {
-		GLOBAL.nClusters = r.getValue();
-	});
-	nclusters.show();
-	
-  	if (GLOBAL.HeatmapType != 'KMeans') {
-		document.getElementById("divnclusters").style.display = "none";
-  	}
+    GLOBAL.nClusters = 2;
+    var nclusters = new Ext.form.NumberField({
+        allowDecimals: false,
+        allowNegative: false,
+        minValue: 1,
+        maxValue: 100,
+        name: "Number of clusters",
+        value: 2,
+        applyTo: 'nClusters',
+        validator: function(value)
+        {
+            if(value < 1) 
+            {
+                return 'You must choose at least 1 cluster.';
+            } 
+            else if(value > 100)
+            {
+                return 'You must choose less than 100 clusters.';
+            }
+            else 
+            {
+                return true;
+            }
+        }
+    });
+    nclusters.on('change', 
+            function(r) {
+        GLOBAL.nClusters = r.getValue();
+    });
+    nclusters.show();
+    
+      if (GLOBAL.HeatmapType != 'KMeans') {
+        document.getElementById("divnclusters").style.display = "none";
+      }
 }
 
 function createPathwaySearchBox(searchInputEltName, divName){
-  	var ajaxurl;
-  	var ds;
-  	var resultTpl;
-  	if (GLOBAL.searchType==='native'){
-  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'name'
-				},[
-					{name: 'uid'},
-					{name: 'source'},
-					{name: 'name'},
-					{name: 'type'}
-			   	]
-			)
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
-	        '</div></tpl>'
-	    );
-  	}else{
-  		ajaxurl=pageInfo.basePath+'/search/loadSearchPathways';
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: "rows", id: "id"},
-				[
-				 	{name: "id"},
-				 	{name: "source"},
-				 	{name: "keyword"},
-				 	{name: "synonyms"},
-					{name: "category"},
-					{name: "display"}
-				]
-			)
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for=".">',
-	    		'<div class="search-item">',
-	    			'<p>',
-	    				'<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
-	    				'<b>{keyword}</b>&nbsp; {synonyms}',
-	    			'</p>',
-	    		'</div>',
-	    	'</tpl>'
-	    );
-  	}
+      var ajaxurl;
+      var ds;
+      var resultTpl;
+      if (GLOBAL.searchType==='native'){
+          ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'name'
+                },[
+                    {name: 'uid'},
+                    {name: 'source'},
+                    {name: 'name'},
+                    {name: 'type'}
+                   ]
+            )
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
+            '</div></tpl>'
+        );
+      }else{
+          ajaxurl=pageInfo.basePath+'/search/loadSearchPathways';
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: "rows", id: "id"},
+                [
+                     {name: "id"},
+                     {name: "source"},
+                     {name: "keyword"},
+                     {name: "synonyms"},
+                    {name: "category"},
+                    {name: "display"}
+                ]
+            )
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for=".">',
+                '<div class="search-item">',
+                    '<p>',
+                        '<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
+                        '<b>{keyword}</b>&nbsp; {synonyms}',
+                    '</p>',
+                '</div>',
+            '</tpl>'
+        );
+      }
     var search = new Ext.form.ComboBox({
         store: ds,
         displayField:'title',
@@ -713,94 +683,94 @@ function createPathwaySearchBox(searchInputEltName, divName){
         //renderTo: 'search',
         itemSelector: 'div.search-item',
         onSelect: function(record){ // override default onSelect to do redirect
-         	//alert(record.data.naturalid);
-         	//compareStepPathwaySelection.hide();
+             //alert(record.data.naturalid);
+             //compareStepPathwaySelection.hide();
              var sp=Ext.get(searchInputEltName);
              if (GLOBAL.searchType==='native'){
-	             sp.dom.value=record.data.name;
-	             GLOBAL.CurrentPathway=record.data.uid;
-	             GLOBAL.CurrentPathwayName=record.data.name;
-    		}else{
-	             sp.dom.value=record.data.keyword;
-	             GLOBAL.CurrentPathway=record.data.id;
-	             GLOBAL.CurrentPathwayName=record.data.keyword;
-    		}
+                 sp.dom.value=record.data.name;
+                 GLOBAL.CurrentPathway=record.data.uid;
+                 GLOBAL.CurrentPathwayName=record.data.name;
+            }else{
+                 sp.dom.value=record.data.keyword;
+                 GLOBAL.CurrentPathway=record.data.id;
+                 GLOBAL.CurrentPathwayName=record.data.keyword;
+            }
              search.collapse();
-             //compareSubsets(); 	
+             //compareSubsets();     
         }
     });
     search.on('focus', function(){
-    								var sp=Ext.get(searchInputEltName);
-    								sp.dom.value="";	
-    								}, this);
+                                    var sp=Ext.get(searchInputEltName);
+                                    sp.dom.value="";    
+                                    }, this);
 
-  	if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
-  		//Clear the pathway variable so we don't submit a value.
-  		GLOBAL.CurrentPathway = '';
-  		
-  		//Remove the pathway box.
-		document.getElementById(divName).style.display = "none";
-  	}
+      if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
+          //Clear the pathway variable so we don't submit a value.
+          GLOBAL.CurrentPathway = '';
+          
+          //Remove the pathway box.
+        document.getElementById(divName).style.display = "none";
+      }
 }
 
 function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchInputEltName, divName){
-  	var ajaxurl;
-  	var ds;
-  	var resultTpl;
-  	var extSearchItemName = divName + "-search-item";
-  	
-  	if (GLOBAL.searchType==='native'){
-  		ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'name'
-				},[
-					{name: 'uid'},
-					{name: 'source'},
-					{name: 'name'},
-					{name: 'type'},
-			   	]
-			)
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="' + extSearchItemName + '">',
-	            '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
-	        '</div></tpl>'
-	    );
-  	}else{
-  		ajaxurl=pageInfo.basePath+'/search/loadSearchAnalysis';
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: "rows", id: "id"},
-				[
-				 	{name: "id"},
-				 	{name: "source"},
-				 	{name: "keyword"},
-				 	{name: "synonyms"},
-					{name: "category"},
-					{name: "display"}
-				]
-			)
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        	'<tpl for=".">',
-	    		'<div class="' + divName + '-search-item">',
-	    			'<p>',
-	    				'<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
-	    				'<b>{keyword}</b>&nbsp; {synonyms}',
-	    			'</p>',
-	    		'</div>',
-	    	'</tpl>'
-	    );
-  	}
+      var ajaxurl;
+      var ds;
+      var resultTpl;
+      var extSearchItemName = divName + "-search-item";
+      
+      if (GLOBAL.searchType==='native'){
+          ajaxurl=pageInfo.basePath+'/analysis/ajaxGetPathwaySearchBoxData';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'name'
+                },[
+                    {name: 'uid'},
+                    {name: 'source'},
+                    {name: 'name'},
+                    {name: 'type'}
+                   ]
+            )
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="' + extSearchItemName + '">',
+                '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
+            '</div></tpl>'
+        );
+      }else{
+          ajaxurl=pageInfo.basePath+'/search/loadSearchAnalysis';
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: "rows", id: "id"},
+                [
+                     {name: "id"},
+                     {name: "source"},
+                     {name: "keyword"},
+                     {name: "synonyms"},
+                    {name: "category"},
+                    {name: "display"}
+                ]
+            )
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+                '<tpl for=".">',
+                '<div class="' + divName + '-search-item">',
+                    '<p>',
+                        '<span class="category-{display:lowercase}">{display}&gt;{source}</span>&nbsp;',
+                        '<b>{keyword}</b>&nbsp; {synonyms}',
+                    '</p>',
+                '</div>',
+            '</tpl>'
+        );
+      }
     var search = new Ext.form.ComboBox({
         store: ds,
         displayField:'title',
@@ -819,69 +789,69 @@ function showPathwaySearchBox(selectedListEltName, pathwayAndIdEltName, searchIn
         onSelect: function(record){ // override default onSelect to do redirect
              var sp=Ext.get(searchInputEltName);
              if (GLOBAL.searchType==='native'){
-	             sp.dom.value=record.data.name;
-	             GLOBAL.CurrentPathway = record.data.uid;
-    		}else {
-	             var selectedGeneStr = record.data.display + '> ' + record.data.keyword;
-	             var selectedListElt = Ext.get(selectedListEltName);
-	             var selectedListText = selectedListElt.dom.value;
-	             if (selectedListText && selectedListText.length != 0) {
-	            	 selectedListText = selectedListText + ", " + selectedGeneStr;
-	             }
-	             else {
-	            	 selectedListText = selectedGeneStr;
-	             }
-	             selectedListElt.dom.value = selectedListText;
-	             // Set the cursor at the end of the text
-	             if (selectedListElt.createTextRange) {
-	            	 var rnage = selectedListElt.createTextRange();
-	            	 range.move("character", selectedListText.length);
-	            	 range.select();
-	             }
-	             else if (selectedListElt.selectionStart) {
-	            	 selectedListElt.focus();
-	            	 selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
-	             }
-	             
-	             //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
-	             var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
-	             var geneAndIdElt = Ext.get(pathwayAndIdEltName);
-	             var geneAndIdListText = geneAndIdElt.dom.value;
-	             if (geneAndIdListText && geneAndIdListText.length != 0) {
-	            	 geneAndIdListText = geneAndIdListText + "|||" + geneAndIdStr;
-	             }
-	             else {
-	            	 geneAndIdListText = geneAndIdStr;
-	             }
-	             geneAndIdElt.dom.value = geneAndIdListText;
-	             sp.dom.value="";	// Empty the search term input field, ready for user to type in next term.
-    		}
+                 sp.dom.value=record.data.name;
+                 GLOBAL.CurrentPathway = record.data.uid;
+            }else {
+                 var selectedGeneStr = record.data.display + '> ' + record.data.keyword;
+                 var selectedListElt = Ext.get(selectedListEltName);
+                 var selectedListText = selectedListElt.dom.value;
+                 if (selectedListText && selectedListText.length != 0) {
+                     selectedListText = selectedListText + ", " + selectedGeneStr;
+                 }
+                 else {
+                     selectedListText = selectedGeneStr;
+                 }
+                 selectedListElt.dom.value = selectedListText;
+                 // Set the cursor at the end of the text
+                 if (selectedListElt.createTextRange) {
+                     var rnage = selectedListElt.createTextRange();
+                     range.move("character", selectedListText.length);
+                     range.select();
+                 }
+                 else if (selectedListElt.selectionStart) {
+                     selectedListElt.focus();
+                     selectedListElt.setSelectionRange(selectedListText.length, selectedListText.length);
+                 }
+                 
+                 //Put the gene display || transmart search_keywork id in selectedGenesAndIdSNPViewer hidden field, separated by |||
+                 var geneAndIdStr = selectedGeneStr + '||' + record.data.id;
+                 var geneAndIdElt = Ext.get(pathwayAndIdEltName);
+                 var geneAndIdListText = geneAndIdElt.dom.value;
+                 if (geneAndIdListText && geneAndIdListText.length != 0) {
+                     geneAndIdListText = geneAndIdListText + "|||" + geneAndIdStr;
+                 }
+                 else {
+                     geneAndIdListText = geneAndIdStr;
+                 }
+                 geneAndIdElt.dom.value = geneAndIdListText;
+                 sp.dom.value="";    // Empty the search term input field, ready for user to type in next term.
+            }
              search.collapse();
         }
     });
     search.on('focus', function(){
-    								var sp=Ext.get(searchInputEltName);
-    								sp.dom.value="";	
-    								}, this);
+                                    var sp=Ext.get(searchInputEltName);
+                                    sp.dom.value="";    
+                                    }, this);
 }
 
 function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
-	var ds =new Ext.data.Store({
-		proxy: new Ext.data.ScriptTagProxy({
-			url: ajaxurl}),
-		reader: new Ext.data.JsonReader({
-			root: 'rows',
-			id: 'name'
-			},[
-				{name: 'uid'},
-				{name: 'source'},
-				{name: 'name'},
-				{name: 'type'}
-		   	]
-		)
-	});
-	
-	// Custom rendering Template
+    var ds =new Ext.data.Store({
+        proxy: new Ext.data.ScriptTagProxy({
+            url: ajaxurl}),
+        reader: new Ext.data.JsonReader({
+            root: 'rows',
+            id: 'name'
+            },[
+                {name: 'uid'},
+                {name: 'source'},
+                {name: 'name'},
+                {name: 'type'}
+               ]
+        )
+    });
+    
+    // Custom rendering Template
     var resultTpl = new Ext.XTemplate(
         '<tpl for="."><div class="search-item">',
             '<p width="430px" style="font: 11px verdana, arial, helvetica, sans-serif;"><span>{source}></span>&nbsp;<b>{name}</b></p>',
@@ -890,21 +860,21 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
     
     // add selector for k
 
-	GLOBAL.nClusters = 2;
-	var nclusters = new Ext.form.NumberField({
-		allowDecimals: false,
-		allowNegative: false,
-		minValue: 1,
-		maxValue: 100,
-		name: "Number of clusters",
-		value: 2,
-		applyTo: 'nClustersRBM'
-	});
-	nclusters.on('change', 
-			function(r) {
-		GLOBAL.nClusters = r.getValue();
-	});
-	nclusters.show();
+    GLOBAL.nClusters = 2;
+    var nclusters = new Ext.form.NumberField({
+        allowDecimals: false,
+        allowNegative: false,
+        minValue: 1,
+        maxValue: 100,
+        name: "Number of clusters",
+        value: 2,
+        applyTo: 'nClustersRBM'
+    });
+    nclusters.on('change', 
+            function(r) {
+        GLOBAL.nClusters = r.getValue();
+    });
+    nclusters.show();
     
     var search = new Ext.form.ComboBox({
         store: ds,
@@ -926,76 +896,76 @@ function createPathwaySearchBoxRBM(ajaxurl, boxwidth){
              var sp=Ext.get("searchPathwayRBM");
              sp.dom.value=record.data.name;
              GLOBAL.CurrentPathway=record.data.uid;
-             search.collapse();         	
+             search.collapse();             
         }
     });
-    search.on('focus', function()	{
-    	var sp=Ext.get("searchPathwayRBM");
-    	sp.dom.value="";	
+    search.on('focus', function()    {
+        var sp=Ext.get("searchPathwayRBM");
+        sp.dom.value="";    
     }, this);
     return search;
 }
 
 function createPlatformSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix = 'platforms';
-	var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-		ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'platform'
-				},[
-					{name: 'platform'},
-					{name: 'platformLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 1, TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
+    var applyToDivIdPrefix = 'platforms';
+    var applyToDivId = applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+        ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'platform'
+                },[
+                    {name: 'platform'},
+                    {name: 'platformLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 1, TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
 
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{platformLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	var onSelectFn=function(record)
-	{
-		var sp=Ext.get(applyToDivId);
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{platformLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+    var onSelectFn=function(record)
+    {
+        var sp=Ext.get(applyToDivId);
         sp.dom.value=record.data.platformLabel;
         GLOBAL.CurrentPlatforms[subsetId-1]=record.data.platform;
         
-	    var fields=['gpl'+applyToDivIdx, 'sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx, 'rbmpanel'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentGpls, GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints, GLOBAL.CurrentRbmpanels];
-	    
+        var fields=['gpl'+applyToDivIdx, 'sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx, 'rbmpanel'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentGpls, GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints, GLOBAL.CurrentRbmpanels];
+        
         clearSelectionsOnSelect(fields, globalValues, applyToDivIdx);
         
-		var ele=Ext.get('divsample'+applyToDivIdx);
-		var eleGpl=Ext.get('divgpl'+applyToDivIdx);
-		var eleTissue=Ext.get('divtissue'+applyToDivIdx);
-		var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
+        var ele=Ext.get('divsample'+applyToDivIdx);
+        var eleGpl=Ext.get('divgpl'+applyToDivIdx);
+        var eleTissue=Ext.get('divtissue'+applyToDivIdx);
+        var eleRbmpanel=Ext.get('divrbmpanel'+applyToDivIdx);
 
         toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[applyToDivIdx-1]);
 
-		toggleDataAssociationFields();
-		
-		this.collapse();
-		
-		if (!((!GLOBAL.CurrentPlatforms[0]) || (!GLOBAL.CurrentPlatforms[1]) || (GLOBAL.CurrentPlatforms[0]==GLOBAL.CurrentPlatforms[1]))){
-			alert('Platforms do not match');
-		}
-	};
-	GLOBAL.CurrentPlatforms[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[subsetId-1]);
+        toggleDataAssociationFields();
+        
+        this.collapse();
+        
+        if (!((!GLOBAL.CurrentPlatforms[0]) || (!GLOBAL.CurrentPlatforms[1]) || (GLOBAL.CurrentPlatforms[0]==GLOBAL.CurrentPlatforms[1]))){
+            alert('Platforms do not match');
+        }
+    };
+    GLOBAL.CurrentPlatforms[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'platform', GLOBAL.DefaultCohortInfo.defaultPlatformLabels[subsetId-1]);
 }
 
 /**
@@ -1009,79 +979,79 @@ function createPlatformSearchBox(subsetId, applyToDivIdx){
  * @return
  */
 function createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, globalArray, fields, globalValues){
-	//This is the function that gets created on select.
-	var onSelectFn = function(record)
-	{
-		//Form the name of the div.
-		var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-		
-		//Get the div object.
-		var sp=Ext.get(applyToDivId);
-		
-		//This is an array of values.
-		var completeSelection = globalArray[subsetId-1];
-		
-		//This is the divs current value.
-		var completeDisplaySelection = sp.dom.value;
-		
-		//This is the record we selected (Value).
-		var selectedValue = record.data[applyToDivIdPrefix];
-		
-		//This is the display value of the selected item.
-		var selectedDisplayValue = record.data[applyToDivIdPrefix+'Label'];
-			
-		//If we selected an item that isn't already in the global list, add it. Otherwise we remove that item.
-		if (completeSelection.indexOf(selectedValue)==-1)
-		{
-			//Mark the item as selected or not using the background color.
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++)
-			{
-			  	if (this.store.data.items[i].id==selectedValue)
-			  	{
-			       	this.innerList.dom.childNodes[i].style.background='#DFE8F6';
-			       	break;
-			    }
-			}
-			
-			//As we select items we add them to the value/display strings.
-	    	if (completeSelection=='')
-	    	{
-	    		completeSelection=selectedValue;
-	    		completeDisplaySelection=selectedDisplayValue;
-	    	}else{
-	    		completeSelection=completeSelection+','+selectedValue;
-	    		completeDisplaySelection=completeDisplaySelection+','+selectedDisplayValue;
-	    	}
-	    	
-		}else{
-			
-			//Remove the item if we are deselecting it.
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++){
-			  	if (this.store.data.items[i].id==selectedValue){
-			       	this.innerList.dom.childNodes[i].style.background='00000';
-			       	break;
-			       }
-			}
-			
-			if(completeSelection.indexOf(selectedValue+',')>-1){
-				completeSelection=completeSelection.replace(selectedValue+',','');
-				completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue+',','');
-			}else if(completeSelection.indexOf(','+selectedValue)>-1){
-				completeSelection=completeSelection.replace(','+selectedValue,'');
-				completeDisplaySelection=completeDisplaySelection.replace(','+selectedDisplayValue,'');
-			}else{
-				completeSelection=completeSelection.replace(selectedValue,'');
-				completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue,'');
-			}
-			
-		}
-		
-		sp.dom.value=completeDisplaySelection;
-		globalArray[subsetId-1]=completeSelection;		
-		
-		clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx);
-	};
-	return onSelectFn;
+    //This is the function that gets created on select.
+    var onSelectFn = function(record)
+    {
+        //Form the name of the div.
+        var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+        
+        //Get the div object.
+        var sp=Ext.get(applyToDivId);
+        
+        //This is an array of values.
+        var completeSelection = globalArray[subsetId-1];
+        
+        //This is the divs current value.
+        var completeDisplaySelection = sp.dom.value;
+        
+        //This is the record we selected (Value).
+        var selectedValue = record.data[applyToDivIdPrefix];
+        
+        //This is the display value of the selected item.
+        var selectedDisplayValue = record.data[applyToDivIdPrefix+'Label'];
+            
+        //If we selected an item that isn't already in the global list, add it. Otherwise we remove that item.
+        if (completeSelection.indexOf(selectedValue)==-1)
+        {
+            //Mark the item as selected or not using the background color.
+            for (var i=0;i<this.innerList.dom.childNodes.length; i++)
+            {
+                  if (this.store.data.items[i].id==selectedValue)
+                  {
+                       this.innerList.dom.childNodes[i].style.background='#DFE8F6';
+                       break;
+                }
+            }
+            
+            //As we select items we add them to the value/display strings.
+            if (completeSelection=='')
+            {
+                completeSelection=selectedValue;
+                completeDisplaySelection=selectedDisplayValue;
+            }else{
+                completeSelection=completeSelection+','+selectedValue;
+                completeDisplaySelection=completeDisplaySelection+','+selectedDisplayValue;
+            }
+            
+        }else{
+            
+            //Remove the item if we are deselecting it.
+            for (var i=0;i<this.innerList.dom.childNodes.length; i++){
+                  if (this.store.data.items[i].id==selectedValue){
+                       this.innerList.dom.childNodes[i].style.background='00000';
+                       break;
+                   }
+            }
+            
+            if(completeSelection.indexOf(selectedValue+',')>-1){
+                completeSelection=completeSelection.replace(selectedValue+',','');
+                completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue+',','');
+            }else if(completeSelection.indexOf(','+selectedValue)>-1){
+                completeSelection=completeSelection.replace(','+selectedValue,'');
+                completeDisplaySelection=completeDisplaySelection.replace(','+selectedDisplayValue,'');
+            }else{
+                completeSelection=completeSelection.replace(selectedValue,'');
+                completeDisplaySelection=completeDisplaySelection.replace(selectedDisplayValue,'');
+            }
+            
+        }
+        
+        sp.dom.value=completeDisplaySelection;
+        globalArray[subsetId-1]=completeSelection;        
+        
+        clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx);
+    };
+    return onSelectFn;
 }
 
 /**
@@ -1092,11 +1062,11 @@ function createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, glob
  * @return
  */
 function clearSelectionsOnSelect(fields, globalValues, subsetId, applyToDivIdx){
-	for (var i=0;i<fields.length;i++){
-	    sp=Ext.get(fields[i]);
-	    sp.dom.value='ALL';
-	    globalValues[i][subsetId-1]='';
-	}
+    for (var i=0;i<fields.length;i++){
+        sp=Ext.get(fields[i]);
+        sp.dom.value='ALL';
+        globalValues[i][subsetId-1]='';
+    }
 }
 
 /**
@@ -1121,270 +1091,270 @@ function hideWhenRBM(applyToDivId, subsetId)
  * @return
  */
 function hideWhenNotRBM(applyToDivId, subsetId){
-	if(!isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])){
-		var ele=Ext.get('div'+applyToDivId);
-		ele.dom.style.display='none';
-	}
+    if(!isRBMPlatform(GLOBAL.CurrentPlatforms[subsetId-1])){
+        var ele=Ext.get('div'+applyToDivId);
+        ele.dom.style.display='none';
+    }
 }
 
 function createGplSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='gpl';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'gpl'
-				},[
-					{name: 'gpl'},
-					{name: 'gplLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 5, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{gplLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentGpls, fields, globalValues);
-	    
-		GLOBAL.CurrentGpls[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultGpls[applyToDivIdx-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
-	    
-	   	//Display this select box only if Platform is MRNA or unselected.
-	    hideWhenRBM(applyToDivId, subsetId);
+    var applyToDivIdPrefix='gpl';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'gpl'
+                },[
+                    {name: 'gpl'},
+                    {name: 'gplLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 5, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{gplLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['sample'+applyToDivIdx, 'tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentSamples, GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentGpls, fields, globalValues);
+        
+        GLOBAL.CurrentGpls[applyToDivIdx-1]=GLOBAL.DefaultCohortInfo.defaultGpls[applyToDivIdx-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'gpl', GLOBAL.DefaultCohortInfo.defaultGplLabels[subsetId-1]);
+        
+           //Display this select box only if Platform is MRNA or unselected.
+        hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createRbmPanelSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='rbmpanel';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'rbmpanel'
-				},[
-					{name: 'rbmpanel'},
-					{name: 'rbmpanelLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 7, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{rbmpanelLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentRbmpanels, fields, globalValues);
-	    
-		GLOBAL.CurrentRbmpanels[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
+    var applyToDivIdPrefix='rbmpanel';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'rbmpanel'
+                },[
+                    {name: 'rbmpanel'},
+                    {name: 'rbmpanelLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 7, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{rbmpanelLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentRbmpanels, fields, globalValues);
+        
+        GLOBAL.CurrentRbmpanels[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'rbmpanel', GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[subsetId-1]);
 
-	   	//Display this select box only if Platform is RBM.
-	    hideWhenNotRBM(applyToDivId, subsetId);
+           //Display this select box only if Platform is RBM.
+        hideWhenNotRBM(applyToDivId, subsetId);
 }
 
 function createTimePointsSearchBox(subsetId, applyToDivIdx){
-	
-	var applyToDivIdPrefix='timepoint';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'timepoint'
-				},[
-					{name: 'timepoint'},
-					{name: 'timepointLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 3, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1],
-            		SAMPLES: GLOBAL.CurrentSamples[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TISSUE: GLOBAL.CurrentTissues[subsetId-1], RBMPANEL: GLOBAL.CurrentRbmpanels[subsetId-1]};
-       			}
-			}
-		});
-		
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{timepointLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=[];
-	    var globalValues=[];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTimepoints, fields, globalValues);
-	    
-		GLOBAL.CurrentTimepoints[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'timepoint', GLOBAL.DefaultCohortInfo.defaultTimepointLabels[subsetId-1]);
+    
+    var applyToDivIdPrefix='timepoint';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'timepoint'
+                },[
+                    {name: 'timepoint'},
+                    {name: 'timepointLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 3, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1],
+                    SAMPLES: GLOBAL.CurrentSamples[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TISSUE: GLOBAL.CurrentTissues[subsetId-1], RBMPANEL: GLOBAL.CurrentRbmpanels[subsetId-1]};
+                   }
+            }
+        });
+        
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{timepointLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=[];
+        var globalValues=[];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTimepoints, fields, globalValues);
+        
+        GLOBAL.CurrentTimepoints[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'timepoint', GLOBAL.DefaultCohortInfo.defaultTimepointLabels[subsetId-1]);
 }
 
 function createSamplesSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='sample';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'sample'
-				},[
-					{name: 'sample'},
-					{name: 'sampleLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 4, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{sampleLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentSamples, fields, globalValues);
-		
-		GLOBAL.CurrentSamples[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultSamples[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
-	    
-	   	//Display this select box only if Platform is MRNA or unselected.
-	    hideWhenRBM(applyToDivId, subsetId);
+    var applyToDivIdPrefix='sample';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'sample'
+                },[
+                    {name: 'sample'},
+                    {name: 'sampleLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 4, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{sampleLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['tissue'+applyToDivIdx, 'timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentTissues, GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentSamples, fields, globalValues);
+        
+        GLOBAL.CurrentSamples[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultSamples[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'sample', GLOBAL.DefaultCohortInfo.defaultSampleLabels[subsetId-1]);
+        
+           //Display this select box only if Platform is MRNA or unselected.
+        hideWhenRBM(applyToDivId, subsetId);
 }
 
 function createTissueSearchBox(subsetId, applyToDivIdx){
-	var applyToDivIdPrefix='tissue';
-	var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
-	var ajaxurl;
-	var ds;
-	var resultTpl;
-	  	ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
-  		ds =new Ext.data.Store({
-			proxy: new Ext.data.ScriptTagProxy({
-				url: ajaxurl}),
-			reader: new Ext.data.JsonReader({
-				root: 'rows',
-				id: 'tissue'
-				},[
-					{name: 'tissue'},
-					{name: 'tissueLabel'}
-			   	]
-			),
-			listeners : {
-        		beforeLoad : function(search) {
-            		search.baseParams = {INFO_TYPE: 6, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], 
-            				SAMPLE: GLOBAL.CurrentSamples[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
-       			}
-			}
-		});
-		// Custom rendering Template
-	    resultTpl = new Ext.XTemplate(
-	        '<tpl for="."><div class="search-item">',
-	            '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{tissueLabel}</b></p>',
-	        '</div></tpl>'
-	    );
-	    
-	    //create onSelect handlers.
-	    var fields=['timepoint'+applyToDivIdx];
-	    var globalValues=[GLOBAL.CurrentTimepoints];
-	    var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTissues, fields, globalValues);
-	    
-		GLOBAL.CurrentTissues[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTissues[subsetId-1];
-	    createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
-	    
-	   	//Display this select box only if Platform is MRNA or unselected.
-	    hideWhenRBM(applyToDivId, subsetId);
+    var applyToDivIdPrefix='tissue';
+    var applyToDivId=applyToDivIdPrefix + applyToDivIdx;
+    var ajaxurl;
+    var ds;
+    var resultTpl;
+          ajaxurl=pageInfo.basePath+'/analysis/getCohortInformation';  
+          ds =new Ext.data.Store({
+            proxy: new Ext.data.ScriptTagProxy({
+                url: ajaxurl}),
+            reader: new Ext.data.JsonReader({
+                root: 'rows',
+                id: 'tissue'
+                },[
+                    {name: 'tissue'},
+                    {name: 'tissueLabel'}
+                   ]
+            ),
+            listeners : {
+                beforeLoad : function(search) {
+                    search.baseParams = {INFO_TYPE: 6, PLATFORM : GLOBAL.CurrentPlatforms[subsetId-1], GPL: GLOBAL.CurrentGpls[subsetId-1], 
+                            SAMPLE: GLOBAL.CurrentSamples[subsetId-1], TRIAL : GLOBAL.DefaultCohortInfo.trials[subsetId-1]};
+                   }
+            }
+        });
+        // Custom rendering Template
+        resultTpl = new Ext.XTemplate(
+            '<tpl for="."><div class="search-item">',
+                '<p style="font: 11px verdana, arial, helvetica, sans-serif; width: 130px"><b>{tissueLabel}</b></p>',
+            '</div></tpl>'
+        );
+        
+        //create onSelect handlers.
+        var fields=['timepoint'+applyToDivIdx];
+        var globalValues=[GLOBAL.CurrentTimepoints];
+        var onSelectFn = createOnMultiSelectFn(subsetId, applyToDivIdPrefix, applyToDivIdx, GLOBAL.CurrentTissues, fields, globalValues);
+        
+        GLOBAL.CurrentTissues[subsetId-1]=GLOBAL.DefaultCohortInfo.defaultTissues[subsetId-1];
+        createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, 200, 'remote', onSelectFn, 'tissue', GLOBAL.DefaultCohortInfo.defaultTissueLabels[subsetId-1]);
+        
+           //Display this select box only if Platform is MRNA or unselected.
+        hideWhenRBM(applyToDivId, subsetId);
 }
 
 Ext.ux.TransmartComboBox = Ext.extend(Ext.form.ComboBox, {
-	onLoad:function(){
-		Ext.ux.TransmartComboBox.superclass.onLoad.call(this);
-	    var completeSelection ='';
-	    if(this.name.indexOf('timepoint')>-1){
-	    	completeSelection=GLOBAL.CurrentTimepoints[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('platform')>-1){
-	    	completeSelection=GLOBAL.CurrentPlatforms[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('sample')>-1){
-	    	completeSelection=GLOBAL.CurrentSamples[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('gpl')>-1){
-	    	completeSelection=GLOBAL.CurrentGpls[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('tissue')>-1){
-	    	completeSelection=GLOBAL.CurrentTissues[this.name.substring(this.name.length-1)-1];
-	    }else if(this.name.indexOf('rbmpanel')>-1){
-	    	completeSelection=GLOBAL.CurrentRbmpanels[this.name.substring(this.name.length-1)-1];
-	    }
-	    if(completeSelection && (completeSelection!='')){
-	    	var selectionsArray = completeSelection.split(',');
-			for (var i=0;i<this.innerList.dom.childNodes.length; i++){
-				for(var j=0;j<selectionsArray.length; j++){
-				  	if (this.store.data.items[i].id==selectionsArray[j]){
-				       	this.innerList.dom.childNodes[i].style.background='#DFE8F6';
-				       	break;
-				    }else{
-				       	this.innerList.dom.childNodes[i].style.background='00000';
-				    }
-				}
-			}
-	    }
-	}
+    onLoad:function(){
+        Ext.ux.TransmartComboBox.superclass.onLoad.call(this);
+        var completeSelection ='';
+        if(this.name.indexOf('timepoint')>-1){
+            completeSelection=GLOBAL.CurrentTimepoints[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('platform')>-1){
+            completeSelection=GLOBAL.CurrentPlatforms[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('sample')>-1){
+            completeSelection=GLOBAL.CurrentSamples[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('gpl')>-1){
+            completeSelection=GLOBAL.CurrentGpls[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('tissue')>-1){
+            completeSelection=GLOBAL.CurrentTissues[this.name.substring(this.name.length-1)-1];
+        }else if(this.name.indexOf('rbmpanel')>-1){
+            completeSelection=GLOBAL.CurrentRbmpanels[this.name.substring(this.name.length-1)-1];
+        }
+        if(completeSelection && (completeSelection!='')){
+            var selectionsArray = completeSelection.split(',');
+            for (var i=0;i<this.innerList.dom.childNodes.length; i++){
+                for(var j=0;j<selectionsArray.length; j++){
+                      if (this.store.data.items[i].id==selectionsArray[j]){
+                           this.innerList.dom.childNodes[i].style.background='#DFE8F6';
+                           break;
+                    }else{
+                           this.innerList.dom.childNodes[i].style.background='00000';
+                    }
+                }
+            }
+        }
+    }
 });
 Ext.reg("transmartcombobox", Ext.ux.TransmartComboBox);
 
 
 function createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds, resultTpl, boxwidth, mode_in, onSelectFn, displayField_in, value_in){
-	
-		if(!value_in || value_in=="") value_in = "ALL";
-	
-	    var search = new Ext.ux.TransmartComboBox({
+    
+        if(!value_in || value_in=="") value_in = "ALL";
+    
+        var search = new Ext.ux.TransmartComboBox({
         store: ds,
         displayField:displayField_in,
         typeAhead: true,
@@ -1405,256 +1375,256 @@ function createGenericSearchBox(applyToDivIdPrefix, subsetId, applyToDivIdx, ds,
         editable: false,
         value: value_in,
         listeners: {
-        	beforequery: function(qe){
-            	delete qe.combo.lastQuery;
-        	}
+            beforequery: function(qe){
+                delete qe.combo.lastQuery;
+            }
         }
     });
 }
 
 function AlertSpecialKey(event, field){
-	//alert(event.getKey());
-	var key=event.getKey();
-	if(key=='13' ||  key=='undefined')
-		{
-		event.stopPropagation();
-		return false;
-		}
-		return true;
-	}
-	
+    //alert(event.getKey());
+    var key=event.getKey();
+    if(key=='13' ||  key=='undefined')
+        {
+        event.stopPropagation();
+        return false;
+        }
+        return true;
+    }
+    
 function showCompareStepPathwaySelection()
 {
-	if(!this.compareStepPathwaySelection)
-	{
-		compareStepPathwaySelection = new Ext.Window({
+    if(!this.compareStepPathwaySelection)
+    {
+        compareStepPathwaySelection = new Ext.Window({
                 id: 'compareStepPathwaySelectionWindow',
                 title: 'Compare Subsets-Pathway Selection',
-            	layout:'fit',
+                layout:'fit',
                 width:450,
-                // height:250,
-                autoHeight: true,
+                height:370,
+                //autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
                 //autoScroll: true,
                 buttons: [
-                		{
+                        {
                             id: 'compareStepPathwaySelectionOKButton',
                             text: 'Run Workflow',
                             handler: function(){       
-                            	
-                            	//If we come from the sample side we handle the code a little different.
-				   				if(GLOBAL.Explorer == "SAMPLE")
-			   					{
-				   					finalAdvancedMenuValidationSample();
-				   					return;
-			   					}
-				   				finalAdvancedMenuValidation();
+                                
+                                //If we come from the sample side we handle the code a little different.
+                                   if(GLOBAL.Explorer == "SAMPLE")
+                                   {
+                                       finalAdvancedMenuValidationSample();
+                                       return;
+                                   }
+                                   finalAdvancedMenuValidation();
 
                             }
                         },
-                		{
+                        {
                             id: 'dataAssociationApplyButton',
                             text: 'Apply Selections',
                             handler: function(){       
-			   					applyToForm();
-			   					return;
-			   				}
+                                   applyToForm();
+                                   return;
+                               }
                         },
                         {
                             text: 'Cancel',
                             handler: function() {
-                            	compareStepPathwaySelection.hide();
+                                compareStepPathwaySelection.hide();
                             }
                          }],
-	            resizable: false,
-	            autoLoad:
-	            {
-	            	url: pageInfo.basePath+'/panels/compareStepPathwaySelection.html',
-	            	scripts: true,
-	               	nocache:true, 
-	               	discardUrl:true,
-	               	method:'POST',
-	               	callback: toggleDataAssociationFields
-	            },
-		        tools:[{
-					id:'help',
-					qtip:'Click for context sensitive help',
-				    handler: function(event, toolEl, panel){
-				    	D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
-				    }
-		        }]
+                resizable: false,
+                autoLoad:
+                {
+                    url: pageInfo.basePath+'/panels/compareStepPathwaySelection.html',
+                    scripts: true,
+                       nocache:true, 
+                       discardUrl:true,
+                       method:'POST',
+                       callback: toggleDataAssociationFields
+                },
+                tools:[{
+                    id:'help',
+                    qtip:'Click for context sensitive help',
+                    handler: function(event, toolEl, panel){
+                        D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    }
+                }]
             });
         }else{
-        	resetCohortInfoValues();
-        	toggleDataAssociationFields();
+            resetCohortInfoValues();
+            toggleDataAssociationFields();
         }
 
-		compareStepPathwaySelection.show(viewport); 
+        compareStepPathwaySelection.show(viewport); 
 
-		// toggle display of "k" selector for k-means clustering
-		if (document.getElementById("divnclusters") != null) {
-			if (GLOBAL.HeatmapType == 'KMeans') {
-				document.getElementById("divnclusters").style.display = "";
-			} else {
-				document.getElementById("divnclusters").style.display = "none";
-			}
-		} else if (document.getElementById("divnclusters1") != null) {
-			if (GLOBAL.HeatmapType == 'KMeans') {
-				document.getElementById("divnclusters1").style.display = "";
-			} else {
-				document.getElementById("divnclusters1").style.display = "none";
-			}
-		}
-		
-		// toggle display of Gene/Pathway selector
-		if (document.getElementById("divpathway") != null) {
-			if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') 
-			{
-				//Clear the pathway variable so we don't submit a value.
-				GLOBAL.CurrentPathway = '';
-				
-				//Hide the pathway box.
-				document.getElementById("divpathway").style.display = "none";
-			} else {
-				document.getElementById("divpathway").style.display = "";
-			}
-		} else if (document.getElementById("divpathway1") != null) {
-			if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
-				document.getElementById("divpathway1").style.display = "none";
-			} else {
-				document.getElementById("divpathway1").style.display = "";
-			}
-		}
+        // toggle display of "k" selector for k-means clustering
+        if (document.getElementById("divnclusters") != null) {
+            if (GLOBAL.HeatmapType == 'KMeans') {
+                document.getElementById("divnclusters").style.display = "";
+            } else {
+                document.getElementById("divnclusters").style.display = "none";
+            }
+        } else if (document.getElementById("divnclusters1") != null) {
+            if (GLOBAL.HeatmapType == 'KMeans') {
+                document.getElementById("divnclusters1").style.display = "";
+            } else {
+                document.getElementById("divnclusters1").style.display = "none";
+            }
+        }
+        
+        // toggle display of Gene/Pathway selector
+        if (document.getElementById("divpathway") != null) {
+            if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') 
+            {
+                //Clear the pathway variable so we don't submit a value.
+                GLOBAL.CurrentPathway = '';
+                
+                //Hide the pathway box.
+                document.getElementById("divpathway").style.display = "none";
+            } else {
+                document.getElementById("divpathway").style.display = "";
+            }
+        } else if (document.getElementById("divpathway1") != null) {
+            if (GLOBAL.HeatmapType == 'Select' || GLOBAL.HeatmapType=='PCA') {
+                document.getElementById("divpathway1").style.display = "none";
+            } else {
+                document.getElementById("divpathway1").style.display = "";
+            }
+        }
 }
 
 //this function has been modified to accomodate the fields in the new panel for data-export
 //There should be a better way of doing this instead of adding code for new fields like below ... what if there are new panels with similar fields :( 
 function resetCohortInfoValues(){
-	if (Ext.get('platforms1') && Ext.get('platforms2')) { 
-		Ext.get('platforms1').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
-		Ext.get('platforms2').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
-	} else if (Ext.get('platforms3') && Ext.get('platforms4')) { 
-		Ext.get('platforms3').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
-		Ext.get('platforms4').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
-	}
-	GLOBAL.CurrentPlatforms[0]=GLOBAL.DefaultCohortInfo.defaultPlatforms[0];
-	GLOBAL.CurrentPlatforms[1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[1];
+    if (Ext.get('platforms1') && Ext.get('platforms2')) { 
+        Ext.get('platforms1').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
+        Ext.get('platforms2').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+    } else if (Ext.get('platforms3') && Ext.get('platforms4')) { 
+        Ext.get('platforms3').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[0] || GLOBAL.DefaultCohortInfo.defaultPlatforms[0] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[0]);
+        Ext.get('platforms4').dom.value=(!GLOBAL.DefaultCohortInfo.defaultPlatforms[1] || GLOBAL.DefaultCohortInfo.defaultPlatforms[1] == "" ? 'ALL' :GLOBAL.DefaultCohortInfo.defaultPlatformLabels[1]);
+    }
+    GLOBAL.CurrentPlatforms[0]=GLOBAL.DefaultCohortInfo.defaultPlatforms[0];
+    GLOBAL.CurrentPlatforms[1]=GLOBAL.DefaultCohortInfo.defaultPlatforms[1];
 
-	if (Ext.get('timepoint1') && Ext.get('timepoint2')) {
-		Ext.get('timepoint1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
-		Ext.get('timepoint2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
-	} else if (Ext.get('timepoint3') && Ext.get('timepoint4')) {
-		Ext.get('timepoint3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
-		Ext.get('timepoint4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
-	}
-	GLOBAL.CurrentTimepoints[0]=GLOBAL.DefaultCohortInfo.defaultTimepoints[0];
-	GLOBAL.CurrentTimepoints[1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[1];
-	
-	if (Ext.get('sample1') && Ext.get('sample2')) {
-		Ext.get('sample1').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
-		Ext.get('sample2').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
-	} else if (Ext.get('sample3') && Ext.get('sample4')) {
-		Ext.get('sample3').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
-		Ext.get('sample4').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
-	}
-	GLOBAL.CurrentSamples[0]=GLOBAL.DefaultCohortInfo.defaultSamples[0];
-	GLOBAL.CurrentSamples[1]=GLOBAL.DefaultCohortInfo.defaultSamples[1];
-	
-	if (Ext.get('gpl1') && Ext.get('gpl2')) {
-		Ext.get('gpl1').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
-		Ext.get('gpl2').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
-	} else if (Ext.get('gpl3') && Ext.get('gpl4')) {
-		Ext.get('gpl3').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
-		Ext.get('gpl4').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
-	}
-	GLOBAL.CurrentGpls[0]=GLOBAL.DefaultCohortInfo.defaultGpls[0];
-	GLOBAL.CurrentGpls[1]=GLOBAL.DefaultCohortInfo.defaultGpls[1];
-	
-	if (Ext.get('tissue1') && Ext.get('tissue2')) {
-		Ext.get('tissue1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
-		Ext.get('tissue2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
-	} else if (Ext.get('tissue3') && Ext.get('tissue4')) {
-		Ext.get('tissue3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
-		Ext.get('tissue4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
-	}
-	GLOBAL.CurrentTissues[0]=GLOBAL.DefaultCohortInfo.defaultTissues[0];
-	GLOBAL.CurrentTissues[1]=GLOBAL.DefaultCohortInfo.defaultTissues[1];
-	
-	if (Ext.get('rbmpanel1') && Ext.get('rbmpanel2')) {
-		Ext.get('rbmpanel1').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
-		Ext.get('rbmpanel2').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
-	} else if (Ext.get('rbmpanel3') && Ext.get('rbmpanel4')) {
-		Ext.get('rbmpanel3').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
-		Ext.get('rbmpanel4').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
-	}
-	GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
-	GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
+    if (Ext.get('timepoint1') && Ext.get('timepoint2')) {
+        Ext.get('timepoint1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
+        Ext.get('timepoint2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+    } else if (Ext.get('timepoint3') && Ext.get('timepoint4')) {
+        Ext.get('timepoint3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[0]);
+        Ext.get('timepoint4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTimepointLabels[1]);
+    }
+    GLOBAL.CurrentTimepoints[0]=GLOBAL.DefaultCohortInfo.defaultTimepoints[0];
+    GLOBAL.CurrentTimepoints[1]=GLOBAL.DefaultCohortInfo.defaultTimepoints[1];
+    
+    if (Ext.get('sample1') && Ext.get('sample2')) {
+        Ext.get('sample1').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
+        Ext.get('sample2').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+    } else if (Ext.get('sample3') && Ext.get('sample4')) {
+        Ext.get('sample3').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[0]);
+        Ext.get('sample4').dom.value=(GLOBAL.DefaultCohortInfo.defaultSampleLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultSampleLabels[1]);
+    }
+    GLOBAL.CurrentSamples[0]=GLOBAL.DefaultCohortInfo.defaultSamples[0];
+    GLOBAL.CurrentSamples[1]=GLOBAL.DefaultCohortInfo.defaultSamples[1];
+    
+    if (Ext.get('gpl1') && Ext.get('gpl2')) {
+        Ext.get('gpl1').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
+        Ext.get('gpl2').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+    } else if (Ext.get('gpl3') && Ext.get('gpl4')) {
+        Ext.get('gpl3').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[0]);
+        Ext.get('gpl4').dom.value=(GLOBAL.DefaultCohortInfo.defaultGplLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultGplLabels[1]);
+    }
+    GLOBAL.CurrentGpls[0]=GLOBAL.DefaultCohortInfo.defaultGpls[0];
+    GLOBAL.CurrentGpls[1]=GLOBAL.DefaultCohortInfo.defaultGpls[1];
+    
+    if (Ext.get('tissue1') && Ext.get('tissue2')) {
+        Ext.get('tissue1').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
+        Ext.get('tissue2').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+    } else if (Ext.get('tissue3') && Ext.get('tissue4')) {
+        Ext.get('tissue3').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[0]);
+        Ext.get('tissue4').dom.value=(GLOBAL.DefaultCohortInfo.defaultTissueLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultTissueLabels[1]);
+    }
+    GLOBAL.CurrentTissues[0]=GLOBAL.DefaultCohortInfo.defaultTissues[0];
+    GLOBAL.CurrentTissues[1]=GLOBAL.DefaultCohortInfo.defaultTissues[1];
+    
+    if (Ext.get('rbmpanel1') && Ext.get('rbmpanel2')) {
+        Ext.get('rbmpanel1').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
+        Ext.get('rbmpanel2').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+    } else if (Ext.get('rbmpanel3') && Ext.get('rbmpanel4')) {
+        Ext.get('rbmpanel3').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[0]);
+        Ext.get('rbmpanel4').dom.value=(GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1] == "" ? "ALL" : GLOBAL.DefaultCohortInfo.defaultRbmpanelLabels[1]);
+    }
+    GLOBAL.CurrentRbmpanels[0]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[0];
+    GLOBAL.CurrentRbmpanels[1]=GLOBAL.DefaultCohortInfo.defaultRbmpanels[1];
 
-	var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
-	var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
-	var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
-	var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
+    var ele=(Ext.get('divsample1')) ? Ext.get('divsample1') : Ext.get('divsample3');
+    var eleGpl=(Ext.get('divgpl1')) ? Ext.get('divgpl1') : Ext.get('divgpl3');
+    var eleTissue=(Ext.get('divtissue1')) ? Ext.get('divtissue1') : Ext.get('divtissue3');
+    var eleRbmpanel=(Ext.get('divrbmpanel1')) ? Ext.get('divrbmpanel1') : Ext.get('divrbmpanel3')
 
     toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[0]);
 
-	ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
-	eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
-	eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
-	eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
+    ele=(Ext.get('divsample2')) ? Ext.get('divsample2') : Ext.get('divsample4');
+    eleGpl=(Ext.get('divgpl2')) ? Ext.get('divgpl2') : Ext.get('divgpl4');
+    eleTissue=(Ext.get('divtissue2')) ? Ext.get('divtissue2') : Ext.get('divtissue4');
+    eleRbmpanel=(Ext.get('divrbmpanel2')) ? Ext.get('divrbmpanel2') : Ext.get('divrbmpanel4')
 
     toggleRBMDisplayElements(ele, eleGpl, eleTissue, eleRbmpanel, GLOBAL.CurrentPlatforms[1]);
 
-	//Clear out the pathway/aggregation input.
-	document.getElementById("probesAggregation").checked=false;
-	document.getElementById("searchPathway").value = "";
-	
+    //Clear out the pathway/aggregation input.
+    document.getElementById("probesAggregation").checked=false;
+    document.getElementById("searchPathway").value = "";
+    
 }
 
 function showCompareStepPathwaySelectionRBM()
 {
 if(!this.compareStepPathwaySelectionRBM)
 {
-	compareStepPathwaySelectionRBM = new Ext.Window({
+    compareStepPathwaySelectionRBM = new Ext.Window({
                 id: 'compareStepPathwaySelectionWindowRBM',
                 title: 'Compare Subsets-Pathway Selection for RBM Platform',
-            	layout:'fit',
+                layout:'fit',
                 width:450,
-                // height:250,
-                autoHeight: true,
+                height:370,
+                //autoHeight: true,
                 closable: false,
                 plain: true,
                 modal: true,
                 border:false,
                 //autoScroll: true,
                 buttons: [
-                		{
+                        {
                             id: 'compareStepPathwaySelectionOKButtonRBM',
                             text: 'OK',
-                            handler: function()	{							                                                  
-                            	compareStepPathwaySelectionRBM.hide();
-	                            var setid1 = GLOBAL.CurrentSubsetIDs[1];
-   	   							var setid2 = GLOBAL.CurrentSubsetIDs[2];
-   	   							var setname1 = "subset1";
-   								var setname2 = "subset2";
-   								var sp=Ext.get("searchPathwayRBM");
-   								if (sp.dom.disabled == true)	{
-   									GLOBAL.CurrentPathway="SHOWALLANALYTES";
-   								}   								
-                            	showHeatMap(setid1, setname1, setid2, setname2,
-   									GLOBAL.CurrentPathway, GLOBAL.CurrentDataType, 
-   									GLOBAL.HeatmapType, GLOBAL.resulttype, GLOBAL.nClusters);
-   								sp.dom.value = "";
-   							}
+                            handler: function()    {                                                                              
+                                compareStepPathwaySelectionRBM.hide();
+                                var setid1 = GLOBAL.CurrentSubsetIDs[1];
+                                      var setid2 = GLOBAL.CurrentSubsetIDs[2];
+                                      var setname1 = "subset1";
+                                   var setname2 = "subset2";
+                                   var sp=Ext.get("searchPathwayRBM");
+                                   if (sp.dom.disabled == true)    {
+                                       GLOBAL.CurrentPathway="SHOWALLANALYTES";
+                                   }                                   
+                                showHeatMap(setid1, setname1, setid2, setname2,
+                                       GLOBAL.CurrentPathway, GLOBAL.CurrentDataType, 
+                                       GLOBAL.HeatmapType, GLOBAL.resulttype, GLOBAL.nClusters);
+                                   sp.dom.value = "";
+                               }
                         }
                         ,{
                             text: 'Cancel',
                             handler: function() {
-                            	compareStepPathwaySelectionRBM.hide();
-                            	var sp=Ext.get("searchPathwayRBM");
-                            	sp.dom.value = "";
+                                compareStepPathwaySelectionRBM.hide();
+                                var sp=Ext.get("searchPathwayRBM");
+                                sp.dom.value = "";
                             }
                          }],
                 resizable: false,
@@ -1662,117 +1632,47 @@ if(!this.compareStepPathwaySelectionRBM)
             {
                url: pageInfo.basePath+'/panels/compareStepPathwaySelectionRBM.html',
                scripts: true,
-               	nocache:true, 
-			discardUrl:true,
-			method:'POST'
+                   nocache:true, 
+            discardUrl:true,
+            method:'POST'
             }
             });
         }
 
-		compareStepPathwaySelectionRBM.show(viewport); 
+        compareStepPathwaySelectionRBM.show(viewport); 
 
-		// toggle display of "k" selector for k-means clustering
-		if (document.getElementById("divnclustersRBM") != null) {
-			if (GLOBAL.HeatmapType == 'KMeans') {
-				document.getElementById("divnclustersRBM").style.display = "";
-			} else {
-				document.getElementById("divnclustersRBM").style.display = "none";
-			}
-		}
+        // toggle display of "k" selector for k-means clustering
+        if (document.getElementById("divnclustersRBM") != null) {
+            if (GLOBAL.HeatmapType == 'KMeans') {
+                document.getElementById("divnclustersRBM").style.display = "";
+            } else {
+                document.getElementById("divnclustersRBM").style.display = "none";
+            }
+        }
                
 }
 
-function getQueryCdItem(el){
-    var item=el.getAttribute("conceptid");
-
-    var inOutCode = el.getAttribute("inoutcode");
-
-    //If there is visit information in the node, add it to the item we return.
-    if(inOutCode) item += "~" + inOutCode;
-
-    return item;
-}
-
-function getQuerySummary(subset)
-{
-var query="";
-//Interate over the criteria groups
-for(var i=1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
-		
-		var qcd=Ext.get("queryCriteriaDiv"+subset+'_'+i.toString());
-		if(qcd.dom.childNodes.length>0)
-		{
-			var panel=getQuerySummaryPanel(qcd.dom, i);
-			if(query!="" && panel!="")
-			{
-				query=query+"<br>AND<br>";
-			}
-			query=query+panel;
-		}
-	}
-return query;
-}
-
-//takes actual dom element
-function getQuerySummaryPanel(qd, number) 
-{
-var panel="";
-//set the invert
-var invert=0;
-if(qd.className=="queryGroupExclude")
-	invert=1;
-//set the occurs (later)
-var occurences=1;
-
-if(invert==1)
-	{
-	panel=panel+"<b>NOT (</b>";
-	}
-else
-	{
-	panel=panel+"<b>(</b>";
-	}
-for(var i=0;i<qd.childNodes.length;i++)
-{
-	if(i>0)
-		{
-		panel=panel+'<br><b>OR</b><br>';
-		}
-	var itemel=qd.childNodes[i];
-	panel=panel+getQuerySummaryItem(itemel);
-}
-return panel+"<b>)</b>";
-}
-                  
-
 function getQuerySummaryItem(el){
- 	var item=el.getAttribute("conceptdimcode")+" "+
- 			getSetValueText(
-        				el.getAttribute('setvaluemode'),
-						el.getAttribute('setvalueoperator'),
-						el.getAttribute('setvaluehighlowselect'),
-						el.getAttribute('setvaluehighvalue'),
-						el.getAttribute('setvaluelowvalue'),
-						el.getAttribute('setvalueunits'));
+     var item=el.getAttribute("conceptdimcode")+" "+
+             getSetValueText(
+                        el.getAttribute('setvaluemode'),
+                        el.getAttribute('setvalueoperator'),
+                        el.getAttribute('setvaluehighlowselect'),
+                        el.getAttribute('setvaluehighvalue'),
+                        el.getAttribute('setvaluelowvalue'),
+                        el.getAttribute('setvalueunits'));
 return item;
-}
-
-function myNullCallback()
-{
- //alert('you have hit my callback');
 }
 
 function isSubsetEmpty(subset)
 {
-	for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-	{
-		var queryDiv=Ext.get("queryCriteriaDiv"+subset+'_'+d);
-		if(queryDiv.dom.childNodes.length>0)
-		{ return false;}	
-	}
-		
-	return true;
+    var flag = true
+    jQuery(".panelModel[subset='" + subset + "']").each(function () {
+        if (jQuery(this).find(".panelBoxList").html().trim() != '' && flag)
+            flag = false
+    })
+        
+    return flag;
 }
 
 function isSubsetOnlyExclude(subset) {
@@ -1794,187 +1694,119 @@ function isSubsetOnlyExclude(subset) {
 }
 
 function showConceptDistributionHistogram(){
-var conceptnode=selectedConcept; 
-/*var cdhwindow=Ext.getCmp('cdhwindow');
-if(cdhwindow==null)
-{
-cdhwindow = new Ext.Window({
-                id: 'cdhwindow',
-                title: 'Histogram',
-            	layout:'fit',
-                width:250,
-                height:180,
-                closable: true,
-     			closeAction:'hide',  
-                plain: true,
-                modal: false,
-                border:false,
-                resizable: false
-            });
-}
-     cdhwindow.show();
-     cdhwindow.el.alignTo(setvaluewin.el, "tl-bl");
-     cdhwindow.body.update("");*/
-     //*run the current query
-     var concept_key=conceptnode.getAttribute('conceptid');
-     Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptDistribution",
-    	        method: 'POST',                                       
-    	        success: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        failure: function(result, request){showConceptDistributionHistogramComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({charttype:"conceptdistribution",
-    	        		 			   concept_key: concept_key})
-    	    });   
+
+    var concept_key = selectedConcept.getAttribute('conceptid');
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistribution",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({concept_key: concept_key})
+        });
 }
 
 function showConceptDistributionHistogramComplete(result)
 {
-/*Ext.getCmp("cdhwindow").body.update(result.responseText);*/
-setvaluewin.setHeight(390);
-Ext.get("setvaluechartsPanel1").update(result.responseText);
-}
+    setvaluewin.setHeight(370);
 
+    if (result == null)
+        return Ext.get("setvaluechartsPanel1").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
+
+    Ext.get("setvaluechartsPanel1").update(result.responseText);
+}
 
 function showConceptDistributionHistogramForSubset()
 {
-/*var cdhswindow=Ext.getCmp('cdhswindow');
-if(cdhswindow==null)
-{
-cdhswindow = new Ext.Window({
-                id: 'cdhswindow',
-                title: 'Histogram for Subset',
-            	layout:'fit',
-                width:250,
-                height:180,
-                closable: true,
-     			closeAction:'hide',  
-                plain: true,
-                modal: false,
-                border:false,
-                resizable: false
-            });
+    var concept_key = selectedConcept.getAttribute('conceptid');
+
+    Ext.Ajax.request(
+        {
+            url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
+            method: 'POST',
+            success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
+            failure: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
+            timeout: '300000',
+            params: Ext.urlEncode({concept_key: concept_key, result_instance_id1: GLOBAL.CurrentSubsetIDs[getSubsetFromPanel(selectedDiv)]})
+        });
 }
-     cdhswindow.show();
-     cdhswindow.el.alignTo(setvaluewin.el, "tr-br");
-     cdhswindow.body.update("");*/
 
-var conceptnode=selectedConcept; 
-var concept_key=conceptnode.getAttribute('conceptid');
-
-var subset;
-if(conceptnode.parentNode.id=="hiddenDragDiv") //was dragging so get target panel
-	{
-	 subset=getSubsetFromPanel(STATE.Target);
-	 }
-else{subset=getSubsetFromPanel(conceptnode.parentNode);} //wasn't dragging so get selected panel
-var result_instance_id1=GLOBAL.CurrentSubsetIDs[subset];
-
-Ext.Ajax.request(
-    	    {
-    	        url: pageInfo.basePath+"/chart/conceptDistributionForSubset",
-    	        method: 'POST',                                       
-    	        success: function(result, request){showConceptDistributionHistogramForSubsetComplete(result);},
-    	        failure: function(result, request){showConceptDistrubutionHistogramForSubsetComplete(result);},
-    	        timeout: '300000',
-    	        params: Ext.urlEncode({ charttype: "conceptdistributionforsubset",
-    	        		  				concept_key: concept_key, 
-    	        		  				result_instance_id1: result_instance_id1})
-    	    }); 
-}
 function showConceptDistributionHistogramForSubsetComplete(result)
 {
-/*Ext.getCmp("cdhswindow").body.update(result.responseText);*/
-setvaluewin.setHeight(390);
-Ext.get("setvaluechartsPanel2").update(result.responseText);
-}
+    setvaluewin.setHeight(370);
 
-function getShortNameFromKey(concept_key)
-{
-//Create a shortname
-	var splits=concept_key.split("\\");
-	var shortname="";
-	if(splits.length>1)
-	{
-	shortname="...\\"+splits[splits.length-2]+"\\"+splits[splits.length-1];
-	}
-	else shortname=splits[splits.length-1];
-	return shortname;
-}
+    if (result == null)
+        return Ext.get("setvaluechartsPanel2").update("<div class='x-mask-loading'><div class='conceptDistributionPlaceholder'/></div>");
 
-function getCategoryFromKey(concept_key)
-{
-//Create a shortname
-	var splits=concept_key.split("\\");
-	var category="";
-	category=splits[2];
-	return category;
-}
-
-function doLogin()
-{
-window.location.href=pageInfo.basePath;
+    Ext.get("setvaluechartsPanel2").update(result.responseText);
 }
 
 function getTreeNodeFromJsonNode(concept)
 {
-		var Tree = Ext.tree;
-		
- 		var level				=	null;
- 		var name				=	null;
- 		var tablename			=	null;
- 		var tooltip				=	null;
- 		var key					=	null;
- 		var dimcode				=	null;
- 		var newnode				=	null;
- 		var leaf				=	false;
- 		var draggable			=	true;
- 		var comment				=	null;
- 		var normalunits			=	null;
- 		var commentnode			=	null;
- 		var normalunitsnode 	= 	null;
- 		var oktousevaluesnode	= 	null;
- 		var oktousevalues		=	null;
+        var Tree = Ext.tree;
+        
+         var level                =    null;
+         var name                =    null;
+         var tablename            =    null;
+         var tooltip                =    null;
+         var key                    =    null;
+         var dimcode                =    null;
+         var newnode                =    null;
+         var leaf                =    false;
+         var draggable            =    true;
+         var comment                =    null;
+         var normalunits            =    null;
+         var commentnode            =    null;
+         var normalunitsnode     =     null;
+         var oktousevaluesnode    =     null;
+         var oktousevalues        =    null;
         var visualattributes    =   null;
+        var applied_path        =    '@';
+         var modifierId            =    null;
+         var constraint_data_type =    null;
+         
+    level                = concept.level;
+    key                    = concept.key;
+    name                = concept.name;
+    tooltip                = concept.tooltip;
+    dimcode                = concept.dimensionCode;
+    tablename            = concept.dimensionTableName;
+    visualattributes    = concept.visualAttributes;
 
-    level				= concept.level;
-    key					= concept.key;
-    name				= concept.name;
-    tooltip				= concept.tooltip;
-    dimcode				= concept.dimensionCode;
-    tablename			= concept.dimensionTableName;
-    visualattributes	= concept.visualAttributes;
-
-    comment				= ''; //XXX
-    normalunits			= concept.metadata && concept.metadata.unitValues
+    comment                = ''; //XXX
+    normalunits            = concept.metadata && concept.metadata.unitValues
                               ? concept.metadata.unitValues.normalUnits
                               : '';
-    oktousevalues		=	concept.metadata
+    oktousevalues        =    concept.metadata
                               ? (concept.metadata.okToUseValues ? 'Y' : 'N')
                               : 'N'
-	    
-	    //We need to replace the < signs with &lt;
-	    name = name.replace(/</gi,"&lt;");
-	    
-	    var iconCls	=	null;
-	    var cls		=	null;
-	    var tcls 	=	null;
-	    
+constraint_data_type = concept.metadata ? concept.metadata.dataType : '';
+        
+        //We need to replace the < signs with &lt;
+        name = name.replace(/</gi,"&lt;");
+        
+        var iconCls    =    null;
+        var cls        =    null;
+        var tcls     =    null;
+        
     if (oktousevalues != "N") {
-	    	iconCls="valueicon";
-	    }
+            iconCls="valueicon";
+        }
 
 
     if (visualattributes.indexOf('LEAF') != -1 ||
         visualattributes.indexOf('MULTIPLE') != -1) {
         leaf = true;
+        if (oktousevalues == "N")
+            iconCls="alphaicon";
         /* otherwise false; see init */
-	    	}
+            }
     if (visualattributes.indexOf('CONTAINER') != -1) {
-	    draggable=false;
+        draggable=false;
         /* otherwise true; see init */
-	    }    
+        }    
 
     if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
         iconCls = 'hleaficon';
@@ -1982,7 +1814,7 @@ function getTreeNodeFromJsonNode(concept)
     } else if (visualattributes.indexOf('EDITABLE') != -1) {
         iconCls = 'eleaficon';
         tcls = 'eleafclass';
-	    }
+    }
 
     if (visualattributes.indexOf('PROGRAM') != '-1') {
         iconCls="programicon";
@@ -1992,28 +1824,47 @@ function getTreeNodeFromJsonNode(concept)
         iconCls="studyicon";
     }
 
+    if(visualattributes.indexOf('MODIFIER_LEAF') != -1)
+    {
+        leaf            = true;
+        iconCls            = "modifiericon";
+        applied_path     = concept.applied_path;
+        modifierId         = concept.key;
+    }
+    else if(visualattributes.indexOf('MODIFIER_CONTAINER') != -1)
+    {
+        leaf            = false;
+        draggable        = false;
+        iconCls            = "modifierfoldericon";
+        applied_path     = concept.applied_path;
+        modifierId         = concept.key;        
+    }
 
-	    //set whether expanded or not.
-	    var autoExpand=false;
-		// Crude string check to bold this node if it's appeared as an actual search result (leaf)
-	    var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
-	    if (isSearchResult) {
-	    	tcls += ' searchResultNode';
-	    }
-	    //And another to highlight if it's the default passed-in path (only do this once)
-	    var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
-	    if (isDefaultPath) {
-	    	tcls += ' defaultPathNode';
-	    }
-	    GLOBAL.DefaultPathToExpand = '';
-	    
-	    if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
-		
-	    var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
-	    
-	    // set the root node
-    	newnode = new Tree.AsyncTreeNode({
-            accession: name,
+    if(oktousevalues != "N" && !leaf)
+    {
+        iconCls="foldernumericicon";
+    }
+    
+        //set whether expanded or not.
+        var autoExpand=false;
+        // Crude string check to bold this node if it's appeared as an actual search result (leaf)
+        var isSearchResult = (GLOBAL.PathToExpand.indexOf(key + ",") > -1);
+        if (isSearchResult) {
+            tcls += ' searchResultNode';
+        }
+        //And another to highlight if it's the default passed-in path (only do this once)
+        var isDefaultPath = (GLOBAL.DefaultPathToExpand.indexOf(key) > -1);
+        if (isDefaultPath) {
+            tcls += ' defaultPathNode';
+        }
+        GLOBAL.DefaultPathToExpand = '';
+        
+        if(GLOBAL.PathToExpand.indexOf(key)>-1 && GLOBAL.UniqueLeaves.indexOf(key + ",")==-1) autoExpand=true;
+        
+        var expand=((contains(dseOpenedNodes, key)) || autoExpand) && (!contains(dseClosedNodes, key));
+        
+        // set the root node
+        newnode = new Tree.AsyncTreeNode({
             text: name,
             draggable: draggable,
             leaf: leaf,
@@ -2028,11 +1879,14 @@ function getTreeNodeFromJsonNode(concept)
             normalunits: normalunits,
             oktousevalues: oktousevalues,
             expanded: expand,
-            visualattributes : visualattributes
-   		 });
-   		 newnode.addListener('contextmenu',ontologyRightClick);
-	return newnode;
-	}
+            visualattributes : visualattributes,
+            applied_path: applied_path,
+               modifierId: modifierId,
+               constraint_data_type : constraint_data_type
+            });
+            newnode.addListener('contextmenu',ontologyRightClick);
+    return newnode;
+    }
 
 
 function getTreeNodeFromJSON(concept)
@@ -2106,72 +1960,69 @@ if(access!=undefined)
   		   }
 }
 
-function showInfo(url) {
-	showInfoInner(url, 600, 500);
+function climbTreeBuildName(baseNode)
+{
+    var nodeNameString = "\\";
+    
+    while(baseNode.parentNode != null)
+    {
+        if(baseNode.attributes.text  && baseNode.attributes.text != "root") nodeNameString = "\\" + baseNode.attributes.text + nodeNameString;
+        
+        baseNode = baseNode.parentNode;
+    }
+    
+    return nodeNameString;
 }
 
-function showInfoInner(url, w, h)
-{
-	
-   if( ! this.infowin)
-   {
-       infowin = new Ext.Window(
-      {
-         id : 'infowin',
-         //title : title
-         layout : 'fit',
-         width : w,
-         height : h,
-         closable : false,
-         plain : true,
-         modal : true,
-         border : true,
-         autoScroll: true,
-         buttons : [
-         {
-            text : 'Close',
-            handler : function()
-            {
-               infowin.hide();
-            }
-         }
-         ],
-         resizable : false
-      }
-      );
-   }
 
-   infowin.show();
-   infowin.load({
-    url: pageInfo.basePath+"/"+url,
-    //params: {param1: "foo", param2: "bar"}, // or a URL encoded string
-    //callback: yourFunction,
-    //scope: yourObject, // optional scope for the callback
-    discardUrl: true,
-    nocache: true,
-    text: "Loading...",
-    timeout: 30,
-    scripts: false
-});
+function toggleNodeDraggingState()
+{
+    if(STATE.Dragging==true)
+    {
+        STATE.Dragging=false;
+        moveSelectedConceptFromHoldingToTarget();
+    }
+    
 }
 
-	  
-function hideCriteriaGroups()
+function nodeType(method, object)
 {
-	var qp=Ext.get("queryPanel").dom.firstChild.firstChild;
-	qp.style.background="#eee";
-	Ext.get("subsetdivider").dom.rowSpan="4";
-for(i=GLOBAL.NumOfQueryCriteriaGroupsAtStart+1;i<=GLOBAL.NumOfQueryCriteriaGroups;i++)
-	{
-    var e=document.getElementById("qcr"+i);
-    e.style.display="none";
-	}
-	
+    if(method=='visualattributes_modifier')
+    {
+        if(object.indexOf('MODIFIER_LEAF') != -1) 
+        {
+            return "LEAF"
+        }
+        else if(object.indexOf('MODIFIER_CONTAINER') != -1) 
+        {
+            return "CONTAINER"
+        }
+        else 
+        {
+            return ""
+        }
+    }
+    
+    if(method=='iconCls_modifier')
+    {
+        if(object == 'modifiericon') 
+        {
+            return "LEAF"
+        }
+        else if(object == 'modifierfoldericon') 
+        {
+            return "CONTAINER"
+        }
+        else 
+        {
+            return ""
+        }
+    }    
 }
 
-function showCriteriaGroup(i)
+function createShortNameFromPath(pathToShorten)
 {
-	var e=document.getElementById("qcr"+i);
-    e.style.display="";
-	if(i>3){Ext.get("subsetdivider").dom.rowSpan=i+1;}
+    var splits=pathToShorten.split("\\");
+    
+    return splits[splits.length-1] || splits[splits.length-2];
 }

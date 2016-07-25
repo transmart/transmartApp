@@ -8,50 +8,22 @@
 
     <title>Sample Explorer :: ${grailsApplication.config.com.recomdata.appTitle}</title>
 
-    <!-- Include Ext and app-specific scripts: -->
-    <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery.min.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/jQuery', file: 'jquery-ui-1.9.1.custom.min.js')}"></script>
+    <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="shortcut icon" />
+    <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="icon" />
 
-    <script type="text/javascript">
-        var $j = jQuery.noConflict();
-    </script>
-
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'browserDetect.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'ext/adapter/ext/ext-base.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'myJobs.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorerMenu.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorer.js')}"></script>
-    <script type="text/javascript"
-            src="${resource(dir: 'js', file: 'sampleExplorer/sampleExplorer.utilities.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'utilitiesMenu.js')}"></script>
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/ext/resources/css', file: 'ext-all.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'sampleExplorer.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'chartservlet.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'js/ext/resources/css', file: 'xtheme-gray.css')}">
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
-    <link rel="stylesheet" type="text/css" href="${resource(dir: 'css', file: 'datasetExplorer.css')}">
-    <!--
-    <script type="text/javascript" src="${resource(dir: 'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'searchcombobox.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'picklist.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'advancedWorkflowFunctions.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/datasetExplorer', file: 'i2b2common.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/HaploView.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/SNP.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/IGV.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js', file: 'sampleExplorer/GWAS.js')}"></script>
-    <script type="text/javascript" src="${resource(dir: 'js/ext-ux', file: 'miframe.js')}"></script>
-    -->
-
+    <g:javascript library="jquery" />
+    <r:require module="sampleTab" />
     <r:layoutResources/>
-    <%-- XXX: Use template --%>
+
+    <r:script type="text/javascript" charset="utf-8">
+
+        var $j = window.$j = jQuery.noConflict();
+
+    </r:script>
 
 </head>
 
 <body>
-
 <script type="text/javascript">
     Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
 
@@ -76,12 +48,12 @@
         resultDataSet: {},
         resultGridPanel: '',
         columnMap: ${columnData},
-        CurrentTimepoints: new Array(),
-        CurrentSamples: new Array(),
-        CurrentPlatforms: new Array(),
-        CurrentGpls: new Array(),
-        CurrentTissues: new Array(),
-        CurrentRbmpanels: new Array(),
+        CurrentTimepoints: [],
+        CurrentSamples: [],
+        CurrentPlatforms: [],
+        CurrentGpls: [],
+        CurrentTissues: [],
+        CurrentRbmpanels: [],
         Explorer: "SAMPLE",
         resulttype: 'applet',
         subsetTabs: 1,
@@ -95,16 +67,6 @@
         BuildVersion: 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:meta name="environment.BUILD_ID"/>',
         explorerType: 'sampleExplorer'
     };
-    // initialize browser version variables; see http://www.quirksmode.org/js/detect.html
-    BrowserDetect.init();
-    if (BrowserDetect.browser == "Explorer") {
-
-        if (BrowserDetect.version < 7) {
-            GLOBAL.resulttype = 'image';
-        }
-    }
-
-
 
 </script>
 
@@ -138,6 +100,6 @@
 </script>
 <!-- ************************************** -->
 
-<r:layoutResources/><%-- XXX: Use template --%>
+<r:layoutResources/>
 </body>
 </html>
