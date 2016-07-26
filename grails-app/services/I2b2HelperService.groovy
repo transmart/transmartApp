@@ -1503,7 +1503,7 @@ class I2b2HelperService {
         log.trace(sqlt)
 
         sql.eachRow(sqlt, [result_instance_id], { row ->
-            if (row[1] != 0) {
+            if (row[0] != null && row[1] != 0) {
                 results.put(row[0], row[1])
                 //log.trace("in row getting patient demographic data for subset")
                 //log.trace("Selected: " + row[0] + ", " + row[1])
