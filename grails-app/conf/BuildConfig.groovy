@@ -161,7 +161,6 @@ grails.project.dependency.resolution = {
 }
 
 dm?.with {
-    configureInternalPlugin 'runtime', 'smart-r'
     configureInternalPlugin 'compile', 'rdc-rmodules'
     configureInternalPlugin 'runtime', 'transmart-core'
     configureInternalPlugin 'test', 'transmart-core-db-tests'
