@@ -46,6 +46,7 @@ class ChartService {
     def i2b2HelperService
     def highDimensionQueryService
     def highDimensionResourceService
+    def public keyCache = []
 
     def getSubsetsFromRequest(params) {
 

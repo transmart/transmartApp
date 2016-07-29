@@ -3,8 +3,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="layout" content="genesigmain" />
     <title>Gene Signature Search</title>
-</head>
-<body>
+
 <!-- override main.css -->
 <style type="text/css">
 .detail td a {
@@ -75,10 +74,12 @@
     }
 
 </script>
+    <script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
 <script language="javascript">
     helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 </script>
-<script type="text/javascript" src="${resource(dir:'js', file:'help/D2H_ctxt.js')}"></script>
+</head>
+<body>
 <div class="body">
     <g:form frm="GenSignatureFrm" method="post">
         <g:hiddenField name="id" value="" />
@@ -142,6 +143,50 @@
                 <g:render template="/geneSignature/summary_record" model="[gs:gs, idx: idx]" />
             </g:each>
 
+            </tbody>
+        </table>
+
+        <br>
+<!--
+        Currently this button links to action:createListWizard, which links to action:createList,
+            which links to view:wizard_list which is non-existent! removing the button until the view file is found
+        <p style="text-align: right;"><span class="button"><g:actionSubmit class="edit" action="createListWizard" value="New Gene/RSID List"/></span></p>
+
+-->
+        <!-- show my lists -->
+        <table id="myLists"  class="detail" style="width: 100%">
+            <g:tableHeaderToggle label="My Lists (${myListItems.size()})" divPrefix="my_lists" status="open" colSpan="${5}"/>
+
+            <tbody id="my_lists_detail" style="display: block;">
+                <tr>
+                    <th>Name</th>
+                    <th>Author</th>
+                    <th>Date Created</th>
+                    <th># Genes</th>
+                    <th>&nbsp;</th>
+                </tr>
+
+                <g:each var="gs" in="${myListItems}" status="idx">
+                    <g:render template="/geneSignature/list_summary_record" model="[gs:gs, idx: idx]" />
+                </g:each>
+            </tbody>
+        </table>
+        <br/>
+        <table id="publicLists"  class="detail" style="width: 100%">
+            <g:tableHeaderToggle label="Public Lists (${pubListItems.size()})" divPrefix="pub_lists" status="open" colSpan="${5}"/>
+
+            <tbody id="pub_lists_detail" style="display: block;">
+                <tr>
+                    <th>Name</th>
+                    <th>Author</th>
+                    <th>Date Created</th>
+                    <th># Genes</th>
+                    <th>&nbsp;</th>
+                </tr>
+
+                <g:each var="gs" in="${pubListItems}" status="idx">
+                    <g:render template="/geneSignature/list_summary_record" model="[gs:gs, idx: idx]" />
+                </g:each>
             </tbody>
         </table>
     </g:form>

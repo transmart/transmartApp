@@ -6,6 +6,7 @@ bin/
 .settings
 .project
 .idea/
+.slcache/
 *.iml
 *.ipr
 *.iws

@@ -17,10 +17,9 @@ class ChartController {
     def i2b2HelperService
     def springSecurityService
     def chartService
-    def highDimensionQueryService
     def accessLogService
     User currentUserBean
-
+    def highDimensionQueryService
 
 
     def displayChart = {
@@ -189,13 +188,8 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
-        // We retrieve the highdimension parameters from the client, if they were passed
-        def omics_params = [:]
-        params.findAll { k, v ->
-            k.startsWith("omics_")
-        }.each { k, v ->
-            omics_params[k] = v
-        }
+        // We add the key to our cache set
+        chartService.keyCache.add(concept)
 
         // Collect concept information
         concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: chartService.getSubsetsFromRequest(params))
@@ -211,6 +205,9 @@ class ChartController {
 
         // Lets put a bit of 'audit' in here
         new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Basic Statistics", eventmessage: "RID1:" + params.result_instance_id1 + " RID2:" + params.result_instance_id2, accesstime: new java.util.Date()).save()
+
+        // We clear the keys in our cache set
+        chartService.keyCache.clear()
 
         // This clears the current session grid view data table and key cache
         request.session.setAttribute("gridtable", null);

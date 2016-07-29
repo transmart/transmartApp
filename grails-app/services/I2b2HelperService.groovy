@@ -9,9 +9,11 @@ import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.SecureAccessLevel
 import org.transmart.searchapp.SecureObjectPath
 import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
 import org.transmartproject.db.querytool.QtPatientSetCollection
+import org.transmartproject.db.ontology.AcrossTrialsOntologyTerm
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -27,6 +29,9 @@ import java.sql.SQLException
 import java.sql.Statement
 import java.net.URL;
 import java.net.MalformedURLException;
+
+import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TABLE_CODE
+import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TOP_TERM_NAME
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
 
@@ -53,20 +58,44 @@ class I2b2HelperService {
     def double[] getPatientDemographicValueDataForSubset(String col, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
-        ArrayList<Double> values = new ArrayList<Double>();
+        // NOTE: UGLY, UGLY CODE -  The sourcesystem_cd field, in the case that across trials data
+        // exists, will be TrialId:SubjectId, where SubjectId is a unique subject id across trials.
+        ArrayList<Double> values = new ArrayList<Double>()
+        Set<String> idSet = new HashSet<String>()
         Sql sql = new Sql(dataSource)
-        String sqlt = """SELECT """ + col + """ FROM patient_dimension f WHERE
-		    PATIENT_NUM IN (select distinct patient_num
+        String sqlt = """SELECT """ + col + """, sourcesystem_cd, patient_num
+            FROM patient_dimension f
+            WHERE patient_num IN (
+                select distinct patient_num
 			from qt_patient_set_collection
 			where result_instance_id = ?)""";
         sql.eachRow(sqlt, [result_instance_id], { row ->
+//            log.trace("row: " + row[0] + "," + row[1] + "," + row[2])
+            def id = row[2];
+            if (row[1]) {
+                def holder = []
+                holder = row[1].toString().split(":");
+                if ((holder != null) && (holder.size() == 2) && (holder[1] != null)) {
+                    id = holder[1];
+                }
+            }
+//            log.trace ("id = " + id)
+            if (!idSet.contains(id)) {
+                idSet.add(id)
             values.add(row[0])
+            }
         });
-        // remove missing values from the distribution
-        values = values.findAll { it != null }
-        double[] returnvalues = new double[values.size()];
+        int count = 0;
         for (int i = 0; i < values.size(); i++) {
-            returnvalues[i] = values.get(i);
+            if (values.get(i) != null) count++
+        }
+        double[] returnvalues = new double[count]
+
+        int index = 0
+        for (int i = 0; i < values.size(); i++) {
+            if (values.get(i) != null) {
+                returnvalues[index++] = values.get(i)
+            }
         }
         return returnvalues;
     }
@@ -206,11 +235,29 @@ class I2b2HelperService {
         return markerType
     }
 
+    def Boolean isXTrialsConcept(String concept_key) {
+        def itemProbe = conceptsResourceService.getByKey(concept_key)
+        return (itemProbe instanceof AcrossTrialsOntologyTerm)
+    }
+
     /**
      * Determines if a concept key is a value concept or not
      */
     def Boolean isValueConceptKey(String concept_key) {
-        return isValueConceptCode(getConceptCodeFromKey(concept_key));
+        log.trace "----------------- start isValueConceptKey"
+        log.trace "concept_key: " + concept_key
+        if (isXTrialsConcept(concept_key)) {
+            def itemProbe = conceptsResourceService.getByKey(concept_key)
+            log.trace "itemProbe.modifierDimension.valueType = " + itemProbe.modifierDimension.valueType
+            def xTrialsValueConcept = itemProbe.modifierDimension.valueType.equalsIgnoreCase("N")
+            log.trace "isValueConceptKey returns " + xTrialsValueConcept
+            return xTrialsValueConcept
+    }
+        def concept_code = getConceptCodeFromKey(concept_key)
+        log.trace "concept_code: " + concept_code
+        def ret = isValueConceptCode(concept_code)
+        log.trace "isValueConceptKey returns " + ret;
+        return ret
     }
 
     /**
@@ -224,9 +271,20 @@ class I2b2HelperService {
     }
 
     /**
-     * Determines if a concept key is a leaf or not
+     * Determines if a concept key is a leaf or not (by concept_key)
      */
     def Boolean isLeafConceptKey(String concept_key) {
+        // profuse appoligies to future programmers reading this code; it is clearly a mess
+        // and this is a patch on top of a mess; the correct solution is to rewrite all this code
+        // to use the API and to rewrite the underlying object class to use the API.
+        // A special case was made for across trials data, because, at this time of this change,
+        // there is no unified representation of across trials data and 'normal' data
+        //log.trace "----------------- isLeafConceptKey - String case"
+
+        if (isXTrialsConcept(concept_key)) {
+            def itemProbe = conceptsResourceService.getByKey(concept_key)
+            return isLeafConceptKey(itemProbe)
+        }
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
         Boolean res = false;
         Sql sql = new Sql(dataSource)
@@ -237,16 +295,56 @@ class I2b2HelperService {
     }
 
     /**
+     * Determines if a concept item is a leaf or not
+     */
+    def Boolean isLeafConceptKey(AcrossTrialsOntologyTerm conceptItem) {
+        // profuse appoligies to future programmers reading this code; it is clearly a mess
+        // and this is a patch on top of a mess; the correct solution is to rewrite all this code
+        // to use the API and to rewrite the underlying object class to use the API.
+        //log.trace "----------------- isLeafConceptKey - AcrossTrialsOntologyTerm case"
+        EnumSet probeSet = conceptItem.visualAttributes
+        if (probeSet.size() == 0) return false;
+        return probeSet.any{ it == org.transmartproject.core.ontology.OntologyTerm.VisualAttributes.LEAF }
+    }
+
+    /**
+     * Determines if a concept item is a leaf or not
+     */
+    def Boolean isLeafConceptKey(org.transmartproject.db.ontology.I2b2 conceptItem) {
+        // profuse appoligies to future programmers reading this code; it is clearly a mess
+        // and this is a patch on top of a mess; the correct solution is to rewrite all this code
+        // to use the API and to rewrite the underlying object class to use the API.
+        //log.trace "----------------- isLeafConceptKey - I2b2 case"
+        return conceptItem.cVisualattributes.contains("L")
+    }
+
+    /**
      * Gets the distinct patient counts for the children of a parent concept key
      */
     def getChildrenWithPatientCountsForConcept(String concept_key) {
-        Sql sql = new Sql(dataSource);
+        log.debug "----------------- getChildrenWithPatientCountsForConcept"
+        log.debug "concept_key = " + concept_key
+
+        def xTrialsTopNode = "\\\\" + ACROSS_TRIALS_TABLE_CODE + "\\" + ACROSS_TRIALS_TOP_TERM_NAME + "\\"
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key) || (concept_key == xTrialsTopNode)
+
         def counts = [:];
+
+       if (xTrialsCaseFlag) {
+            log.trace("XTrials for getConceptDistributionDataForConcept")
+            def node = conceptsResourceService.getByKey(concept_key)
+            def List<OntologyTerm> childNodes = node.children
+            for (OntologyTerm term: childNodes) {
+                counts.put(term.fullName,getObservationCountForXTrialsNode(term))
+            }
+        } else {
+        Sql sql = new Sql(dataSource);
         log.trace("Trying to get counts for parent_concept_path=" + keyToPath(concept_key));
         sql.eachRow("select * from CONCEPT_COUNTS where parent_concept_path = ?", [keyToPath(concept_key)], { row ->
             log.trace "Found " << row.concept_path
             counts.put(row.concept_path, row.patient_count)
         });
+        }
         return counts;
     }
 
@@ -272,8 +370,62 @@ class I2b2HelperService {
         return returnvalues;
     }
 
-    def getConceptDistributionDataForValueConceptFromCode(String concept_cd, String result_instance_id) {
+    /**
+     *  Gets the data associated with a value type concept from observation fact table
+     * for display in a distribution histogram for a given subset
+     */
+    def getConceptDistributionDataForValueConcept(String concept_key, String result_instance_id) {
+        log.debug "----------------- getConceptDistributionDataForValueConcept"
+        log.debug("Getting concept distribution data for value concept_key, " + concept_key + ", with results_instance_id = " + result_instance_id);
+
         checkQueryResultAccess result_instance_id
+        log.trace("Access assured")
+
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key)
+        log.trace("Check for xTrials case = " + xTrialsCaseFlag)
+
+        ArrayList<Double> values = new ArrayList<Double>();
+
+        if (xTrialsCaseFlag) {
+
+            def data = fetchAcrossTiralsData(concept_key,result_instance_id)
+            data.each {
+                def subject = it.subject
+                def value = it.value
+                values.add(value)
+            }
+
+        } else {
+            Sql sql = new Sql(dataSource);
+            String concept_cd = getConceptCodeFromKey(concept_key);
+
+        String sqlt = "SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = '" +
+                concept_cd + "' AND PATIENT_NUM IN (select distinct patient_num " +
+                "from qt_patient_set_collection where result_instance_id = " + result_instance_id + ")";
+
+        log.trace("executing query: sqlt=" + sqlt);
+        try {
+            //sql.eachRow(sqlt, [concept_cd, result_instance_id], {row ->
+            sql.eachRow(sqlt, { row ->
+                if (row.NVAL_NUM != null) {
+                    values.add(row.NVAL_NUM);
+                }
+            });
+        } catch (Exception e) {
+            log.error("exception in getConceptDistributionDataForValueConcept: " + e.getMessage())
+        }
+        }
+
+        log.debug("getConceptDistributionDataForValueConcept now finished: returning values n = " + values.size());
+        return values;
+    }
+
+    def getConceptDistributionDataForValueConceptFromCode(String concept_cd, String result_instance_id) {
+        log.debug "----------------- getConceptDistributionDataForValueConceptFromCode"
+        log.debug("Getting concept distribution data for value concept_cd, " + concept_cd + ", with results_instance_id = " + result_instance_id);
+
+        checkQueryResultAccess result_instance_id
+        log.trace("Access assured")
 
         ArrayList<Double> values = new ArrayList<Double>();
         ArrayList<Double> returnvalues = new ArrayList<Double>(values.size());
@@ -288,7 +440,7 @@ class I2b2HelperService {
 		    PATIENT_NUM IN (select distinct patient_num
 			from qt_patient_set_collection
 			where result_instance_id = ?)""";
-        log.debug("executing query: " + sqlt);
+        log.trace("executing query: " + sqlt);
         sql.eachRow(sqlt, [
                 concept_cd,
                 result_instance_id
@@ -300,23 +452,33 @@ class I2b2HelperService {
         for (int i = 0; i < values.size(); i++) {
             returnvalues[i] = values.get(i);
         }
-        log.trace("getConceptDistributionDataForValueConceptFromCode now finished");
+        log.debug("getConceptDistributionDataForValueConceptFromCode now finished: returning values n = " + returnvalues.size());
         return returnvalues;
     }
 
     /**
-     *  Gets the count of a a patient set fromt he result instance id
+     *  Gets the count of a patient set from the result instance id
      */
     def Integer getPatientSetSize(String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
-        log.trace("Getting patient set size with id:" + result_instance_id);
+        log.debug("getPatientSetSize(): result_instance_id = " + result_instance_id);
+
         Integer i = 0;
         Sql sql = new Sql(dataSource);
-        String sqlt = """select count(distinct(patient_num)) as patcount 
-						 FROM qt_patient_set_collection
-						 WHERE result_instance_id = CAST(? AS numeric)""";
-
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
+        String sqlt = """select count(*) as patcount
+            FROM (
+                SELECT DISTINCT pd.sourcesystem_cd AS subject_id
+                FROM qt_patient_set_collection ps
+                    JOIN patient_dimension pd
+                    ON ps.patient_num=pd.patient_num
+                WHERE ps.result_instance_id = CAST(? AS numeric)
+            ) patient_set"""
+//        String sqlt = """select count(distinct(patient_num)) as patcount
+//						 FROM qt_patient_set_collection
+//						 WHERE result_instance_id = CAST(? AS numeric)""";
         log.trace(sqlt);
         sql.eachRow(sqlt, [result_instance_id], { row ->
             log.trace("inrow");
@@ -332,12 +494,40 @@ class I2b2HelperService {
     def int getPatientSetIntersectionSize(String result_instance_id1, String result_instance_id2) {
         checkQueryResultAccess result_instance_id1, result_instance_id2
 
-        log.trace("Getting patient set intersection");
+        log.debug("Getting patient set intersection - result_instance_id1 = "
+                + result_instance_id1 + ", result_instance_id2 = " + result_instance_id2);
         Integer i = 0;
         Sql sql = new Sql(dataSource);
-        String sqlt = """Select count(*) as patcount FROM ((select distinct patient_num from qt_patient_set_collection
-		        where result_instance_id = ?) a inner join (select distinct patient_num from qt_patient_set_collection
-		        where result_instance_id = ?) b ON a.patient_num=b.patient_num)""";
+
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
+        String sqlt = """Select count(*) as patcount
+        FROM (
+                SELECT DISTINCT pd.sourcesystem_cd AS subject_id
+                from
+                qt_patient_set_collection a
+                inner join qt_patient_set_collection b
+                on a.patient_num=b.patient_num and a.result_instance_id = CAST(? AS numeric)
+                join patient_dimension pd
+                on b.patient_num=pd.patient_num and b.result_instance_id = CAST(? AS numeric)
+        ) qt_patient_set"""
+
+//        String sqlt = """Select count(*) as patcount
+//            FROM (
+//                SELECT DISTINCT split_part(pd.sourcesystem_cd , ':', 2) AS subject_id
+//                from
+//                     ((select distinct patient_num
+//                     from qt_patient_set_collection
+//	    	            where result_instance_id = CAST(? AS numeric)) a
+//                        inner join
+//                        (select distinct patient_num
+//                            from qt_patient_set_collection
+//		                    where result_instance_id = CAST(? AS numeric)) b
+//                        ON a.patient_num=b.patient_num) qt_patient_set
+//                    JOIN patient_dimension pd
+//                    ON qt_patient_set.patient_num=pd.patient_num
+//		            """;
+
         log.trace(sqlt);
         sql.eachRow(sqlt, [
                 result_instance_id1,
@@ -375,7 +565,7 @@ class I2b2HelperService {
      * Determines if a concept code is a value concept code or not by checking the metadata xml
      */
     def Boolean isValueConceptCode(String concept_code) {
-        log.trace("Checking isValueConceptCode for code:" + concept_code);
+        log.trace "Checking isValueConceptCode for code:" + concept_code
         Boolean res = false;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_METADATAXML FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?"
@@ -443,10 +633,96 @@ class I2b2HelperService {
         return res;
     }
 
+    def HashMap<String, Integer> getConceptDistributionDataForConcept(String concept_key, String result_instance_id) throws SQLException {
+        log.debug "----------------- start getConceptDistributionDataForConcept"
+        checkQueryResultAccess result_instance_id
+
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key)
+        def leafNodeFlag = isLeafConceptKey(concept_key)
+
+        def HashMap<String, Integer> results = new LinkedHashMap<String, Integer>()
+
+        log.trace "input concept_key = " + concept_key
+        if (leafNodeFlag) {
+            concept_key = getParentConceptKey(concept_key)
+        }
+        log.trace "lookup concept_key = " + concept_key
+
+        def node = conceptsResourceService.getByKey(concept_key)
+
+        if (xTrialsCaseFlag) {
+            log.trace("XTrials for getConceptDistributionDataForConcept")
+            def List<OntologyTerm> childNodes = node.children
+            for (OntologyTerm term: childNodes) {
+                results.put(term.name,getObservationCountForXTrialsNode(term,result_instance_id))
+            }
+
+        } else {
+            String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
+            int i = getLevelFromKey(concept_key) + 1;
+            Sql sql = new Sql(dataSource);
+            String sqlt = """
+                SELECT DISTINCT c_name, c_fullname
+                FROM i2b2metadata.i2b2
+                WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ?
+                ORDER BY C_FULLNAME
+            """
+            log.trace(sqlt);
+            sql.eachRow(sqlt, [fullname.asLikeLiteral() + "%", i], { row ->
+                results.put(row[0], getObservationCountForConceptForSubset("\\blah" + row[1], result_instance_id));
+            });
+        }
+
+        log.debug "getConceptDistributionDataForConcept - returns " + results
+        return results;
+    }
+
+    def SortedMap<String, HashMap<String, Integer>> getConceptDistributionDataForConceptByTrial(String concept_key, String result_instance_id) throws SQLException {
+        log.debug "----------------- start getConceptDistributionDataForConceptByTrial"
+        checkQueryResultAccess result_instance_id
+
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key)
+        def leafNodeFlag = isLeafConceptKey(concept_key)
+
+        def SortedMap<String, HashMap<String, Integer>> results = new TreeMap<String, HashMap<String, Integer>>()
+
+        log.trace "input concept_key = " + concept_key
+        if (leafNodeFlag) {
+            concept_key = getParentConceptKey(concept_key)
+        }
+        log.trace "lookup concept_key = " + concept_key
+
+        def baseNode = conceptsResourceService.getByKey(concept_key)
+        log.trace(baseNode.class.name)
+
+        def List<String> trials = trialsForResultSet(result_instance_id)
+        log.trace("trials = " + trials)
+
+        if (xTrialsCaseFlag) {
+            log.trace("Across Trials case")
+            def itemProbe = conceptsResourceService.getByKey(concept_key)
+            def String modifier_cd = itemProbe.modifierDimension.code
+            for (String trial: trials) {
+                log.trace("results for: " + trial + ", " + concept_key)
+                results.put(trial, getAllObservationCountsForXTrialsConceptNodeWithTrial(trial, concept_key, result_instance_id))
+            }
+
+        } else {
+            log.trace("Single study case")
+            // if not across trials; all parients in same trial/study
+            def study = "Study"
+            if (!trials.isEmpty()) study = trials[0]
+            results.put(study,getConceptDistributionDataForConcept(concept_key, result_instance_id))
+        }
+
+        log.trace("results.size() = " + results.size())
+        log.debug "----------------- end getConceptDistributionDataForConceptByTrial"
+        return results
+    }
     /**
      * Gets the distribution of data for a concept
      */
-    def HashMap<String, Integer> getConceptDistributionDataForConceptOld(String concept_key, String result_instance_id) throws SQLException {
+    def HashMap<String, Integer> getConceptDistributionDataForConceptOld1(String concept_key, String result_instance_id) throws SQLException {
         checkQueryResultAccess result_instance_id
 
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length())
@@ -480,14 +756,20 @@ class I2b2HelperService {
     /**
      *  Gets the concept distributions for a concept in a subset
      */
-    def HashMap<String, Integer> getConceptDistributionDataForConcept(String concept_key, String result_instance_id) throws SQLException {
+    def HashMap<String, Integer> getConceptDistributionDataForConceptOld2(String concept_key, String result_instance_id) throws SQLException {
+        log.debug "----------------- start getConceptDistributionDataForConcept"
         String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
         HashMap<String, Integer> results = new LinkedHashMap<String, Integer>();
 
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key)
+
+        if (xTrialsCaseFlag) {
+            log.warn("NOT IMPLEMENTED - XTrials for getConceptDistributionDataForConcept")
+        } else {
         // check to see if there is a mapping from this concept_key to a concept_key for the results
-        log.debug("getConceptDistributionDataForConcept: looking up parent_concept of fullname: " + fullname)
+            log.trace("looking up parent_concept of fullname: " + fullname)
         String parent_concept = lookupParentConcept(fullname);
-        log.debug("getConceptDistributionDataForConcept: parent_concept: " + parent_concept);
+            log.trace("parent_concept: " + parent_concept);
         Set<String> concepts = new HashSet<String>();
         if (parent_concept != null) {
             // lookup appropriate children
@@ -495,11 +777,11 @@ class I2b2HelperService {
             if (childConcepts.isEmpty()) {
                 childConcepts.add(concept_key);
             }
-            log.debug("getConceptDistributionDataForConcept: childConcepts: " + childConcepts);
+                log.trace("getConceptDistributionDataForConcept: childConcepts: " + childConcepts);
             for (c in childConcepts) {
                 int i = getLevelFromKey(concept_key) + 1;
                 fullname = getConceptPathFromCode(c);
-                log.debug("** IN LOOP: fullname: " + fullname);
+                    log.trace("** IN LOOP: fullname: " + fullname);
                 Sql sql = new Sql(dataSource);
                 String sqlt =
                         "SELECT DISTINCT c_name, c_fullname FROM i2b2metadata.i2b2 WHERE C_FULLNAME LIKE ? escape '\\' AND c_hlevel = ? ORDER BY C_FULLNAME";
@@ -520,6 +802,7 @@ class I2b2HelperService {
             sql.eachRow(sqlt, [fullname.asLikeLiteral() + "%", i], { row ->
                 results.put(row[0], getObservationCountForConceptForSubset("\\blah" + row[1], result_instance_id));
             });
+        }
         }
         return results;
     }
@@ -581,6 +864,168 @@ class I2b2HelperService {
         return i;
     }
 
+    def HashMap<String, Integer> getAllObservationCountsForXTrialsConceptNodeWithTrial(String trial, String concept_key, String result_instance_id)  throws SQLException {
+        checkQueryResultAccess result_instance_id
+
+        log.debug "------ getAllObservationCountsForXTrialsConceptNodeWithTrial"
+
+        def node = conceptsResourceService.getByKey(concept_key)
+        def List<OntologyTerm> childNodes = node.children
+
+        def modifierList = []
+        childNodes.each { childNode ->
+            modifierList.add(childNode.code)
+        }
+
+        log.trace "modifierList = " + modifierList
+        log.trace "result_instance_id = " + result_instance_id
+        log.trace "trial = " + trial
+
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
+        def sqlt = """
+            SELECT count(subject_id) as n, modifier_cd
+            FROM (
+                SELECT DISTINCT modifier_cd, pd.sourcesystem_cd AS subject_id
+                FROM
+                    observation_fact f
+                    JOIN patient_dimension pd ON f.patient_num=pd.patient_num
+                    JOIN patient_trial pt ON pt.patient_num=pd.patient_num AND pt.trial=?
+                WHERE
+                    modifier_cd in ( """ + listToIN(modifierList.asList()) +  """ )
+                    AND concept_cd != 'SECURITY'
+                    AND f.patient_num IN (
+                        SELECT DISTINCT patient_num
+                        FROM qt_patient_set_collection
+                        WHERE result_instance_id = ?)
+                ) subject_data
+            group by modifier_cd
+        """
+
+        log.trace sqlt
+
+        def map = [:]
+        Sql sql = new Sql(dataSource)
+        sql.eachRow(sqlt, [trial,result_instance_id], { row ->
+            map.put(row.modifier_cd, row.n)
+        })
+
+        HashMap<String, Integer> results = new HashMap<String,Integer>()
+        for (OntologyTerm term: childNodes) {
+            int count = 0
+            if (map.get(term.code)){
+                count = map.get(term.code)
+            }
+            results.put(term.name,count)
+        }
+
+        log.trace(results)
+
+        return results;
+    }
+
+    def Integer getObservationCountForXTrialsNode(AcrossTrialsOntologyTerm term_node, String result_instance_id) {
+        log.debug "--------  start getObservationCountForXTrialsNode"
+        log.debug "---------- case: term_node and result_instance_id"
+        log.debug "term_node.name = " + term_node.name
+        checkQueryResultAccess result_instance_id
+
+        def modifierList = []
+        def leafNodes = getAllXTrialsLeafNodes(term_node)
+        leafNodes.each { node ->
+            modifierList.add(node.code)
+        }
+
+        Sql sql = new Sql(dataSource)
+
+        log.trace "modifierList = " + modifierList
+        log.trace "result_instance_id = " + result_instance_id
+
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
+        def sqlt = """
+            SELECT count(*) FROM (
+                SELECT DISTINCT pd.sourcesystem_cd AS subject_id
+                FROM 
+                    observation_fact f
+                    JOIN patient_dimension pd ON f.patient_num=pd.patient_num
+                WHERE
+                    modifier_cd in ( """ + listToIN(modifierList.asList()) +  """ )
+                    AND concept_cd != 'SECURITY'
+                    AND f.patient_num IN (select distinct patient_num
+                        from qt_patient_set_collection
+                        where result_instance_id = ?)
+                ) subjectList
+        """
+
+        int count = 0
+
+        sql.eachRow(sqlt, [result_instance_id], { row ->
+            count = row[0]
+        })
+
+        log.trace "count = " + count
+        return count
+    }
+
+    def Integer getObservationCountForXTrialsNode(AcrossTrialsOntologyTerm term_node) {
+        log.debug "-------- start getObservationCountForXTrialsNode"
+        log.debug "--------------------------- case: term_node only"
+
+        def modifierList = []
+        def leafNodes = getAllXTrialsLeafNodes(term_node)
+        leafNodes.each { node ->
+            modifierList.add(node.code)
+        }
+
+        if (modifierList.isEmpty()) return 0
+        
+        Sql sql = new Sql(dataSource)
+
+        log.trace "For case NOT using result_instance_id"
+        log.trace "modifierList = " + modifierList
+
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
+        def sqlt = """
+            SELECT count(*) FROM (
+                SELECT DISTINCT pd.sourcesystem_cd AS subject_id
+                FROM 
+                    observation_fact f
+                    JOIN patient_dimension pd ON f.patient_num=pd.patient_num
+                WHERE
+                    f.modifier_cd in ( """ + listToIN(modifierList.asList()) +  """ )
+                    AND f.concept_cd != 'SECURITY'
+                ) subjectList
+        """
+
+		log.trace "sql text ="
+		log.trace sqlt
+		
+        int count = 0
+        sql.eachRow(sqlt, { row ->
+            count = row[0]
+        })
+
+        log.trace "count = " + count
+        return count
+    }
+
+    def List<AcrossTrialsOntologyTerm> getAllXTrialsLeafNodes(AcrossTrialsOntologyTerm top){
+        List<AcrossTrialsOntologyTerm> nodes = new ArrayList<AcrossTrialsOntologyTerm>()
+
+        if (isLeafConceptKey(top)) {
+            nodes.add(top)
+            return nodes
+        }
+
+        top.children.each { child ->
+            nodes.addAll(getAllXTrialsLeafNodes(child))
+        }
+
+        return nodes
+    }
+
     /**
      * Gets the count of the observations in the fact table for a concept and a subset
      */
@@ -608,6 +1053,7 @@ class I2b2HelperService {
                         where result_instance_id = ?)
             ) as subjectList
         """
+        log.trace(sqlt);
         sql.eachRow(sqlt, [
                 fullnameLike,
                 result_instance_id
@@ -624,7 +1070,7 @@ class I2b2HelperService {
     def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         checkQueryResultAccess result_instance_id
 
-        log.trace("Getting sampleCD's for paitent number")
+        log.trace("Getting sampleCD's for patient number")
         def mapOfSampleCdsByPatientNum = buildMapOfSampleCdsByPatientNum(result_instance_id)
 
         log.trace("Adding patient demographic data to grid with result instance id:" + result_instance_id + " and subset: " + subset)
@@ -651,7 +1097,7 @@ class I2b2HelperService {
             ORDER BY
                 I.PATIENT_NUM''';
 
-        log.debug "Initial grid query: $sqlt, riid: $result_instance_id"
+        log.trace "Initial grid query: $sqlt, riid: $result_instance_id"
 
         //if i have an empty table structure so far
         if (tablein.getColumns().size() == 0) {
@@ -762,6 +1208,15 @@ class I2b2HelperService {
     def ExportTableNew addConceptDataToTable(ExportTableNew tablein, String concept_key, String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
+        log.debug "----------------- start addConceptDataToTable <<<<<< <<<<<< <<<<<<"
+        log.trace "concept_key = " + concept_key
+
+        def leafConceptFlag =  isLeafConceptKey(concept_key)
+        log.trace "is Leaf Concept key: " + leafConceptFlag
+
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key)
+        log.trace "is XTrials case = " + xTrialsCaseFlag
+
         /* As the column headers only show the (in many cases ambiguous) leaf part of the concept path,
          * showing the full concept path in the tooltip is much more informative.
          * As no tooltip text is passed on to the GridView code, the value of the string columnid is used
@@ -773,81 +1228,33 @@ class I2b2HelperService {
         String columnid = concept_key.encodeAsSHA1()
         String columnname = getColumnNameFromKey(concept_key).replace(" ", "_")
         String columntooltip = keyToPath(concept_key).replaceAll('[^a-zA-Z0-9_\\-\\\\]+','_')
-        if (isLeafConceptKey(concept_key)) {
-            /*add the column to the table if its not there*/
+
+
+        if (leafConceptFlag) {
+            log.debug "----------------- this is a Leaf Node"
+
+
+            def valueLeafNodeFlag = isValueConceptKey(concept_key)
+            def columnType = "string"
+            if (valueLeafNodeFlag){
+                columnType = "number"
+                    }
+
+            // add the subject and columnid column to the table if its not there
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
-
-            if (isValueConceptKey(concept_key)) {
-
                 if (tablein.getColumn(columnid) == null) {
-                    tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "number", columntooltip));
+                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", columnType,columntooltip));
                 }
 
-                /*get the data*/
-                String concept_cd = getConceptCodeFromKey(concept_key);
-                Sql sql = new Sql(dataSource)
-                String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
-				        PATIENT_NUM IN (select distinct patient_num
-						from qt_patient_set_collection
-						where result_instance_id = ?)""";
-
-                sql.eachRow(sqlt, [
-                        concept_cd,
-                        result_instance_id
-                ], { row ->
-                    /*If I already have this subject mark it in the subset column as belonging to both subsets*/
-                    String subject = row.PATIENT_NUM
-                    Double value = row.NVAL_NUM
-                    if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                        tablein.getRow(subject).put(columnid, value.toString());
-                    } else
-                    /*fill the row*/ {
-                        ExportRowNew newrow = new ExportRowNew();
-                        newrow.put("subject", subject);
-                        newrow.put(columnid, value.toString());
-                        tablein.putRow(subject, newrow);
+            if (xTrialsCaseFlag) {
+                insertAcrossTrialsConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein)
                     }
-                })
-            } else {
-
-                if (tablein.getColumn(columnid) == null) {
-                    tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "string", columntooltip));
-                }
-
-                String concept_cd = getConceptCodeFromKey(concept_key);
-                Sql sql = new Sql(dataSource)
-                String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
-				        PATIENT_NUM IN (select distinct patient_num
-				        from qt_patient_set_collection
-						where result_instance_id = ?)""";
-
-                sql.eachRow(sqlt, [
-                        concept_cd,
-                        result_instance_id
-                ], { row ->
-                    /*If I already have this subject mark it in the subset column as belonging to both subsets*/
-                    String subject = row.PATIENT_NUM
-                    String value = row.TVAL_CHAR
-                    if (value == null) {
-                        value = "Y";
-                    }
-                    if (isURL(value)) {
-                        /* Embed URL in a HTML Link */
-                        value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>";
+            else {
+                insertConceptDataIntoTable(columnid, concept_key, result_instance_id, valueLeafNodeFlag, tablein)
                     }                    
-                    if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
-                        tablein.getRow(subject).put(columnid, value.toString());
-                    } else
-                        /*fill the row*/ {
-                        ExportRowNew newrow = new ExportRowNew();
-                        newrow.put("subject", subject);
-                        newrow.put(columnid, value.toString());
-                        tablein.putRow(subject, newrow);
-                    }
-                });
-            }
+
         } else {
             // If a folder is dragged in, we want the contents of the folder to be added to the data
             // That is possible if the folder contains only categorical values and no subfolders.
@@ -855,28 +1262,54 @@ class I2b2HelperService {
             // Check whether the folder is valid: first find all children of the current code
             def item = conceptsResourceService.getByKey(concept_key)
 
+            log.debug "----------------- this is Folder Node"
+            log.trace "concept_key = " + concept_key
+            log.trace "children? " + !!item.children
+
             if (!item.children) {
-                log.debug("Can not show data in gridview for empty node: " + concept_key)
+                log.trace("Can not show data in gridview for empty node: " + concept_key)
+                return tablein
             }
 
             // All children should be leaf categorical values
             if (item.children.any {
-                return !it.cVisualattributes.contains("L") || nodeXmlRepresentsValueConcept(it.metadataxml)
+				if (xTrialsCaseFlag) {
+					return !isLeafConceptKey(it)
+				}
+                return !isLeafConceptKey(it) || nodeXmlRepresentsValueConcept(it.metadataxml)
             }) {
-                log.debug("Can not show data in gridview for foldernodes with mixed type of children")
+                log.trace("Can not show data in gridview for folder nodes with mixed type of children")
                 return tablein
             }
 
-            /*add the column to the table if its not there*/
+            log.debug "----------------- all folder child nodes are categorical leaf nodes"
+
+            def columnType = "string"
+
+            // add the subject and columnid column to the table if its not there
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
             if (tablein.getColumn(columnid) == null) {
-                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", "string", columntooltip));
+                tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", columnType,columntooltip));
             }
+
+            if (xTrialsCaseFlag) {
+                log.trace "----------------- this is Folder Node - xTrials case"
+                item.children.each { child ->
+                    log.trace "Child key code: " + child.key
+                    def valueLeafNodeFlag = false
+                    concept_key = child.key
+                    insertAcrossTrialsConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein)
+                }
+            } else {
+
+                log.debug "----------------- this is Folder Node - single study case"
 
             // Store the concept paths to query
             def paths = item.children*.fullName
+
+                log.trace "Children Paths: " + paths
 
             // Find the concept codes for the given children
             def conceptCriteria = ConceptDimension.createCriteria()
@@ -884,19 +1317,24 @@ class I2b2HelperService {
                 'in'("conceptPath", paths)
             }
 
-            // Determine the patients to query
-            def patientIds = QtPatientSetCollection.executeQuery("SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong())
-            patientIds = patientIds.collect { BigDecimal.valueOf(it) }
+                log.trace "Children concepts: " + concepts*.conceptCode
 
-            // If nothing is found, return
-            if (!concepts || !patientIds) {
+                // Determine the patients to query
+                def patientIds = QtPatientSetCollection.executeQuery("SELECT q.patient.id FROM QtPatientSetCollection q WHERE q.resultInstance.id = ?", result_instance_id.toLong())
+                patientIds = patientIds.collect { BigDecimal.valueOf(it) }
+
+                // If nothing is found, return
+                if (!concepts || !patientIds) {
+                    log.debug "no concept; no parentIds"
                 return
             }
 
             // After that, retrieve all data entries for the children
-            def results = ObservationFact.executeQuery("SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect {
-                it?.toLong()
-            }])
+                def results = ObservationFact.executeQuery("SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)", [conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect {
+                    it?.toLong()
+                }])
+
+                log.trace "results length: " + results.length
 
             results.each { row ->
 
@@ -906,10 +1344,76 @@ class I2b2HelperService {
                 if (value == null) {
                     value = "Y";
                 }
+                    if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+                        tablein.getRow(subject).put(columnid, value.toString());
+                    } else /*fill the row*/ {
+                        ExportRowNew newrow = new ExportRowNew();
+                        newrow.put("subject", subject);
+                        newrow.put(columnid, value.toString());
+                        tablein.putRow(subject, newrow);
+                    }
+                }
+            }
+        }
+        log.debug "----------------- end addConceptDataToTable >>>>>> >>>>>> >>>>>>"
+        return tablein;
+    }
+
+    def fetchConceptData(concept_key,result_instance_id){
+        def valueLeafNodeFlag = isValueConceptKey(concept_key)
+        def dataList = []
+        if (valueLeafNodeFlag) {
+            String concept_cd = getConceptCodeFromKey(concept_key)
+            log.debug "----------------- this is a value Leaf Node"
+            log.debug "concept_key = " + concept_key
+            log.debug "concept_cd = " + concept_cd
+            /*get the data*/
+            log.trace "result_instance_id = " + result_instance_id
+            Sql sql = new Sql(dataSource)
+            String sqlt = """SELECT PATIENT_NUM, NVAL_NUM, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
+				        PATIENT_NUM IN (select distinct patient_num
+						from qt_patient_set_collection
+						where result_instance_id = ?)""";
+            sql.eachRow(sqlt, [concept_cd,result_instance_id], { row ->
+                /*If I already have this subject mark it in the subset column as belonging to both subsets*/
+                String subject = row.PATIENT_NUM
+                Double value = row.NVAL_NUM
+                dataList.add(['subject':subject, 'value':value])
+            })
+        } else {
+            String concept_cd = getConceptCodeFromKey(concept_key);
+            log.debug "----------------- this is a non-value, catigorical, Leaf Node"
+            log.debug "concept_key = " + concept_key
+            log.debug "concept_cd = " + concept_cd
+            Sql sql = new Sql(dataSource)
+            String sqlt = """SELECT PATIENT_NUM, TVAL_CHAR, START_DATE FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ? AND
+				        PATIENT_NUM IN (select distinct patient_num
+				        from qt_patient_set_collection
+						where result_instance_id = ?)""";
+
+            sql.eachRow(sqlt, [concept_cd,result_instance_id], { row ->
+                String subject = row.PATIENT_NUM
+                String value = row.TVAL_CHAR
+                if (value == null) {
+                    value = "Y";
+                }
                 if (isURL(value)) {
                     /* Embed URL in a HTML Link */
                     value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>"
                 }
+                dataList.add(['subject':subject, 'value':value])
+            })
+        }
+        return dataList
+    }
+
+    def insertConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein) {
+        log.debug "----------------- insertConceptDataIntoTable"
+        log.debug "for columnid = " + columnid
+        def data = fetchConceptData(concept_key,result_instance_id)
+        data.each{
+            def subject = it.subject
+            def value = it.value
                 if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
                     tablein.getRow(subject).put(columnid, value.toString());
                 } else /*fill the row*/ {
@@ -920,28 +1424,125 @@ class I2b2HelperService {
                 }
             }
         }
-        return tablein;
+
+    def fetchAcrossTiralsData(concept_key,result_instance_id){
+        log.debug "----------------- fetchAcrossTiralsData"
+
+        def valueLeafNodeFlag = isValueConceptKey(concept_key)
+        def dataList = []
+
+        def itemProbe = conceptsResourceService.getByKey(concept_key)
+        String modifier_cd = itemProbe.modifierDimension.code
+
+        log.debug "concept_key = " + concept_key
+        log.debug "modifier_cd = " + modifier_cd
+        log.debug "result_instance_id = " + result_instance_id
+
+        if (valueLeafNodeFlag) {
+            log.debug "----------------- this is a value Leaf Node"
+
+            Sql sql = new Sql(dataSource)
+
+            def sqlt = """
+                SELECT PATIENT_NUM, NVAL_NUM, START_DATE
+                FROM OBSERVATION_FACT f
+                WHERE
+                    modifier_cd = ?
+                    AND concept_cd != 'SECURITY'
+                    AND PATIENT_NUM IN (select distinct patient_num
+                        from qt_patient_set_collection
+                        where result_instance_id = ?)
+                """
+
+            sql.eachRow(sqlt, [modifier_cd, result_instance_id], { row ->
+                /*If I already have this subject mark it in the subset column as belonging to both subsets*/
+                String subject = row.PATIENT_NUM
+                Double value = row.NVAL_NUM
+                dataList.add(['subject': subject, 'value': value])
+            })
+        } else {
+            log.debug "----------------- this is a non-value, catigorical, Leaf Node"
+            Sql sql = new Sql(dataSource)
+
+            def sqlt = """
+                SELECT PATIENT_NUM, TVAL_CHAR, START_DATE
+                FROM OBSERVATION_FACT f
+                WHERE
+                    modifier_cd = ?
+                    AND concept_cd != 'SECURITY'
+                    AND PATIENT_NUM IN (select distinct patient_num
+                        from qt_patient_set_collection
+                        where result_instance_id = ?)
+                """
+
+            sql.eachRow(sqlt, [modifier_cd, result_instance_id], { row ->
+                /*If I already have this subject mark it in the subset column as belonging to both subsets*/
+                String subject = row.PATIENT_NUM
+                String value = "" + (row.TVAL_CHAR as String)
+                dataList.add(['subject': subject, 'value': value])
+            })        }
+        dataList
+    }
+
+    def insertAcrossTrialsConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein) {
+        log.debug "----------------- insertAcrossTrialsConceptDataIntoTable <<<< ---- <<<<<"
+
+        def data = fetchAcrossTiralsData(concept_key,result_instance_id)
+        data.each{
+            def subject = it.subject
+            def value = it.value
+            if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
+                tablein.getRow(subject).put(columnid, value.toString());
+            } else
+            /*fill the row*/ {
+                ExportRowNew newrow = new ExportRowNew();
+                newrow.put("subject", subject);
+                newrow.put(columnid, value.toString());
+                tablein.putRow(subject, newrow);
+            }
+        }
+        log.debug "----------------- insertAcrossTrialsConceptDataIntoTable >>>>> ---- >>>>>>"
     }
 
     /**
      * Gets a distribution of information from the patient dimension table
      * */
     def HashMap<String, Integer> getPatientDemographicDataForSubset(String col, String result_instance_id) {
+
+        log.trace("in getPatientDemographicDataForSubset ...")
+        log.trace("args: col = " + col + ", result_instance_id = " + result_instance_id)
         checkQueryResultAccess result_instance_id
 
         HashMap<String, Integer> results = new LinkedHashMap<String, Integer>();
         Sql sql = new Sql(dataSource)
-        String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
-		(SELECT DISTINCT UPPER(""" + col + """) as cat FROM patient_dimension) a
-		LEFT OUTER JOIN
-		(SELECT UPPER(""" + col + """) as cat,COUNT(*) as demcount FROM patient_dimension
-		WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
-		Group by UPPER(""" + col + """)) b
-		ON a.cat=b.cat ORDER BY a.cat""";
+
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
+        String sqlt = """SELECT cat, COUNT(subject_id) as demcount
+        FROM (
+                SELECT DISTINCT UPPER("""+ col + """) as cat, pd.sourcesystem_cd AS subject_id
+                FROM qt_patient_set_collection ps
+                JOIN patient_dimension pd
+                ON ps.patient_num=pd.patient_num AND result_instance_id = ?
+        ) base
+        GROUP BY cat
+        """;
+
+//      String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
+//		(SELECT DISTINCT UPPER(""" + col + """) as cat FROM patient_dimension) a
+//		LEFT OUTER JOIN
+//		(SELECT UPPER(""" + col + """) as cat,COUNT(*) as demcount FROM patient_dimension
+//		WHERE PATIENT_NUM IN (select distinct patient_num from qt_patient_set_collection where result_instance_id = ?)
+//		Group by UPPER(""" + col + """)) b
+//		ON a.cat=b.cat ORDER BY a.cat""";
+
+        log.trace(sqlt)
+
         sql.eachRow(sqlt, [result_instance_id], { row ->
-            if (row[1] != 0) {
+            if (row[0] != null && row[1] != 0) {
                 results.put(row[0], row[1])
-                log.trace("in row getting patient demographic data for subset")
+                //log.trace("in row getting patient demographic data for subset")
+                //log.trace("Selected: " + row[0] + ", " + row[1])
             }
         })
         return results;
@@ -1028,20 +1629,25 @@ class I2b2HelperService {
      *  This is used when presenting results across trials
      */
     def String lookupParentConcept(String conceptPath) {
-        /*get all distinct  concepts for analysis from both subsets into hashmap*/
 
+        // DOES NOT APPEAR TO WORK - July 14, 2015 - Terry E Weymouth
+        // I believe that this might be an old implementation of xTrials
+        // In the current ETL, deapp.de_xtrial_child_map, is not populated!
+
+        /*get all distinct  concepts for analysis from both subsets into hashmap*/
+        log.debug("lookupParentConcept" + conceptPath);
         try {
             Sql sql = new Sql(dataSource);
             String sqlQuery = """select parent_cd from deapp.de_xtrial_child_map xcm
 				inner join concept_dimension cd
 				on xcm.concept_cd=cd.concept_cd
 				where concept_path = ?""";
-            log.debug("\ncalled with conceptPath:" + conceptPath);
-            log.debug("\nexecuting query:" + sqlQuery);
+            log.trace("\ncalled with conceptPath:" + conceptPath);
+            log.trace("\nexecuting query:" + sqlQuery);
             String parentConcept = "";
             sql.eachRow(sqlQuery, [conceptPath], { row -> parentConcept = row.parent_cd; });
             if (parentConcept != "") {
-                log.debug("returning parentConcept=" + parentConcept);
+                log.trace("returning parentConcept=" + parentConcept);
                 return parentConcept;
             } else {
                 return null;
@@ -1266,7 +1872,6 @@ class I2b2HelperService {
 
         //This is the SQL statement we run.
         String sqlt = "select distinct PATIENT_ID from DE_SUBJECT_SAMPLE_MAPPING where SAMPLE_ID in (" + listToIN(SampleIDList) + ")";
-
         sql.eachRow(sqlt, [], { row -> subjectIds.add(row.PATIENT_ID); })
 
         return subjectIds;
@@ -1814,7 +2419,6 @@ class I2b2HelperService {
                         concepts1, concepts2, timepoint1, timepoint2, rbmPanels1, rbmPanels2);
                 log.debug("RBM heatmap query: " + query);
                 Sql sql = new Sql(dataSource);
-
                 def rowsObj = sql.rows(query, numColumnsClosure)
 
                 // create header
@@ -2556,7 +3160,7 @@ class I2b2HelperService {
         Map<String, String> conceptIdToDisplayNameMap = new HashMap<String, String>();
 
         // Get the dataset list from subject lists, and organize them in pairs for each patient.
-        String commonPlatformName = null;    // To make sure there is noly one platform among all the datasets
+        String commonPlatformName = null;    // To make sure there is only one platform among all the datasets
         String commonTrialName = null;    // For now only one trial is allowed.
 
         Sql sql = new Sql(dataSource);
@@ -3732,7 +4336,7 @@ class I2b2HelperService {
         StringBuilder trialQ = new StringBuilder("select distinct s.trial_name from de_subject_sample_mapping s ");
         trialQ.append(" where s.patient_id in (").append(ids).append(") and s.platform = 'MRNA_AFFYMETRIX'");
 
-        log.debug("getTrialName used this query: " + trialQ.toString());
+        log.trace("getTrialName used this query: " + trialQ.toString());
 
         String trialNames = "";
         sql.eachRow(trialQ.toString(), { row ->
@@ -3806,7 +4410,6 @@ class I2b2HelperService {
         StringBuilder sampleQ = new StringBuilder("SELECT distinct s.SAMPLE_TYPE_CD FROM de_subject_sample_mapping s WHERE s.CONCEPT_CODE IN ").append(convertStringToken(concepts));
 
         log.debug("getSampleTypes used this query: " + sampleQ.toString());
-
         sql.eachRow(sampleQ.toString(), { row ->
             String st = row.sample_type_cd;
             if (st != null && st.trim().length() > 0) {
@@ -4892,13 +5495,54 @@ class I2b2HelperService {
      * for display in a distribution histogram for a given subset
      */
     def getConceptDistributionDataForValueConceptByTrial(String concept_key, String result_instance_id) {
+        log.debug "----------------- getConceptDistributionDataForValueConceptByTrial"
+
         checkQueryResultAccess result_instance_id
+        log.trace "access assured"
+
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key)
+        log.trace "xTrialsCaseFlag = " + xTrialsCaseFlag
 
         def trialdata = [:];
 
         if (result_instance_id != null && result_instance_id != "") {
-            log.trace("Getting concept distribution data for value concept:" + concept_key);
+            log.debug("Getting concept distribution data for value concept:" + concept_key);
+            log.trace "concept_key = " + concept_key
+            log.trace "result_instance_id = " + result_instance_id
+
             Sql sql = new Sql(dataSource);
+
+            if (xTrialsCaseFlag) {
+
+                def itemProbe = conceptsResourceService.getByKey(concept_key)
+                String modifier_cd = itemProbe.modifierDimension.code
+
+                log.debug "modifier_cd = " + modifier_cd
+                log.debug "result_instance_id = " + result_instance_id
+
+                String sqlt = """
+                    SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f
+                        INNER JOIN PATIENT_TRIAL t ON f.PATIENT_NUM=t.PATIENT_NUM
+                    WHERE modifier_cd = ?
+                        AND concept_cd != 'SECURITY'
+                        AND f.PATIENT_NUM IN (select distinct patient_num
+                            from qt_patient_set_collection
+                            where result_instance_id = ?)
+                    """;
+                sql.eachRow(sqlt, [
+                        modifier_cd, result_instance_id
+                ], { row ->
+                    if (row.NVAL_NUM != null) {
+                        //add a new Array if this is the first time im hitting this trial
+                        if (!trialdata.containsKey(row.TRIAL)) {
+                            trialdata.put(row.TRIAL, [row.NVAL_NUM]);
+                        } else {
+                            trialdata[row.TRIAL].add(row.NVAL_NUM);
+                        }
+                    }
+                })
+            } else {
+
             String concept_cd = getConceptCodeFromKey(concept_key);
             //ArrayList<Double> values=new ArrayList<Double>();
             String sqlt = """SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
@@ -4919,20 +5563,24 @@ class I2b2HelperService {
                 }
             })
         }
+
+        }
+        log.debug "----------------- end getConceptDistributionDataForValueConceptByTrial"
         return trialdata;
     }
 
     def getConceptDistributionDataForValueConceptByTrialByConcepts(Set<String> childConcepts, String result_instance_id) {
+        log.debug "----------------- getConceptDistributionDataForValueConceptByTrialByConcepts"
+
         checkQueryResultAccess result_instance_id
+        log.trace "Access assured"
+
+        log.trace "childConcepts list is empty: " + childConcepts.isEmpty()
 
         def trialdata = [:];
 
         if (result_instance_id != null && result_instance_id != "" && !childConcepts.isEmpty()) {
             Sql sql = new Sql(dataSource);
-            // String concept_cd=getConceptCodeFromKey(concept_key);
-            //ArrayList<Double> values=new ArrayList<Double>();
-
-            // IN clause here
 
             String sqlt = """SELECT TRIAL, NVAL_NUM FROM OBSERVATION_FACT f  INNER JOIN PATIENT_TRIAL t
 			ON f.PATIENT_NUM=t.PATIENT_NUM
@@ -4941,8 +5589,7 @@ class I2b2HelperService {
 					from qt_patient_set_collection
 					where result_instance_id=""" + result_instance_id + """) """;
 
-            log.debug("about to execute query: " + sqlt);
-
+            log.trace("about to execute query: " + sqlt);
             sql.eachRow(sqlt,
                     { row ->
                         if (row.NVAL_NUM != null) {
@@ -4961,10 +5608,37 @@ class I2b2HelperService {
     /****************************************New security stuff*************************/
 
     /**
+     *  check whether the current use is permitted to view Across Trials data
+     */
+    def currentUserHasAcrossTrialsAccess(){
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+        return isXTrialsRole(user);
+    }
+
+    /**
+     *  check whether the current use is permitted to view Across Trials data
+     */
+    def isXTrials(user) {
+        def access = false;
+        for (role in user.authorities) {
+            if (isXTrialsRole(role)) {
+                access = true;
+            }
+        }
+        return access;
+
+    }
+
+    /**
      *  check whether or not a role is admin
-     *
-     *
-     *  */
+     */
+    def isXTrialsRole(role) {
+        return role.authority.equals("ROLE_ACROSS_TRIALS");
+    }
+
+    /**
+     *  check whether or not a role is admin
+     */
     def isAdminRole(role) {
         return role.authority.equals("ROLE_ADMIN") || role.authority.equals("ROLE_DATASET_EXPLORER_ADMIN");
     }
@@ -5003,14 +5677,14 @@ class I2b2HelperService {
         return ls;
     }
 
-    Map<String, String> getSecureTokensForStudies(Collection<String> sdudyIds) {
-        if (!sdudyIds) return [:]
+    Map<String, String> getSecureTokensForStudies(Collection<String> studyIds) {
+        if (!studyIds) return [:]
 
         Sql sql = new Sql(dataSource)
         def tokens = [:]
         try {
             sql.eachRow("""
-                SELECT sourcesystem_cd, secure_obj_token FROM i2b2metadata.i2b2_SECURE WHERE sourcesystem_cd IN  (""" + listToIN(sdudyIds.asList()) + """) AND c_hlevel = 1
+                SELECT sourcesystem_cd, secure_obj_token FROM i2b2metadata.i2b2_SECURE WHERE sourcesystem_cd IN  (""" + listToIN(studyIds.asList()) + """) AND c_hlevel = 1
             """, { row ->
                 tokens += [(row.sourcesystem_cd): row.secure_obj_token]
             })
@@ -5043,8 +5717,30 @@ class I2b2HelperService {
      * Gets the children with access for a concept
      */
     def getChildrenWithAccessForUserNew(String concept_key, AuthUser user) {
+        log.debug "----------------- getChildrenWithAccessForUserNew"
+
+        def xTrialsTopNode = "\\\\" + ACROSS_TRIALS_TABLE_CODE + "\\" + ACROSS_TRIALS_TOP_TERM_NAME + "\\"
+        def xTrialsCaseFlag = isXTrialsConcept(concept_key) || (concept_key == xTrialsTopNode)
+
+        def results = [:]
+
+        log.trace "input concept_key = " + concept_key
+        log.trace "user = " + user
+
+        if (xTrialsCaseFlag) {
+            log.trace("XTrials for getChildrenWithAccessForUserNew")
+            log.warn("getChildrenWithAccessForUserNew - For cross trials, make no check at this time!!")
+
+            def node = conceptsResourceService.getByKey(concept_key)
+            def List<OntologyTerm> childNodes = node.children
+            for (OntologyTerm term: childNodes) {
+                results.put(term.fullName, 'view')
+            }
+        } else {
         def children = getChildPathsWithTokensFromParentKey(concept_key);
-        return getAccess(children, user);
+            results =  getAccess(children, user)
+    }
+        return results
     }
 
     /**
@@ -5079,13 +5775,20 @@ class I2b2HelperService {
                 } else if (tokens.containsKey(childtoken)) //null tokens are assumed to be unlocked
                 {
                     access.put(key, tokens[childtoken]); //found access for this token so put in access level
+                } else if (isXTrialsTopLevel(key) && isXTrials(user)) {
+                    access.put(key, "VIEW");
                 } else {
                     access.put(key, "Locked"); //didn't find authorization for this token
                 }
             }
         }
-        log.debug(access.toString());
+        log.debug("In getAccess: " + access.toString());
         return access;
+    }
+
+    def isXTrialsTopLevel(nodeName) {
+        String match = "\\" + ACROSS_TRIALS_TOP_TERM_NAME + "\\"
+        return match.equals(nodeName)
     }
 
     /**
@@ -5251,6 +5954,8 @@ class I2b2HelperService {
             ls.put(keyToPath(conceptkey), row.secure_obj_token);
             log.trace("@@found" + conceptkey);
         })
+        // for across trials - mark top level know with special token for downstream access control
+        ls.put("\\Across Trials\\","EXP:ACROSS_TRIALS")
         return ls;
     }
 
@@ -5692,6 +6397,28 @@ class I2b2HelperService {
     def String getTrialNameByConceptKey(String key) {
         return conceptsResourceService.getByKey(key).getStudy().getId()
     }
+
+    def List<String> trialsForResultSet (String result_instance_id) {
+        checkQueryResultAccess result_instance_id
+
+        List<String> trials = new ArrayList<String>();
+        Sql sql = new Sql(dataSource)
+        String sqlt = """
+            SELECT distinct trial
+            FROM patient_trial pt
+                JOIN qt_patient_set_collection psc
+                    ON pt.patient_num=psc.patient_num
+            WHERE psc.result_instance_id = ?
+            ORDER BY trial
+            """
+        log.trace(sqlt);
+        sql.eachRow(sqlt, [result_instance_id], {row ->
+            trials.add(row.trial)
+        })
+
+        return trials
+}
+
 }
 
 class SurvivalConcepts {

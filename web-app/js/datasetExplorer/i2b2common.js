@@ -1688,6 +1688,24 @@ function isSubsetEmpty(subset)
 	return flag;
 }
 
+function isSubsetOnlyExclude(subset) {
+
+    var allExcludes = true;
+    var count = 0;
+    for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
+    {
+        var queryDiv=Ext.get("queryCriteriaDiv"+subset+'_'+d);
+        if (queryDiv.dom.childNodes.length>0) {
+            count++;
+            var isInclude = (queryDiv.dom.className.indexOf("queryGroupInclude") > -1);
+            if (isInclude) allExcludes = false;
+        }
+    }
+    allExcludes = (count > 0) && allExcludes;
+
+    return allExcludes;
+}
+
 function showConceptDistributionHistogram(){
 
 	var concept_key = selectedConcept.getAttribute('conceptid');
@@ -1883,22 +1901,19 @@ function getTreeNodeFromJsonNode(concept)
 	newnode.addListener('contextmenu',ontologyRightClick);
 	return newnode;
 }
-
-
 function setTreeNodeSecurity(newnode, access)
 {
 if(access!=undefined)
-  	{
-  		if(access=='Locked')
-  		{
+  			{
+  			if(access=='Locked')
+  			{
   			//newnode.setText(child.text+" <b>Locked</b>");
   			newnode.attributes.access='locked';
   			newnode.disable();
   			newnode.on('beforeload', function(node){alert("Access to this node has been restricted. Please contact your administrator for access."); return false});		
-  		}
-	 }
+  			}
+  		   }
 }
-
 
 function climbTreeBuildName(baseNode)
 {
