@@ -125,4 +125,10 @@ class QueriesResourceAuthorizationDecorator
          * Odd that this method is not in QueryResult anyway */
         delegate.getQueryDefinitionForResult(result)
     }
+
+    @Override
+    List<QueryResult> getQueryResultsByUsername(String username) {
+        delegate.getQueryResultsByUsername(username)
+    }
+
 }
