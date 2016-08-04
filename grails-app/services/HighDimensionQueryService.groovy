@@ -1,23 +1,11 @@
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
-import grails.gorm.PagedResultList
 import groovy.sql.Sql
-import org.hibernate.criterion.Restrictions
-import org.transmartproject.core.dataquery.TabularResult
-import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
-import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
-import org.transmartproject.db.dataquery.highdim.DeGplInfo
-import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping
-import org.transmartproject.db.dataquery.highdim.mirna.DeSubjectMirnaData
-import org.transmartproject.db.dataquery.highdim.mrna.DeMrnaAnnotationCoreDb
-import org.transmartproject.db.dataquery.highdim.mrna.DeSubjectMicroarrayDataCoreDb
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
-
 /**
  * Author: Denny Verbeeck (dverbeec@its.jnj.com)
  */
