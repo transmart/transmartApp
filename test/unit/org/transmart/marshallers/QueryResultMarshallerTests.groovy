@@ -33,6 +33,8 @@ class QueryResultMarshallerTests {
                 not(hasEntry(equalTo('statusTypeId'), anything())),
                 not(hasEntry(equalTo('description'), anything())),
                 not(hasEntry(equalTo('username'), anything())),
+                not(hasEntry(equalTo('queryXML'), anything())),
+                not(hasEntry(equalTo('name'), anything()))
         )
     }
 }
