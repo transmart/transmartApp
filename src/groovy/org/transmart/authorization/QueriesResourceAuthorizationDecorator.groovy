@@ -64,6 +64,13 @@ class QueriesResourceAuthorizationDecorator
         res
     }
 
+    @Override
+    QueryResult runDisablingQuery(Long id,
+                                  String username) throws InvalidRequestException
+    {
+        delegate.runDisablingQuery(id, username)
+    }
+
     static class LegacyQueryResultAccessCheckRequestCache {
         // should be request-scope bean
         Set<Long> resultInstanceIdsAllowed = Sets.newHashSet()
