@@ -14,6 +14,8 @@ import org.transmartproject.db.ontology.I2b2
 import org.transmartproject.db.ontology.StudyTestData
 import org.transmartproject.db.test.RuleBasedIntegrationTestMixin
 
+import java.nio.file.Paths
+
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 import static org.junit.Assert.assertTrue
@@ -70,7 +72,7 @@ class HighDimExportServiceTests {
                 exportOptions: [meta: false, samples: false, platform: false])
 
         assertThat files, contains(
-                hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','data_mrna.tsv').toString())),
         )
 
         def dataFile = files[0]
@@ -98,7 +100,7 @@ class HighDimExportServiceTests {
                 exportOptions: [meta: false, samples: false, platform: false])
 
         assertThat files, contains(
-                hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','data_mrna.tsv').toString())),
         )
 
         def dataFile = files[0]
@@ -127,8 +129,8 @@ class HighDimExportServiceTests {
                 exportOptions: [meta: true, samples: false, platform: false])
 
         assertThat files, containsInAnyOrder(
-                hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),
-                hasProperty('absolutePath', endsWith('/bar/meta.tsv')),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','data_mrna.tsv').toString())),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','meta.tsv').toString())),
         )
 
         files.each { File file ->
@@ -136,7 +138,7 @@ class HighDimExportServiceTests {
             assertThat file.length(), greaterThan(0l)
         }
 
-        def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
+        def metaFile = files.find { it.absolutePath.endsWith File.separator + 'meta.tsv' }
 
         def metaTable = parseSepValTable(metaFile)
         assertThat metaTable, contains(
@@ -158,8 +160,8 @@ class HighDimExportServiceTests {
                 exportOptions: [meta: false, samples: true, platform: false])
 
         assertThat files, containsInAnyOrder(
-                hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),
-                hasProperty('absolutePath', endsWith('/bar/samples.tsv')),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','data_mrna.tsv').toString())),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','samples.tsv').toString())),
         )
 
         files.each { File file ->
@@ -167,7 +169,7 @@ class HighDimExportServiceTests {
             assertThat file.length(), greaterThan(0l)
         }
 
-        def samplesFile = files.find { it.absolutePath.endsWith '/samples.tsv' }
+        def samplesFile = files.find { it.absolutePath.endsWith File.separator + 'samples.tsv' }
 
         def samplesTable = parseSepValTable(samplesFile)
         assertThat samplesTable, containsInAnyOrder(
@@ -191,8 +193,8 @@ class HighDimExportServiceTests {
                 exportOptions: [meta: false, samples: false, platform: true])
 
         assertThat files, containsInAnyOrder(
-                hasProperty('absolutePath', endsWith('/bar/data_mrna.tsv')),
-                hasProperty('absolutePath', endsWith('/bar/platform.tsv')),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','data_mrna.tsv').toString())),
+                hasProperty('absolutePath', endsWith(Paths.get('/bar','platform.tsv').toString())),
         )
 
         files.each { File file ->
@@ -200,7 +202,7 @@ class HighDimExportServiceTests {
             assertThat file.length(), greaterThan(0l)
         }
 
-        def platformFile = files.find { it.absolutePath.endsWith '/platform.tsv' }
+        def platformFile = files.find { it.absolutePath.endsWith File.separator + 'platform.tsv' }
 
         def platformTable = parseSepValTable(platformFile)
         assertThat platformTable, contains(
