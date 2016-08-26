@@ -8,6 +8,7 @@
 
     <g:javascript library="jquery" />
     <r:require module="extjs" />
+    <g:layoutHead/>
     <r:layoutResources/>
 
     <script type="text/javascript" charset="utf-8">
@@ -20,8 +21,6 @@
 
     </script>
 
-    <g:layoutHead/>
-    <r:layoutResources/>
 </head>
 
 <body>
