@@ -41,6 +41,7 @@
     padding: 4px;
     border: 1px solid #f0f0f0;
     cursor: pointer;
+    text-align: left
 }
 
 #utilitiesMenu li:hover {
@@ -77,7 +78,6 @@ span.utilMenuSeparator {
 <th class="menuLink" style="width: 100px; text-align: right">
     <a href="#" onclick="toggleMenu();
     return false;" id="utilitiesMenuButton">Utilities</a>
-</th>
 
 <g:set var="buildNumber"><g:meta name="environment.BUILD_NUMBER"/></g:set>
 <g:set var="buildId"><g:meta name="environment.BUILD_ID"/></g:set>
@@ -94,3 +94,4 @@ span.utilMenuSeparator {
         <li><a href="${createLink(controller: 'login', action: 'forceAuth')}">Log Out</a></li>
     </ul>
 </div>
+</th>
