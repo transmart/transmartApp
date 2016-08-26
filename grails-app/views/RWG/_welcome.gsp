@@ -13,7 +13,7 @@
 
         <p>The <b>Analyze</b> window lets you perform a number of analyses either on studies selected
         in the Browse window, or from the global search box located in the top ribbon of your screen.
-        More information about the analyses you can perform is available in the “Help ? section of the "Utilities" menu.
+        More information about the analyses you can perform is available in the “Help" section of the "Utilities" menu.
         </p>
         <br><br>
 
