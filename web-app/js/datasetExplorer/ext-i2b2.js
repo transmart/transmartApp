@@ -60,11 +60,8 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	        FM.handleFolderHasFilesRequest(this, response, node, callback);
 	    }
 	        
-	    else {
-                //parseJson(response, node);
-	        getChildConceptPatientCounts(node);
-		//this.endAppending(node, callback);
-	    }
+	    getChildConceptPatientCounts(node);
+
 	    node.endUpdate();
 	    if (typeof callback == "function") {
 	        callback(this, node);
@@ -159,24 +156,24 @@ function parseJson (response, node) {
         
  }
 
- function handleFolderHasFilesRequest (source, originalResponse, node, callback) {
-
-    Ext.Ajax.request({
-        url: pageInfo.basePath+"/fmFolder/getFolderHasFiles",
-        method: 'GET',
-        success: function(response) {
-            if (response.responseText == "true") {
-                node.appendChild(getFileFolderNode(node));
-            }
-            //parseJson(originalResponse, node);
-            //source.endAppending(node, callback);
-        },
-        timeout: '120000', //2 minutes
-        params: {accession: node.attributes.accession}
-    });
-
-
-}
+// function handleFolderHasFilesRequest (source, originalResponse, node, callback) {
+//
+//    Ext.Ajax.request({
+//        url: pageInfo.basePath+"/fmFolder/getFolderHasFiles",
+//        method: 'GET',
+//        success: function(response) {
+//            if (response.responseText == "true") {
+//                node.appendChild(getFileFolderNode(node));
+//            }
+//            //parseJson(originalResponse, node);
+//            //source.endAppending(node, callback);
+//        },
+//        timeout: '120000', //2 minutes
+//        params: {accession: node.attributes.accession}
+//    });
+//
+//
+//}
 
 function getConceptPatientCountComplete(result, node) {
     node.setText(node.text + " <b>(" + result.responseText + ")</b>");
