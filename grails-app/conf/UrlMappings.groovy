@@ -11,6 +11,7 @@ class UrlMappings {
             }
         }
         "/"(controller: 'userLanding', action: 'index')
+        "/v1/oauth"(controller: 'oauth', action: 'verify')
         "500"(view: '/error')
         "/transmart/dataExport/getJobs"(controller: "dataExport", action: "getJobs")
         //"/transmart/exportData"(controller:"dataExport", action:"processExport")
