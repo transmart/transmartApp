@@ -11,6 +11,7 @@ import org.transmartproject.core.exceptions.NoSuchResourceException
 import org.transmartproject.core.querytool.QueriesResource
 import org.transmartproject.core.querytool.QueryDefinition
 import org.transmartproject.core.querytool.QueryResult
+import org.transmartproject.core.querytool.QueryResultSummary
 import org.transmartproject.core.users.User
 
 import javax.annotation.Resource
@@ -134,8 +135,8 @@ class QueriesResourceAuthorizationDecorator
     }
 
     @Override
-    List<QueryResult> getQueryResultsByUsername(String username) {
-        delegate.getQueryResultsByUsername(username)
+    List<QueryResultSummary> getQueryResultsSummaryByUsername(String username) {
+        delegate.getQueryResultsSummaryByUsername(username)
     }
 
 }
