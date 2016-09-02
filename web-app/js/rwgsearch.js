@@ -967,7 +967,7 @@ jQuery(document).ready(function() {
 			ids.push(jQuery(checkboxes[i]).attr('name'));
 		}
 
-		if (ids.size() == 0) {return false;}
+		if (ids.length == 0) {return false;}
 
 		window.location = exportURL + "?id=" + ids.join(',');
 		   
@@ -977,7 +977,7 @@ jQuery(document).ready(function() {
 			url:exportRemoveURL,
 			data: {id: ids.join(',')},			
 			success: function(response) {
-				for(j=0; j<ids.size(); j++){
+				for(j=0; j<ids.length; j++){
 					jQuery(checkboxes[j]).closest("tr").remove();
 					jQuery('#cartcount').show().text(response);
 					updateExportCount();
