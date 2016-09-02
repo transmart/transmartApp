@@ -17,9 +17,12 @@
                     </div>
                     <table class="analysis">
                         <tbody>
-                        <tr><td><b>Mean: </b>${(p?."${prefix}Stats"?.mean?.round(2) =~ /NaN/).replaceAll("-")}</td></tr>
-                        <tr><td><b>Median: </b>${(p?."${prefix}Stats"?.median?.round(2) =~ /NaN/).replaceAll("-")}</td></tr>
-                        <tr><td><b>IQR: </b>${((p?."${prefix}Stats"?.q3 - p?."${prefix}Stats"?.q1).round(2) =~ /NaN/).replaceAll("-")}</td></tr>
+                        <g:set var="stats" value="${p?."${prefix}Stats"}"/>
+                        <g:if test="${stats}">
+                            <tr><td><b>Mean: </b>${(stats.mean?.round(2) =~ /NaN/).replaceAll("-")}</td></tr>
+                            <tr><td><b>Median: </b>${(stats.median?.round(2) =~ /NaN/).replaceAll("-")}</td></tr>
+                            <tr><td><b>IQR: </b>${((stats.q3 - stats.q1).round(2) =~ /NaN/).replaceAll("-")}</td></tr>
+                        </g:if>
                         <g:if test="${p?."${prefix}Data".size()}">
                             <tr><td><b>SD: </b>${Statistics.getStdDev((Number [])p?."${prefix}Data".toArray()).round(2)}</td></tr>
                         </g:if>

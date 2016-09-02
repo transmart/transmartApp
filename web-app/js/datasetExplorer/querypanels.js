@@ -117,6 +117,11 @@ function setupQueryPanelClone(clone) {
                 STATE.Target = this.el;
                 showSetValueDialog();
             }
+            else if (data.node.attributes.oktousevalues == "H") {
+                STATE.Dragging = true;
+                STATE.Target = this.el;
+                highDimensionalConceptDropped(data.node, true);
+            }
         }
         // Mask the placeholder and add a new panel
         clone.find(".panelBoxListPlaceholder").hide()
@@ -556,6 +561,15 @@ function getQueryPanelItem(item) {
                 .append(jQuery("<value_type />").html("TEXT"))
 
             break;
+        case 'omics_value' :
+            _constrainValue = jQuery("<constrain_by_omics_value/>")
+            _constrainValue
+                .append(jQuery("<omics_value_operator />").html(item.attr('omicsoperator')))
+                .append(jQuery("<omics_value_constraint />").html(item.attr('omicsvalue')))
+                .append(jQuery("<omics_value_type />").html(item.attr('omicsvaluetype')))
+                .append(jQuery("<omics_property />").html(item.attr('omicsproperty')))
+                .append(jQuery("<omics_selector />").html(item.attr('omicsselector')))
+                .append(jQuery("<omics_projection_type />").html(item.attr('omicsprojection')))
     }
 
     _item

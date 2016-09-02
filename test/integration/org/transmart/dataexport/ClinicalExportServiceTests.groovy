@@ -107,7 +107,7 @@ class ClinicalExportServiceTests {
                 exportMetaData: false)
 
         assertThat files, contains(
-                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith(File.separator + 'data_clinical.tsv')),
         )
 
         def dataFile = files[0]
@@ -132,8 +132,8 @@ class ClinicalExportServiceTests {
                 exportMetaData: true)
 
         assertThat files, containsInAnyOrder(
-                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
-                hasProperty('absolutePath', endsWith('/meta.tsv')),
+                hasProperty('absolutePath', endsWith(File.separator + 'data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith(File.separator + 'meta.tsv')),
         )
 
         files.each { file ->
@@ -141,7 +141,7 @@ class ClinicalExportServiceTests {
             assertThat file.length(), greaterThan(0l)
         }
 
-        def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
+        def metaFile = files.find { it.absolutePath.endsWith File.separator + 'meta.tsv' }
 
         def metaTable = parseSepValTable(metaFile)
         assertThat metaTable, contains(
@@ -164,10 +164,10 @@ class ClinicalExportServiceTests {
                 exportMetaData: false)
 
         assertThat files, contains(
-                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith(File.separator + 'data_clinical.tsv')),
         )
 
-        def dataFile = files.find { it.absolutePath.endsWith '/data_clinical.tsv' }
+        def dataFile = files.find { it.absolutePath.endsWith File.separator + 'data_clinical.tsv' }
         def table = parseSepValTable(dataFile)
         assertThat table, contains(
                 contains('Subject ID', '\\foo\\study2\\long path\\with%some$characters_\\',
@@ -188,8 +188,8 @@ class ClinicalExportServiceTests {
                 exportMetaData: true)
 
         assertThat files, containsInAnyOrder(
-                hasProperty('absolutePath', endsWith('/data_clinical.tsv')),
-                hasProperty('absolutePath', endsWith('/meta.tsv')),
+                hasProperty('absolutePath', endsWith(File.separator + 'data_clinical.tsv')),
+                hasProperty('absolutePath', endsWith(File.separator + 'meta.tsv')),
         )
 
         files.each { file ->
@@ -197,7 +197,7 @@ class ClinicalExportServiceTests {
             assertThat file.length(), greaterThan(0l)
         }
 
-        def metaFile = files.find { it.absolutePath.endsWith '/meta.tsv' }
+        def metaFile = files.find { it.absolutePath.endsWith File.separator + 'meta.tsv' }
 
         def metaTable = parseSepValTable(metaFile)
         assertThat metaTable, contains(
