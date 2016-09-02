@@ -726,7 +726,7 @@ Ext.onReady(function () {
         });
     }
 
-    /* load the leegacy hardcoded tabs */
+    /* load the legacy hardcoded tabs */
     loadPlugin('dalliance-plugin', '/Dalliance/loadScripts', function () {
         loadDalliance(resultsTabPanel);
     }, true);

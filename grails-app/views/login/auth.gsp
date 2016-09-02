@@ -169,13 +169,20 @@
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
                 <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
+                <g:set var="providerLogo" value="${grailsApplication.config?.com?.recomdata?.providerLogo}"/>
                 <g:if test="${providerName}">
                     <a id="providerpowered" target="_blank"
                        href="${grailsApplication.config?.com?.recomdata?.providerURL}" style="text-decoration: none;">
                         <div>
                             <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">Powered by&nbsp;</span>
-                            <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
-                                 style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+			    <g:if test="{$providerLogo}">
+                                <img src="${providerLogo}" alt="${providerName}"
+                                     style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                            </g:if>
+                            <g:else>
+                               <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
+                                     style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                            </g:else>
                         </div>
                     </a>
                 </g:if>
