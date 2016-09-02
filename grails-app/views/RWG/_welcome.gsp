@@ -2,7 +2,9 @@
     <div class="welcome"
          style="margin: 40px auto; background: #F4F4F4; border: 1px solid #DDD; padding: 20px; width: 400px; text-align: center; border-top-left-radius: 20px; border-bottom-right-radius: 20px">
         <g:set var="projectName" value="${grailsApplication.config?.com?.recomdata?.projectName}"/>
+        <g:set var="projectLogo" value="${grailsApplication.config?.com?.recomdata?.projectLogo}"/>
         <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
+        <g:set var="providerLogo" value="${grailsApplication.config?.com?.recomdata?.providerLogo}"/>
         <p><b>Welcome to tranSMART <g:if test="${projectName}">for ${projectName}</g:if></b></p>
 
         <p>The <b>Browse</b> window lets you search and dive into the information contained in tranSMART,
@@ -19,18 +21,30 @@
 
         <div>
             <g:if test="${projectName}">
-                <img src="${resource(dir: 'images', file: 'project_logo.png')}" alt="${projectName}"
-                     style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                <g:if test="${projectLogo}">
+                    <img src="${projectLogo}" alt="${projectName}"
+                         style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                </g:if>
+		<g:else>
+                    <img src="${resource(dir: 'images', file: 'project_logo.png')}" alt="${projectName}"
+                         style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                </g:else>
             </g:if>
             <g:if test="${projectName && providerName}">
                 <span style="font-size:20px;display: inline-block;line-height: 35px; height: 35px;">&nbsp;+&nbsp;</span>
             </g:if>
             <g:if test="${providerName}">
                 <a id="providerpowered" target="_blank" href="${grailsApplication.config?.com?.recomdata?.providerURL}"
-                   style="text-decoration: none;">
-                    <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
-                         style="height:35px;vertical-align:middle;margin-bottom: 12px;">
-                </a>
+                    style="text-decoration: none;">
+		    <g:if test="${providerLogo}">
+                        <img src="${providerLogo}" alt="${providerName}"
+                             style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                    </g:if>
+		    <g:else>
+		        <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
+                             style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+		    </g:else>
+		</a>
             </g:if>
         </div>
     </div>
