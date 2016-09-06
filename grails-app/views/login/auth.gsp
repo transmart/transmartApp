@@ -143,11 +143,6 @@
                                                     style="text-decoration:underline;color:#0000FF">administrator</a> to request an account.
                                             </td>
                                         </tr>
-                                        <g:if test='${grailsApplication.config.ui.loginScreen.disclaimer}'>
-                                            <td colspan="2" style="font-size:10px; font-weight: bold;">
-                                                ${grailsApplication.config.ui.loginScreen.disclaimer}
-                                            </td>
-                                        </g:if>
                                         <g:if test='${grailsApplication.config.org.transmart.security.samlEnabled}'>
                                             <tr>
                                                 <td colspan="2" style="font-size:10px;">
@@ -170,6 +165,14 @@
                 </div>
             </td>
         </tr>
+        <tr><td>&nbsp;</td></tr>
+        <g:if test='${grailsApplication.config.ui.loginScreen.disclaimer}'>
+            <tr>
+                <td style="font-weight: bold;text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
+                    ${grailsApplication.config.ui.loginScreen.disclaimer}
+                </td>
+            </tr>
+        </g:if>
         <tr><td>&nbsp;</td></tr>
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
