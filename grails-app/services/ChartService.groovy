@@ -138,6 +138,7 @@ class ChartService {
         // We retrieve the basics
         result.commons.conceptCode = i2b2HelperService.getConceptCodeFromKey(concept);
         result.commons.conceptName = i2b2HelperService.getShortNameFromKey(concept);
+        result.commons.conceptPath = concept
 
         if (i2b2HelperService.isValueConceptCode(result.commons.conceptCode)) {
 
