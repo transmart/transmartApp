@@ -168,8 +168,10 @@
         <tr><td>&nbsp;</td></tr>
         <g:if test='${grailsApplication.config.ui.loginScreen.disclaimer}'>
             <tr>
-                <td style="font-weight: bold;text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
-                    ${grailsApplication.config.ui.loginScreen.disclaimer}
+                <td style="font-weight: bold;text-align:center;color:#CC0000;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
+                    <div style="margin-right:auto;margin-left:auto;width:435px">
+                        ${grailsApplication.config.ui.loginScreen.disclaimer}
+                     </div>
                 </td>
             </tr>
         </g:if>
