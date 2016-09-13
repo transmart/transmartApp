@@ -269,7 +269,10 @@ DataExport.prototype.displayResult = function (records, options, success) {
         _dataTypesGridPanel.records = _this.records;
         _dataTypesGridPanel.on("afterrender", _dataTypesGridPanel.dropZonesChecker);
 
-        // add gridPanel to the main panel
+        var prevDataGridPanel = analysisDataExportPanel.findById(_dataTypesGridPanel.id);
+        if(prevDataGridPanel) {
+            analysisDataExportPanel.remove(prevDataGridPanel);
+        }
         analysisDataExportPanel.add(_dataTypesGridPanel);
         analysisDataExportPanel.doLayout();
 
