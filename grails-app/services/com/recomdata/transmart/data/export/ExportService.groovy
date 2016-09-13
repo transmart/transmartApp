@@ -106,8 +106,9 @@ class ExportService {
             if (checkboxItem.dataTypeId) {
                 //Second item is the data type.
                 String selectedFile = checkboxItem.dataTypeId.trim()
-                if (!(checkboxItem.dataTypeId in highDimensionResourceService.knownTypes)) {
-                    selectedFile += checkboxItem.fileType
+                if (!(checkboxItem.dataTypeId == 'CLINICAL'
+                        || checkboxItem.dataTypeId in highDimensionResourceService.knownTypes)) {
+                    selectedFile += '.' + checkboxItem.fileType
                 }
                 subsetSelectedFilesMap.get(currentSubset)?.push(selectedFile)
             }
