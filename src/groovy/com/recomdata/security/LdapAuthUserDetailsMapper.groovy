@@ -73,7 +73,7 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 
         AuthUser user
         if (ldapConfig.caseInsensitive) {
-            user = AuthUser.createCriteria().get { eq(mappedUsernameProperty, username)}
+            user = AuthUser.createCriteria().get { eq(mappedUsernameProperty, username, [ignoreCase: true])}
             if (user == null) {
                 user = AuthUser.create()
                 user.username = username
