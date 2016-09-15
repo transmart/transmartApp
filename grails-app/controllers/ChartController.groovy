@@ -112,7 +112,6 @@ class ChartController {
 
         // We retrieve the result instance ids from the client
         def concept = params.concept_key ?: null
-        def concepts = [:]
 
         // We retrieve the highdimension parameters from the client, if they were passed
         def omics_params = [:]
@@ -139,7 +138,6 @@ class ChartController {
 
         // We retrieve the result instance ids from the client
         def concept = params.concept_key ?: null
-        def concepts = [:]
 
         // We retrieve the highdimension parameters from the client, if they were passed
         def omics_params = [:]
@@ -188,6 +186,14 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
+
+        // We retrieve the highdimension parameters from the client, if they were passed
+        def omics_params = [:]
+        params.findAll { k, v ->
+            k.startsWith("omics_")
+        }.each { k, v ->
+            omics_params[k] = v
+        }
         // We add the key to our cache set
         chartService.keyCache.add(concept)
 
