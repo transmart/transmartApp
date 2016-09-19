@@ -40,7 +40,7 @@ function appendQueryPanelInto(subset) {
  * Adding supplementary item within a destination (subset or panelBoxList).
  * @param destination : subset {numeric} or selector {string} or DOM reference {object} to add the item to
  * @param concept : flatten concept object {object}
- * @param invert : whether the set membership should be updated {boolean}
+ * @param invert : whether the set membership should exclude query {boolean}
  * @returns {void}
  */
 function appendItemFromConceptInto(destination, concept, invert) {
@@ -64,12 +64,13 @@ function appendItemFromConceptInto(destination, concept, invert) {
 
 /**
  * This will hook our object to ExtJS
- * @param clone : jQuery instance of a clonned panel
+ * @param clone : jQuery instance of a cloned panel
  * @returns {void}
  */
 function setupQueryPanelClone(clone) {
 
     clone.find(".panelRadio").buttonset()
+
     clone.find(".panelDate").button().click(function() {
         if (jQuery(this).attr('checked') == 'checked')
             jQuery(this).closest(".panelBox").addClass("withDates")
@@ -187,7 +188,7 @@ function adjustPanelSize()
  */
 function refillQueryPanels(subsets) {
 
-    // Legacy ExtJS call (The way this is handle can cause problems
+    // Legacy ExtJS call (The way this is handled can cause problems)
     queryPanel.el.mask('Rebuilding query ...', 'x-mask-loading');
 
     clearQueryPanels()
@@ -222,7 +223,7 @@ function refillQueryPanels(subsets) {
 }
 
 /**
- * Create a concept object from and XML query item
+ * Create a concept object from an XML query item
  * This is full of legacy crap
  * @param item
  * @returns {object}
@@ -388,7 +389,7 @@ function getClassForNodeResource(node) {
 }
 
 /**
- * Get subset query that represent user's cohort selections
+ * Get subset query that represents user's cohort selections
  * @param subset
  * @returns {object}
  */
