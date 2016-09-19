@@ -141,7 +141,7 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            runtime ':smart-r:1.0.RC1-SNAPSHOT'
+            runtime ':smart-r:1.0-STABLE-SNAPSHOT'
             compile ':rdc-rmodules:16.1'
             runtime ':transmart-core:16.1'
             compile ':transmart-gwas:16.1'
