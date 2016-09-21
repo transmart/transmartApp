@@ -101,11 +101,11 @@ class StudyIdService {
     public String getStudyIdsForQueries(List<String> queryIds) {
         Set<String> studyIds = []
         for (String queryId: queryIds) {
-            if (queryId != null) {
+            if (queryId != null && queryId != "null") {
                 queryId = queryId.trim()
                 if (!queryId.empty) {
                     if (!queryId.isLong()) {
-                        log.warn "Query id is not an integer: ${queryId}."
+                        log.warn "Query id is not an integer: ${queryId}"
                     } else {
                         Long qId = queryId.toLong()
                         studyIds += getStudyIdsForQueryId(qId)
