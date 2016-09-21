@@ -1679,15 +1679,20 @@ function isSubsetOnlyExclude(subset) {
 
     var allExcludes = true;
     var count = 0;
-    for(var d=1;d<=GLOBAL.NumOfQueryCriteriaGroups;d++)
-    {
-        var queryDiv=Ext.get("queryCriteriaDiv"+subset+'_'+d);
-        if (queryDiv.dom.childNodes.length>0) {
-            count++;
-            var isInclude = (queryDiv.dom.className.indexOf("queryGroupInclude") > -1);
-            if (isInclude) allExcludes = false;
-        }
-    }
+
+    jQuery(".panelModel[subset='" + subset + "']").each(function () {
+	var subsetQuery = jQuery(this);
+	if(jQuery(".panelBoxList",subsetQuery).html().trim() != '') {
+	    var invert = subsetQuery.find("input[name^=panelRadio]:checked").val()
+	    if(invert == '1')
+		count++;
+            if(invert == '0') {
+		allExcludes = false;
+		count++;
+	    }
+	}
+    })
+
     allExcludes = (count > 0) && allExcludes;
 
     return allExcludes;

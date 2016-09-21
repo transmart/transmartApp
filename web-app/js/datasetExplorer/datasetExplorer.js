@@ -504,9 +504,9 @@ Ext.onReady(function () {
                     runAllQueries(getDatadata, p);
                     return;
                 }
-		else {
-		    this.doLayout()
-		}
+                else {
+                    this.doLayout()
+                }
             },
             'afterLayout': {
                 fn: function (el) {
@@ -733,6 +733,7 @@ Ext.onReady(function () {
     loadPlugin('dalliance-plugin', '/Dalliance/loadScripts', function () {
         loadDalliance(resultsTabPanel);
     }, true);
+
     if (GLOBAL.metacoreAnalyticsEnabled === 'true') {
         loadPlugin('transmart-metacore-plugin', '/MetacoreEnrichment/loadScripts', function () {
             loadMetaCoreEnrichment(resultsTabPanel);
@@ -774,7 +775,7 @@ Ext.onReady(function () {
 
 
     if (GLOBAL.galaxyEnabled === 'true') {
-       resultsTabPanel.add(GalaxyPanel);
+        resultsTabPanel.add(GalaxyPanel);
     }
 
     southCenterPanel = new Ext.Panel({
@@ -1763,17 +1764,20 @@ function runAllQueries(callback, panel) {
         }
         Ext.Msg.alert('Subsets are empty', 'All subsets are empty. Please select subsets.');
         return;
-    //}
+    }
 
-    //panel.body.unmask();
-    //for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
-    //    if (isSubsetOnlyExclude(i)) {
-    //        if (panel) {
-    //            panel.body.unmask();
-    //        }
-    //        Ext.Msg.alert('Subset is only exclude', 'Subset ' + i + ' contains only EXCLUDE caluses. Please add at least one INCLUDE clause.');
-    //        return;
-    //    }
+    if (panel) {
+        panel.body.unmask();
+    }
+
+    for (var i = 1; i <= GLOBAL.NumOfSubsets; i++) {
+        if (isSubsetOnlyExclude(i)) {
+            if (panel) {
+                panel.body.unmask();
+            }
+            Ext.Msg.alert('Subset is only exclude', 'Subset ' + i + ' contains only EXCLUDE clauses. Please add at least one INCLUDE clause.');
+            return;
+        }
     }
 
     // setup the number of subsets that need running
@@ -1801,10 +1805,11 @@ function runAllQueries(callback, panel) {
             runQuery(j, callback);
         }
     }
+
 }
 
 /**
- * Check if there're any changes in both subsets
+ * Check if there are any changes in both subsets
  * @returns {boolean}
  */
 function isSubsetQueriesChanged(referenceQueries) {
@@ -3342,7 +3347,7 @@ function ontFilterLoaded(el, success, response, options) {
 function clearQuery() {
     if (confirm("Are you sure you want to clear your current selections and analysis ?")) {
         clearAnalysisPanel();
-		clearQueryPanels();
+        clearQueryPanels();
         clearDataAssociation();
     }
 }
