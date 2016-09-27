@@ -894,7 +894,63 @@ jQuery(document).ready(function() {
 	  
 	jQuery('body').on('click', '#closeupload', function() {
 	      jQuery('#uploadFilesOverlay').fadeOut();  
-	}); 
+	});
+
+	jQuery('#metadata-viewer').on('click', '.deletestudy', function () {
+
+		var id = jQuery(this).attr('name');
+		var parent = jQuery('#parentId').val();
+		if (confirm("Are you sure you want to delete this study?")) {
+			findChildByParent(id, function (hasChildren) {
+				if (hasChildren) {
+					if (!confirm("This study contain beneath some elements it. Are you sure?")) {
+						return;
+					}
+				}
+				jQuery.ajax({
+					url: deleteStudyURL,
+					data: {id: id},
+					success: function (response) {
+						updateFolder(parent);
+						showDetailDialog(parent);
+						jQuery('.result-folder-name').removeClass('selected');
+						jQuery('#result-folder-name-' + parent).addClass('selected');
+					},
+					error: function (xhr) {
+						alert(xhr.message);
+					}
+				});
+			})
+
+		}
+	});
+
+	jQuery('#metadata-viewer').on('click', '.deleteprogram', function () {
+
+		var id = jQuery(this).attr('name');
+		if (confirm("Are you sure you want to delete this program?")) {
+			findChildByParent(id, function (hasChildren) {
+				if (hasChildren) {
+					if (!confirm("This program contain beneath some elements it. Are you sure?")) {
+						return;
+					}
+				}
+				jQuery.ajax({
+					url: deleteProgramURL,
+					data: {id: id},
+					success: function (response) {
+						showSearchResults();
+						goWelcome();
+					},
+					error: function (xhr) {
+						alert(xhr.message);
+					}
+				});
+			})
+
+		}
+	});
+
 	jQuery('#metadata-viewer').on('click', '.addstudy', function() {
 
     	var id = jQuery(this).attr('name');
@@ -1318,4 +1374,16 @@ function createUploader() {
 
 function setUploderEndPoint(id) {
 	uploader.setEndpoint(uploadActionURL+'?parentId='+id);
+}
+
+function findChildByParent(parent, callFunc){
+	var hasChildred = true
+	jQuery.ajax({
+		url: hasChildrenURL,
+		data: {id: parent},
+		success: function(response) {
+			hasChildred = response.result
+			callFunc(hasChildred);
+		}
+	});
 }
