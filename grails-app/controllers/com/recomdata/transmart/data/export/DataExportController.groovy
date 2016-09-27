@@ -90,12 +90,23 @@ class DataExportController {
         render([result: isAllowed] as JSON)
     }
 
+    /**
+     * Private method that puts the (Long) values of parameters named 'result_instance_id<n>' in a list.
+     * The previous implementation of this method would return an empty list if the key named 'result_instance_id1' was not found.
+     * Even if the key named 'result_instance_id2' was present.
+     * This caused AssertionException's being thrown by dataExportService.isUserAllowedToExport.
+     * Also the checkRightsToExport method would throw an InvalidArgumentsException("No result instance id provided")
+     * when trying to export data if subset2 existed, but not subset1
+     * Current implementation will in this case (i.e. only key 'result_instance_id2' is present) return a list
+     * with the first element equal to null and the second equal to the value of 'result_instance_id2'.
+     * Currently the maximum number of subsets that are supported is 2
+     */
     private List<Long> parseResultInstanceIds() {
+        assert !params.containsKey('result_instance_id3')
         List<Long> result = []
-        int subsetNumber = 1
-        while (params.containsKey('result_instance_id' + subsetNumber)) {
-            result << params.long('result_instance_id' + subsetNumber)
-            subsetNumber += 1
+        for (subsetNumber in 1..2) {
+            if (params.containsKey('result_instance_id'+subsetNumber)) 
+                result[subsetNumber-1] = params.long('result_instance_id'+subsetNumber)
         }
         result
     }
