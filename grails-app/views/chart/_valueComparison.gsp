@@ -1,5 +1,6 @@
 <%@ page import="org.jfree.data.statistics.Statistics" %>
 <g:set var="prefix" value="${prefix ?: 'concept'}"/>
+<g:if test="${subsets?.commons?."${prefix}Histo"}">
 <table width="80%">
     <tbody>
     <tr>
@@ -24,7 +25,7 @@
                             <tr><td><b>IQR: </b>${((stats.q3 - stats.q1).round(2) =~ /NaN/).replaceAll("-")}</td></tr>
                         </g:if>
                         <g:if test="${p?."${prefix}Data".size()}">
-                            <tr><td><b>SD: </b>${Statistics.getStdDev((Number [])p?."${prefix}Data".toArray()).round(2)}</td></tr>
+                            <tr><td><b>SD: </b>${(Statistics.getStdDev((Number [])p?."${prefix}Data".toArray()).round(2) =~ /NaN/).replaceAll("-")}</td></tr>
                         </g:if>
                         <g:else>
                             <tr><td><b>SD: </b>-</td></tr>
@@ -41,3 +42,4 @@
     </tr>
     </tbody>
 </table>
+</g:if>
