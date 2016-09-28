@@ -524,6 +524,9 @@ Ext.onReady(function () {
                     runAllQueries(getDatadata, p);
                     return;
                 }
+		else {
+		    this.doLayout()
+		}
             },
             'afterLayout': {
                 fn: function (el) {

@@ -41,15 +41,10 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 	    }
     	}
     	else {
-	    if (node.attributes.level == 1) {
-	        FM.handleFolderHasFilesRequest(this, response, node, callback);
-	    }
-	        
-	    else {
-                //parseJson(response, node);
-	        getChildConceptPatientCounts(node);
-		//this.endAppending(node, callback);
-	    }
+            //parseJson(response, node);
+	    getChildConceptPatientCounts(node);
+	    //this.endAppending(node, callback);
+
 	    node.endUpdate();
 	    if (typeof callback == "function") {
 	        callback(this, node);
@@ -64,6 +59,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         var concepts = Ext.decode(response.responseText);
 
         var matchList = GLOBAL.PathToExpand.split(",");
+
         for (i = 0; i < concepts.length; i++) {
             var c = getTreeNodeFromJsonNode(concepts[i]);
             if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
@@ -139,25 +135,6 @@ function parseJson (response, node) {
         }
         
  }
-
- function handleFolderHasFilesRequest (source, originalResponse, node, callback) {
-
-    Ext.Ajax.request({
-        url: pageInfo.basePath+"/fmFolder/getFolderHasFiles",
-        method: 'GET',
-        success: function(response) {
-            if (response.responseText == "true") {
-                node.appendChild(getFileFolderNode(node));
-            }
-            //parseJson(originalResponse, node);
-            //source.endAppending(node, callback);
-        },
-        timeout: '120000', //2 minutes
-        params: {accession: node.attributes.accession}
-    });
-
-
-}
 
 function getConceptPatientCountComplete(result, node) {
     node.setText(node.text + " <b>(" + result.responseText + ")</b>");
