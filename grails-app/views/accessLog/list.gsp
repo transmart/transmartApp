@@ -39,6 +39,9 @@
                 <th style="vertical-align: middle;"><g:message code="accessLogInstance.eventmessage"
                                                                default="Event Message"/></th>
 
+                <th style="vertical-align: middle;"><g:message code="accessLogInstance.requesturl"
+                                                               default="Request Url"/></th>
+
             </tr>
             </thead>
             <tbody>
@@ -49,6 +52,11 @@
                     <td style="width: 100px; vertical-align: top;">${fieldValue(bean: accessLogInstance, field: 'username')}</td>
                     <td style="width: 200px; vertical-align: top;">${fieldValue(bean: accessLogInstance, field: 'event')}</td>
                     <td style="vertical-align: top;">${fieldValue(bean: accessLogInstance, field: 'eventmessage')}</td>
+                    <td style="vertical-align: top;">
+                        <g:if test="${accessLogInstance.requestURL}">
+                            <a href="${accessLogInstance.requestURL}" target="_blank">link</a>
+                        </g:if>
+                    </td>
 
                 </tr>
             </g:each>

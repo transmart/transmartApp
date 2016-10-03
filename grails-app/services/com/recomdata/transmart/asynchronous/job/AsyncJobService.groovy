@@ -252,7 +252,7 @@ class AsyncJobService {
     def updateStatus(jobName, status, viewerURL = null, altViewerURL = null, results = null) {
         def retValue = false   // true if the job was cancelled
         def jobNameArray = jobName.split("-")
-        def jobID = jobNameArray[2]
+        def jobID = jobNameArray[-1]
 
         //log.debug("Checking to see if the user cancelled the job")
         if (jobResultsService[jobName]["Status"] == "Cancelled") {

@@ -46,7 +46,7 @@
                     <g:each in="${tabs}" var="tab">
                         <g:if test="${tab.get('display', true)}">
                             <g:render template="/layouts/headertab" model="[id: tab.id, title: tab.title, controller: tab.controller, app: app]"/>
-                        </g:if>
+                    </g:if>
                     </g:each>
 
                     <tmpl:/layouts/utilitiesMenu/>

@@ -82,7 +82,7 @@ modules = {
     }
 
     analyseTab {
-        dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs', 'session_timeout', 'folder_management'
+        dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs', 'session_timeout'
 
         resource url: 'js/advancedWorkflowFunctions.js', disposition: 'head'
         resource url: 'js/ajax_queue.js', disposition: 'head'
@@ -103,6 +103,7 @@ modules = {
         resource url: 'js/datasetExplorer/workflowStatus.js', disposition: 'head'
         resource url: 'js/datasetExplorer/workspace.js', disposition: 'head'
         resource url: 'js/datasetExplorer/modifiers.js', disposition: 'head'
+        resource url: 'js/datasetExplorer/omicsFilter.js', disposition: 'head'
         resource url: 'js/datasetExplorer/exportData/dataTab.js', disposition: 'head'
         resource url: 'js/datasetExplorer/exportData/exportJobsTab.js', disposition: 'head'
         resource url: 'js/facetedSearch/facetedSearchBrowse.js', disposition: 'head'

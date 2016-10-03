@@ -19,6 +19,7 @@ class ChartController {
     def chartService
     def accessLogService
     User currentUserBean
+    def highDimensionQueryService
 
 
     def displayChart = {
@@ -111,11 +112,18 @@ class ChartController {
 
         // We retrieve the result instance ids from the client
         def concept = params.concept_key ?: null
-        def concepts = [:]
+
+        // We retrieve the highdimension parameters from the client, if they were passed
+        def omics_params = [:]
+        params.findAll { k, v ->
+            k ==~ /omics_/
+        }.each { k, v ->
+            omics_params[k] = v
+        }
 
         // Collect concept information
         // We need to force computation for an empty instance ID
-        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
 
         PrintWriter pw = new PrintWriter(response.getOutputStream());
         pw.write(concept.commons.conceptHisto)
@@ -130,14 +138,40 @@ class ChartController {
 
         // We retrieve the result instance ids from the client
         def concept = params.concept_key ?: null
-        def concepts = [:]
+
+        // We retrieve the highdimension parameters from the client, if they were passed
+        def omics_params = [:]
+        params.findAll { k, v ->
+            k ==~ /omics_/
+        }.each { k, v ->
+            omics_params[k] = v
+        }
 
         // Collect concept information
-        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: chartService.getSubsetsFromRequest(params), chartSize : [width : 245, height : 180])
 
         PrintWriter pw = new PrintWriter(response.getOutputStream());
         pw.write(concept.commons.conceptHisto)
         pw.flush();
+    }
+
+    def conceptDistributionWithValues = {
+        // Lets put a bit of 'audit' in here
+        new AccessLog(username: springSecurityService.getPrincipal().username, event: "DatasetExplorer-Concept Distribution With Values", eventmessage: "Concept:" + params.concept_key, accesstime: new java.util.Date()).save()
+
+        def concept = params.concept_key ?: null
+
+        // We retrieve the highdimension parameters from the client, if they were passed
+        def omics_params = [:]
+        params.findAll { k, v ->
+            k.startsWith("omics_")
+        }.each { k, v ->
+            omics_params[k] = v
+        }
+        // Collect concept information
+        concept = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: [ 1: [ exists: true, instance : "" ], 2: [ exists: false ], commons: [:]], chartSize : [width : 245, height : 180])
+
+        render concept as JSON
     }
 
     /**
@@ -152,11 +186,19 @@ class ChartController {
         def concept = params.concept_key ?: null
         def concepts = [:]
 
+
+        // We retrieve the highdimension parameters from the client, if they were passed
+        def omics_params = [:]
+        params.findAll { k, v ->
+            k.startsWith("omics_")
+        }.each { k, v ->
+            omics_params[k] = v
+        }
         // We add the key to our cache set
         chartService.keyCache.add(concept)
 
         // Collect concept information
-        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), subsets: chartService.getSubsetsFromRequest(params))
+        concepts[concept] = chartService.getConceptAnalysis(concept: i2b2HelperService.getConceptKeyForAnalysis(concept), omics_params: omics_params, subsets: chartService.getSubsetsFromRequest(params))
 
         // Time to delivery !
         render(template: "conceptsAnalysis", model: [concepts: concepts])
@@ -179,6 +221,7 @@ class ChartController {
         // We retrieve all our charts from our ChartService
         def subsets = chartService.computeChartsForSubsets(chartService.getSubsetsFromRequest(params))
         def concepts = chartService.getConceptsForSubsets(subsets)
+        concepts.putAll(chartService.getHighDimensionalConceptsForSubsets(subsets))
 
         // Time to delivery !
         render(template: "summaryStatistics", model: [subsets: subsets, concepts: concepts])
@@ -213,33 +256,57 @@ class ChartController {
 
             for (int i = 0; i < keys.size(); i++) {
 
-                log.trace("adding concept data for " + keys.get(i));
-                if (s1) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id1);
-                if (s2) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id2);
+                if (!i2b2HelperService.isHighDimensionalConceptKey(keys.get(i))) {
+                    log.trace("adding concept data for " + keys.get(i));
+                    if (s1) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id1);
+                    if (s2) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id2);
+                }
+            }
+
+            def highDimConcepts = highDimensionQueryService.getHighDimensionalConceptSet(result_instance_id1, result_instance_id2)
+            highDimConcepts.each {
+                if (s1) highDimensionQueryService.addHighDimConceptDataToTable(table, it, result_instance_id1)
+                if (s2) highDimensionQueryService.addHighDimConceptDataToTable(table, it, result_instance_id2)
             }
         }
         PrintWriter pw = new PrintWriter(response.getOutputStream());
 
         if (concept_key && !concept_key.isEmpty()) {
 
-            String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
-            Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
 
-            def conceptKeys = [];
-            def prefix = concept_key.substring(0, concept_key.indexOf("\\", 2));
-
-            if (!cconcepts.isEmpty()) {
-                for (cc in cconcepts) {
-                    def ck = prefix + i2b2HelperService.getConceptPathFromCode(cc);
-                    conceptKeys.add(ck);
-                }
-            } else
-                conceptKeys.add(concept_key);
-
-            for (ck in conceptKeys) {
-                if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1);
-                if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2);
+            // We retrieve the highdimension parameters from the client, if they were passed
+            def omics_params = [:]
+            params.findAll { k, v ->
+                k.startsWith("omics_")
+            }.each { k, v ->
+                omics_params[k] = v
             }
+            if (omics_params) {  // empty maps are coerced to false by groovy
+                omics_params.concept_key = concept_key
+                if (s1) highDimensionQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
+                if (s2) highDimensionQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)
+            }
+            else {
+                String parentConcept = i2b2HelperService.lookupParentConcept(i2b2HelperService.keyToPath(concept_key));
+                Set<String> cconcepts = i2b2HelperService.lookupChildConcepts(parentConcept, result_instance_id1, result_instance_id2);
+
+                def conceptKeys = [];
+                def prefix = concept_key.substring(0, concept_key.indexOf("\\", 2));
+
+                if (!cconcepts.isEmpty()) {
+                    for (cc in cconcepts) {
+                        def ck = prefix + i2b2HelperService.getConceptPathFromCode(cc);
+                        conceptKeys.add(ck);
+                    }
+                } else
+                    conceptKeys.add(concept_key);
+
+                for (ck in conceptKeys) {
+                    if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1);
+                    if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2);
+                }
+            }
+
         }
         pw.write(table.toJSONObject().toString(5));
         pw.flush();

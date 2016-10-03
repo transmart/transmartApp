@@ -2,12 +2,12 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
 
     requestData: function (node, callback) {
         if (this.fireEvent("beforeload", this, node, callback) !== false) {
-            
+
             node.isModifier = false;
             if (nodeType('iconCls_modifier',node.attributes.iconCls) != ""){
                 node.isModifier = true;
             }
-            
+
             //TODO: This is fugly.
             if(!node.isModifier) {
                 this.transId = Ext.Ajax.request({
@@ -20,20 +20,20 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     argument: {callback: callback, node: node},
                     timeout: '120000' //2 minutes
                 });
-                
+
             } else {
                 this.transId = Ext.Ajax.request({
                     method: 'GET',
                     url: pageInfo.basePath + "/concepts/getModifierChildren",
                     params: { modifier_key: node.id,
-                                applied_path: node.attributes.applied_path,
-                                qualified_term_key: node.attributes.qualified_term_key},
+                        applied_path: node.attributes.applied_path,
+                        qualified_term_key: node.attributes.qualified_term_key},
                     success: this.handleResponse,
                     failure: this.handleFailure,
                     scope: this,
                     argument: {callback: callback, node: node},
                     timeout: '120000' //2 minutes
-                });                
+                });
             }
         } else {
             // if the load is cancelled, make sure we notify
@@ -47,21 +47,10 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
     processResponse: function (response, node, callback) {
         node.beginUpdate();
         this.parseJson(response, node);
-        //getChildConceptPatientCounts(node);
-	if(node.attributes.cls == 'fileFolderNode') {
-            FM.addFileNodes(this, response, node, callback);
-            node.endUpdate();
-	    if (typeof callback == "function") {
-	        callback(this, node);
-	    }
-    	}
-    	else {
-	    getChildConceptPatientCounts(node);
-
-	    node.endUpdate();
-	    if (typeof callback == "function") {
-	        callback(this, node);
-	    }
+        getChildConceptPatientCounts(node);
+        node.endUpdate();
+        if (typeof callback == "function") {
+            callback(this, node);
         }
     },
 
@@ -89,11 +78,11 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                     continue;
                 }
             }
-            
+
             if(nodeType("visualattributes_modifier", c.attributes.visualattributes) != "") {
                 c = extendTreeNodeForModifier(c, concepts[i]);
             }
-            
+
             //If the node has been disabled, ignore all children
             if (!node.disabled) {
                 node.appendChild(c);
@@ -157,7 +146,7 @@ function getConceptPatientCountComplete(result, node) {
 }
 
 function getChildConceptPatientCounts(node) {
-	
+
     var params = Ext.urlEncode({
         charttype: "childconceptpatientcounts",
         concept_key: node.attributes.id
@@ -190,8 +179,8 @@ function getChildConceptPatientCountsComplete(result, node) {
         }
 
         if ((access != undefined && access != 'Locked') ||
-                key.indexOf('\\\\xtrials\\') === 0 || // across trials node should never be locked
-                GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
+            key.indexOf('\\\\xtrials\\') === 0 || // across trials node should never be locked
+            GLOBAL.IsAdmin) //if im an admin or there is an access level other than locked leave node unlocked
         {
             //leave node unlocked must have some read access
         }

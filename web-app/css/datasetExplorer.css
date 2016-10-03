@@ -229,6 +229,15 @@ div.analysistitle {
 	padding-bottom: 20px;
 }
 
+div.analysissubtitle {
+	font-size: 10pt !important;
+	font-family:arial;
+	font-style: italic;
+	color: #7c7c7c;
+	padding-bottom: 5px;
+	margin-bottom: 15px;
+}
+
 div.smalltitle {
 	padding-bottom: 5px !important;
 }

@@ -20,22 +20,6 @@ class DatasetExplorerController {
 
         //code for retrieving a saved comparison
         pathToExpand = pathToExpand ?: params.path;
-        def subsetId = params.sId;
-        log.trace("DatasetExplorer Controller found saved comparison id=" + subsetId);
-        def qid1 = null;
-        def qid2 = null;
-        Boolean restorecomparison = false;
-
-        if (subsetId != null && subsetId != "") {
-            Subset subset = Subset.get(subsetId);
-            if (subset != null) {
-                restorecomparison = true;
-                qid1 = subset.queryID1;
-                qid2 = subset.queryID2;
-            }
-
-        }
-
         def rwgSearchFilter = session['rwgSearchFilter'];
         if (rwgSearchFilter) {
             rwgSearchFilter = rwgSearchFilter.join(",,,")
@@ -70,9 +54,6 @@ class DatasetExplorerController {
                                                 admin             : admin,
                                                 tokens            : tokens,
                                                 initialaccess     : initialaccess,
-                                                restorecomparison : restorecomparison,
-                                                qid1              : qid1,
-                                                qid2              : qid2,
                                                 i2b2Domain        : i2b2Domain,
                                                 i2b2ProjectID     : i2b2ProjectID,
                                                 i2b2Username      : i2b2Username,
