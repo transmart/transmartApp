@@ -80,7 +80,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                 //However, don't filter studies/top folders out if a higher-level match exists
                 var highLevelMatchFound = false;
                 for (var j = 0; j < matchList.length-1; j++) { //-1 here - leave out last result (trailing comma)
-                    if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+                    if (c.id.indexOf(matchList[j]) === 0 && c.id != matchList[j]) {
                         highLevelMatchFound = true;
                         break;
                     }
@@ -134,7 +134,7 @@ function parseJson (response, node) {
                 //However, don't filter studies/top folders out if a higher-level match exists
                 var highLevelMatchFound = false;
                 for (var j = 0; j < matchList.length -1; j++) { //-1 here - leave out last result (trailing comma)
-                    if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+                    if (c.id.indexOf(matchList[j]) === 0 && c.id != matchList[j]) {
                         highLevelMatchFound = true;
                         break;
                     }
