@@ -41,7 +41,7 @@ class OntologyService {
 
         def accessionSearchString = ""
         if (accessionsToInclude) {
-            accessionSearchString += " OR (o.hlevel <= 1 AND o.sourcesystemcd IN ("
+            accessionSearchString += " OR (o.visualattributes = 'FAS' AND o.sourcesystemcd IN ("
             accessionSearchString += "'" + accessionsToInclude.join("','") + "'"
             accessionSearchString += "))"
         }
