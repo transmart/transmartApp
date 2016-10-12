@@ -8,6 +8,7 @@ import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.SecureAccessLevel
 import org.transmart.searchapp.SecureObjectPath
+import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
@@ -191,7 +192,7 @@ class I2b2HelperService {
      */
     def String getConceptKeyForAnalysis(String concept_key_in) {
         if (isLeafConceptKey(concept_key_in)) {
-            if (isValueConceptKey(concept_key_in)) {
+            if (isValueConceptKey(concept_key_in) || isHighDimensionalConceptKey(concept_key_in)) {
                 return concept_key_in; //just use me cause im a value node
             } else {
                 return getParentConceptKey(concept_key_in)
@@ -257,6 +258,16 @@ class I2b2HelperService {
         def ret = isValueConceptCode(concept_code)
         log.trace "isValueConceptKey returns " + ret;
         return ret
+    }
+
+    /**
+     * Determines if a concept key is a high dimensional concept or not
+     * Will return true for keys of the form ...\Human Affymetrix ...\
+     * as well as ...\Human Affymetrix ...\TNF
+     */
+    def Boolean isHighDimensionalConceptKey(String concept_key) {
+        def code = getConceptCodeFromKey(concept_key)
+        return isHighDimensionalConceptCode(code)
     }
 
     /**
@@ -567,6 +578,31 @@ class I2b2HelperService {
         log.trace("METADATA XML:" + xml);
 
         res = nodeXmlRepresentsValueConcept(xml)
+        return res;
+    }
+
+    /**
+     * Determines if a concept code is a high-dimensional concept code by checking the visual
+     * style.
+     * TODO: when omics data have proper metadata, change this to check to metadata!
+     * @param concept_code the concept code to check
+     * @return true if i2b2metadata.i2b2.c_visualattributes equals "LAH" for the given concept code
+     */
+    def Boolean isHighDimensionalConceptCode(String concept_code) {
+        log.info "Checking isHighDimensionalConceptCode for code:" + concept_code
+        Boolean res = false;
+        Sql sql = new Sql(dataSource);
+        String sqlt = "SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?";
+        sql.eachRow(sqlt, [concept_code], { row ->
+            if (row.c_visualattributes == "LAH") {
+                res = true;
+                log.info("Positive for high dimensional node");
+            }
+            else {
+                log.info("Negative for high dimensional node");
+            }
+        })
+
         return res;
     }
 
@@ -5819,17 +5855,53 @@ class I2b2HelperService {
                         }
 
                         Node key = (Node) xpath.evaluate("item_key", item, XPathConstants.NODE)
+
+                        String textContent = key.getTextContent()
+                        log.debug("Found item ${textContent}")
+
                         Node valueinfo = (Node) xpath.evaluate("constrain_by_value", item, XPathConstants.NODE)
                         String operator = "";
                         String constraints = "";
 
+                        pw.write(textContent);
+
                         if (valueinfo != null) {
                             operator = ((Node) xpath.evaluate("value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
                             constraints = ((Node) xpath.evaluate("value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+                            pw.write(" " + operator + " " + constraints)
                         }
-                        String textContent = key.getTextContent()
-                        log.debug("Found item ${textContent}")
-                        pw.write(textContent + " " + operator + " " + constraints)
+
+                        valueinfo = (Node) xpath.evaluate("constrain_by_omics_value", item, XPathConstants.NODE)
+                        operator = ""
+                        constraints = ""
+                        String value_type = ""
+                        String selector = ""
+                        String projection = ""
+                        if (valueinfo != null) {
+                            value_type = ((Node) xpath.evaluate("omics_value_type", valueinfo, XPathConstants.NODE)).getTextContent()
+                            operator = ((Node) xpath.evaluate("omics_value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
+                            constraints = ((Node) xpath.evaluate("omics_value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+                            selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
+                            projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
+                            pw.write(selector)
+                            if (value_type.equals("Gene Expression") || value_type.equals("RNASEQ_RCNT") || value_type.equals("Chromosomal")) {
+                                pw.write(" - " + Projection.prettyNames.get(projection, projection) + " " + operator + " ")
+                                if (operator.equals("BETWEEN")) {
+                                    String[] bounds = constraints.split(":")
+                                    if (bounds.length != 2) {
+                                        log.error "BETWEEN constraint type found with values not seperated by ':'"
+                                        pw.write(constraints)
+                                    }
+                                    else {
+                                        pw.write(bounds.join(" and "))
+                                    }
+                                }
+                                else {
+                                    pw.write(constraints)
+                                }
+                            }
+                        }
+
                     }
                     pw.write("<b>)</b>")
                 }
@@ -6322,6 +6394,10 @@ class I2b2HelperService {
         }
     }
 
+    def String getTrialNameByConceptKey(String key) {
+        return conceptsResourceService.getByKey(key).getStudy().getId()
+    }
+
     def List<String> trialsForResultSet (String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
@@ -6342,6 +6418,7 @@ class I2b2HelperService {
 
         return trials
 }
+
 }
 
 class SurvivalConcepts {

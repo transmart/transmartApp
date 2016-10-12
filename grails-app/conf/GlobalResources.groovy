@@ -103,6 +103,7 @@ modules = {
         resource url: 'js/datasetExplorer/workflowStatus.js', disposition: 'head'
         resource url: 'js/datasetExplorer/workspace.js', disposition: 'head'
         resource url: 'js/datasetExplorer/modifiers.js', disposition: 'head'
+        resource url: 'js/datasetExplorer/omicsFilter.js', disposition: 'head'
         resource url: 'js/datasetExplorer/exportData/dataTab.js', disposition: 'head'
         resource url: 'js/datasetExplorer/exportData/exportJobsTab.js', disposition: 'head'
         resource url: 'js/facetedSearch/facetedSearchBrowse.js', disposition: 'head'

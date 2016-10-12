@@ -34,6 +34,11 @@ if (dmClass) {
     dm = dmClass.newInstance()
 }
 
+grails.plugin.location.'folder-management' = '../folder-management-plugin'
+grails.plugin.location.'transmart-gwas' = '../transmart-gwas-plugin'
+grails.plugin.location.'transmart-core' = '../transmart-core-db'
+grails.plugin.location.'transmart-core-db-tests' = '../transmart-core-db/transmart-core-db-tests/'
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {}
@@ -142,8 +147,8 @@ grails.project.dependency.resolution = {
         if (!dm) {
             runtime ':smart-r:1.0-STABLE-SNAPSHOT'
             compile ':rdc-rmodules:16.2-SNAPSHOT'
-            runtime ':transmart-core:16.2-SNAPSHOT'
-            compile ':transmart-gwas:16.2-SNAPSHOT'
+            //runtime ':transmart-core:16.2-SNAPSHOT'
+            //compile ':transmart-gwas:16.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':transmart-legacy-db:16.2-SNAPSHOT'
             //// already included in transmart-gwas

@@ -23,8 +23,8 @@ import groovy.json.JsonSlurper
 import org.apache.log4j.Category
 import org.apache.log4j.Level
 import org.apache.log4j.spi.LoggingEvent
-import org.gmock.WithGMock
 import org.junit.Test
+
 import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
@@ -37,8 +37,8 @@ class JsonLayoutTests {
     @Test
     void testSingleLine() {
         def j = new JsonLayout(singleLine: true, conversionPattern: "%m%n")
-        assertThat j.format(makeEvent([1,2,3])), is('[1,2,3]\n')
-        assertThat j.format(makeEvent([foo: 'bar', baz: 42, qux: null])), is ('{"foo":"bar","baz":42,"qux":null}\n')
+        assertThat j.format(makeEvent([1,2,3])), is(String.format('[1,2,3]%n'))
+        assertThat j.format(makeEvent([foo: 'bar', baz: 42, qux: null])), is (String.format('{"foo":"bar","baz":42,"qux":null}%n'))
     }
 
     @Test

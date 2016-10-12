@@ -1,4 +1,5 @@
 package org.transmart.marshallers
+
 import org.transmartproject.core.ontology.OntologyTerm
 
 //import org.transmartproject.core.ontology.BoundModifier

@@ -330,39 +330,52 @@ function conceptRightClick(event)
 {
 	var conceptnode=this.dom;
 	selectConcept(conceptnode, true);
-	var conceptid=this.dom.attributes.concepttooltip.nodeValue; //change to id later
+	var conceptid=this.dom.attributes.conceptid.nodeValue;
 	var comment=this.dom.attributes.conceptcomment.nodeValue;
 
 	if (!this.contextMenuConcepts) {
-		this.contextMenuConcepts = new Ext.menu.Menu({
-			id: 'contextMenuConcepts',
-			items: [{
-				text: 'Delete', handler: function() {
-					selectedDiv.removeChild(selectedConcept);
-					removeUselessPanels()
-					invalidateSubset(getSubsetFromPanel(selectedDiv));
-				}
-			},{
-				id: 'setvaluemenu',
-				text: 'Set Value',
-				handler:function() {
-					showSetValueDialog();
-				}
-			}, {
-				text: 'Show Definition',
-				handler: function() {
-					showConceptInfoDialog(conceptid, conceptid, comment);}
+	this.contextMenuConcepts = new Ext.menu.Menu({
+		id: 'contextMenuConcepts',
+		items: [{
+			text: 'Delete', handler: function() {
+				selectedDiv.removeChild(selectedConcept);
+				removeUselessPanels();
+				invalidateSubset(getSubsetFromPanel(selectedDiv));
+			}
+		},{
+			id: 'setvaluemenu',
+			text: 'Set Value',
+			handler:function() {
+				showSetValueDialog();
+			}
+		}, {
+			id: 'geneexprfiltermenu',
+			text: 'Set Filter',
+			handler:function() {
+				// set the global variable for repopulating the filter window
+				omicsFilterRepopulateWindow = selectedConcept.attributes;
+
+				// create mock node object for highDimensionalConceptDropped
+				var node = {id: selectedConcept.attributes.conceptid.nodeValue}
+				highDimensionalConceptDropped(node, true);
+			}
+		}, {
+			text: 'Show Definition',
+			handler: function() {
+				showConceptInfoDialog(conceptid, conceptid, comment);}
 			}]
 		});
 	}
 	var xy = event.getXY();
 	this.contextMenuConcepts.showAt(xy);
 	var m=Ext.getCmp('setvaluemenu');
-	if(this.dom.attributes.oktousevalues.nodeValue!='Y')
-		m.hide();
-	//alert('you cant set value');
-	else
+	var o=Ext.getCmp('geneexprfiltermenu');
+	m.hide();
+	o.hide();
+	if(this.dom.attributes.oktousevalues.nodeValue=='Y')
 		m.show();
+	else if (this.dom.attributes.oktousevalues.nodeValue == 'H')
+		o.show();
 	return false;
 }
 
@@ -1666,11 +1679,11 @@ function getQuerySummaryItem(el){
 
 function isSubsetEmpty(subset)
 {
-	var flag = true
+	var flag = true;
 	jQuery(".panelModel[subset='" + subset + "']").each(function () {
 		if (jQuery(this).find(".panelBoxList").html().trim() != '' && flag)
 			flag = false
-	})
+	});
 
 	return flag;
 }
@@ -1811,6 +1824,7 @@ function getTreeNodeFromJsonNode(concept)
 	if (visualattributes.indexOf('HIGH_DIMENSIONAL') != -1) {
 		iconCls = 'hleaficon';
 		tcls = 'hleafclass';
+        oktousevalues = 'H';
 	} else if (visualattributes.indexOf('EDITABLE') != -1) {
 		iconCls = 'eleaficon';
 		tcls = 'eleafclass';

@@ -900,7 +900,7 @@ Ext.onReady(function () {
             plain: true,
             modal: true,
             border: false,
-            items: [setvaluePanel , setvaluechartsPanel1, setvaluechartsPanel2],
+            items: [setvaluePanel, setvaluechartsPanel1, setvaluechartsPanel2],
             buttons: [
                 {
                     text: 'Show Histogram',
@@ -956,10 +956,10 @@ Ext.onReady(function () {
             resizable: false,
             tools: [
                 {
-                    id:'help',
-                    qtip:'Click for context sensitive help',
-                    handler: function(event, toolEl, panel) {
-                        D2H_ShowHelp("1239", helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP);
+                    id: 'help',
+                    qtip: 'Click for context sensitive help',
+                    handler: function (event, toolEl, panel) {
+                        D2H_ShowHelp("1239", helpURL, "wndExternal", CTXT_DISPLAY_FULLHELP);
                     }
                 }
             ]
@@ -967,6 +967,53 @@ Ext.onReady(function () {
 
         setvaluewin.show();
         setvaluewin.hide();
+    }
+
+    // preload geneexpr filter dialog
+
+    omicsfilterpanel = new Ext.Panel(
+        {
+            id: 'omicsfilterPanel',
+            region: 'center',
+            height: 80,
+            width: 100,
+            split: false,
+            html: '<div id="highdimension-filter-main"></div>'
+        }
+    );
+
+    if (!this.omicsfilterwin) {
+        omicsfilterwin = new Ext.Window(
+            {
+                id: 'omicsFilterWindow',
+                title: '',
+                layout: 'border',
+                width: 270,
+                height: 350,
+                closable: false,
+                plain: true,
+                modal: true,
+                border: false,
+                items: [omicsfilterpanel],
+                buttons: [
+                    {
+                        text: 'OK',
+                        handler: function () {
+                            applyOmicsFilterDialog(true);
+                        }
+                    }
+                    ,
+                    {
+                        text: 'Cancel',
+                        handler: function () {
+                            applyOmicsFilterDialog(false);
+                        }
+                    }
+                ],
+                tools: []
+            });
+        omicsfilterwin.show();
+        omicsfilterwin.hide();
     }
 
     showLoginDialog();
@@ -1892,6 +1939,11 @@ function buildAnalysis(nodein) {
         return;
     }
 
+    if (node.attributes.oktousevalues == "H") {
+        highDimensionalConceptDropped(node, false);
+        return;
+    }
+
     resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
 
     Ext.Ajax.request({
@@ -1909,7 +1961,7 @@ function buildAnalysis(nodein) {
             resultsTabPanel.body.unmask();
         },
         failure: function (result, request) {
-            alert("A problem arose while trying to retrieve the results")
+            alert("A problem arose while trying to retrieve the results");
             resultsTabPanel.body.unmask();
         }
     });
@@ -2906,20 +2958,49 @@ function storeLoaded(jsonStore, rows, paramsObject) {
 }
 
 function getAnalysisGridData(concept_key) {
-    gridstore = new Ext.data.JsonStore({
-        url: pageInfo.basePath+'/chart/analysisGrid'
-    });
+    return getAnalysisGridData(concept_key, null);
+}
+
+function getAnalysisGridData(concept_key, omics_params) {
+    gridstore = new Ext.data.JsonStore(
+        {
+            url : pageInfo.basePath+'/chart/analysisGrid',
+            root : 'rows',
+            fields : ['name', 'url']
+        }
+    );
     gridstore.on('load', storeLoaded);
-    var myparams = Ext.urlEncode({
-        charttype: "analysisgrid",
-        concept_key: concept_key,
-        result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
-        result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
-    });
+
+    var myparams;
+
+    if (omics_params) {
+        myparams = Ext.urlEncode(
+            {
+                charttype : "analysisgrid",
+                concept_key : concept_key,
+                omics_selector : omics_params.omics_selector,
+                omics_value_type: omics_params.omics_value_type,
+                omics_property: omics_params.omics_property,
+                omics_projection_type: omics_params.omics_projection_type,
+                omics_platform: omics_filter_info.platform.id,
+                result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+            });
+    }
+    else {
+        myparams = Ext.urlEncode(
+            {
+                charttype : "analysisgrid",
+                concept_key : concept_key,
+                result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+            });
+    }
+
     // or a URL encoded string */
 
     gridstore.load({
-        params: myparams
+        params : myparams
     });
 }
 
