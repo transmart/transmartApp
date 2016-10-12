@@ -34,11 +34,6 @@ if (dmClass) {
     dm = dmClass.newInstance()
 }
 
-grails.plugin.location.'folder-management' = '../folder-management-plugin'
-grails.plugin.location.'transmart-gwas' = '../transmart-gwas-plugin'
-grails.plugin.location.'transmart-core' = '../transmart-core-db'
-grails.plugin.location.'transmart-core-db-tests' = '../transmart-core-db/transmart-core-db-tests/'
-
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {}
