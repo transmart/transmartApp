@@ -61,6 +61,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         var concepts = Ext.decode(response.responseText);
 
         var matchList = GLOBAL.PathToExpand.split(",");
+
         for (i = 0; i < concepts.length; i++) {
             var c = getTreeNodeFromJsonNode(concepts[i]);
             if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
