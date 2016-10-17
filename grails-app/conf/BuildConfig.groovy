@@ -42,14 +42,11 @@ grails.project.dependency.resolution = {
     if (!dm) {
         repositories {
             grailsCentral()
+            mavenLocal()
             mavenCentral()
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
 
-            // -- Genome Browser plugin --
-            //   to inclue the plugin, uncomment the following line
-            //   and see related comment block below 
-            // mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -80,7 +77,6 @@ grails.project.dependency.resolution = {
         compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile 'org.apache.httpcomponents:httpcore:4.4.1'
 
-        compile 'org.apache.httpcomponents:httpclient:4.2.4'
         compile 'org.apache.solr:solr-solrj:5.4.1'
         compile 'org.apache.solr:solr-core:5.4.1'
 
@@ -140,7 +136,7 @@ grails.project.dependency.resolution = {
         compile ":codenarc:0.21"
 
         if (!dm) {
-            runtime ':smart-r:1.1-BETA-SNAPSHOT'
+            runtime ':smart-r:1.0-STABLE-SNAPSHOT'
             compile ':rdc-rmodules:16.2-SNAPSHOT'
             runtime ':transmart-core:16.2-SNAPSHOT'
             compile ':transmart-gwas:16.2-SNAPSHOT'
@@ -155,14 +151,13 @@ grails.project.dependency.resolution = {
             //compile ':biomart-domain:16.2-SNAPSHOT'
             //// already included in biomart-domain
             //compile ':transmart-java:16.2-SNAPSHOT'
-            // -- Genome Browser plugin --
-            //   to inclue the plugin, uncomment the following two lines
-            //   and see related comment block above 
-            // runtime ':dalliance-plugin:unknown'
-            // runtime ':transmart-mydas:unknown'
+            runtime ':dalliance-plugin:16.2-SNAPSHOT'
+            runtime ':transmart-mydas:16.2-SNAPSHOT'
             runtime ':transmart-rest-api:16.2-SNAPSHOT'
             runtime ':blend4j-plugin:16.2-SNAPSHOT'
             runtime ':transmart-metacore-plugin:16.2-SNAPSHOT'
+            runtime ':transmart-xnat-importer:16.2-SNAPSHOT'
+            runtime ':xnat-viewer:16.2-SNAPSHOT'
 
             test ':transmart-core-db-tests:16.2-SNAPSHOT'
         } else {
