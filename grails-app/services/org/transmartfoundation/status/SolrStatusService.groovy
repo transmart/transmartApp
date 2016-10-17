@@ -5,7 +5,7 @@ import grails.util.Holders
 import java.util.Date
 //import org.apache.http.impl.client.HttpClientBuilder
 //import org.apache.http.impl.client.CloseableHttpClient
-import org.apache.http.impl.client.DefaultHttpClient
+//import org.apache.http.impl.client.DefaultHttpClient
 import org.apache.solr.common.SolrDocumentList
 import org.apache.solr.common.params.SolrParams
 import org.apache.solr.common.util.NamedList
@@ -25,8 +25,8 @@ class SolrStatusService {
 		def solrQuery = '*:*'
 
 //        CloseableHttpClient httpClient = HttpClientBuilder.create().build()
-        DefaultHttpClient httpClient = new DefaultHttpClient()
-		SolrClient solr = new HttpSolrClient(urlString,httpClient)
+//                DefaultHttpClient httpClient = new HttpClientBuilder.create().build()
+		SolrClient solr = new HttpSolrClient(urlString)
 		
 		NamedList nl = new NamedList()
 		nl.addAll(['q':solrQuery])
