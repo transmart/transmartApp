@@ -140,7 +140,7 @@
                                                 Not a user ? Contact <a
                                                     href="mailto:${grailsApplication.config.com.recomdata.administrator}"
                                                     target="_blank"
-                                                    style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
+                                                    style="text-decoration:underline;color:#0000FF">administrator</a> to request an account.
                                             </td>
                                         </tr>
                                         <g:if test='${grailsApplication.config.org.transmart.security.samlEnabled}'>
@@ -165,6 +165,16 @@
                 </div>
             </td>
         </tr>
+        <tr><td>&nbsp;</td></tr>
+        <g:if test='${grailsApplication.config.ui.loginScreen.disclaimer}'>
+            <tr>
+                <td style="font-weight: bold;text-align:center;color:#CC0000;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
+                    <div style="margin-right:auto;margin-left:auto;width:435px">
+                        ${grailsApplication.config.ui.loginScreen.disclaimer}
+                     </div>
+                </td>
+            </tr>
+        </g:if>
         <tr><td>&nbsp;</td></tr>
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">

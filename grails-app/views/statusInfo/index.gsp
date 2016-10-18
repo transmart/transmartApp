@@ -14,7 +14,7 @@
             <tr><th>Component</th><th>Status</th></tr>
         </thead>
         <tbody>
-            <tr><td>Overall - is avaiable?</td><td>${solrStatus.connected}</td></tr>
+            <tr><td>Overall - is available?</td><td>${solrStatus.connected}</td></tr>
             <tr><td>rwg core?</td><td>${solrStatus.rwgAvailable} (number of records: ${solrStatus.rwgNumberOfRecords})</td></tr>
             <tr><td>browse core?</td><td>${solrStatus.browseAvailable} (number of records: ${solrStatus.browseNumberOfRecords})</td></tr>
             <tr><td>sample core?</td><td>${solrStatus.sampleAvailable} (number of records: ${solrStatus.sampleNumberOfRecords})</td></tr>
@@ -27,10 +27,10 @@
             <tr><th>Component</th><th>Status</th></tr>
         </thead>
         <tbody>
-            <tr><td>Overall - is avaiable?</td><td>${rserveStatus.connected}</td></tr>
-            <tr><td>working</td><td>${rserveStatus.simpleExpressionOK}</td></tr>
-            <tr><td>necessary libraries</td><td>${rserveStatus.librariesOk}</td></tr>
-            <tr><td>error message (if any)</td><td>${rserveStatus.lastErrorMessage}</td></tr>
+            <tr><td>Overall - is available?</td><td>${rserveStatus.connected}</td></tr>
+            <tr><td>Working</td><td>${rserveStatus.simpleExpressionOK}</td></tr>
+            <tr><td>Necessary libraries</td><td>${rserveStatus.librariesOk}</td></tr>
+            <tr><td>Error message (if any)</td><td>${rserveStatus.lastErrorMessage}</td></tr>
         </tbody>
     </table>
     <h1 class="status-title">Status of connection to gwava.war</h1>
@@ -41,8 +41,8 @@
                 <tr><th>Component</th><th>Status</th></tr>
             </thead>
             <tbody>
-                <tr><td>Overall - is avaiable?</td><td>${gwavaStatus.connected}</td></tr>
-                <tr><td>error message (if any)</td><td>${gwavaStatus.errorMessage}</td></tr>
+                <tr><td>Overall - is available?</td><td>${gwavaStatus.connected}</td></tr>
+                <tr><td>Error message (if any)</td><td>${gwavaStatus.errorMessage}</td></tr>
             </tbody>
         </table>
     </g:if>

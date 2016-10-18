@@ -2882,7 +2882,7 @@ function getSummaryGridData() {
 
     resultsTabPanel.body.mask("Loading ..", 'x-mask-loading');
 
-    if (!(GLOBAL.CurrentSubsetIDs[0]) && !(GLOBAL.CurrentSubsetIDs[1])) {
+    if (!(GLOBAL.CurrentSubsetIDs[1]) && !(GLOBAL.CurrentSubsetIDs[2])) {
         Ext.Msg.alert('Subsets are unavailable.',
                 'Please select one or two Comparison subsets and run Summary Statistics.');
         resultsTabPanel.body.unmask();

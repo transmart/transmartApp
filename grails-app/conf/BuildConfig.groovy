@@ -34,11 +34,6 @@ if (dmClass) {
     dm = dmClass.newInstance()
 }
 
-grails.plugin.location.'folder-management' = '../folder-management-plugin'
-grails.plugin.location.'transmart-gwas' = '../transmart-gwas-plugin'
-grails.plugin.location.'transmart-core' = '../transmart-core-db'
-grails.plugin.location.'transmart-core-db-tests' = '../transmart-core-db/transmart-core-db-tests/'
-
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {}
@@ -48,14 +43,11 @@ grails.project.dependency.resolution = {
         repositories {
             mavenLocal()
             grailsCentral()
+            mavenLocal()
             mavenCentral()
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
 
-            // -- Genome Browser plugin --
-            //   to inclue the plugin, uncomment the following line
-            //   and see related comment block below 
-            // mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
         dm.configureRepositories delegate
@@ -86,7 +78,6 @@ grails.project.dependency.resolution = {
         compile 'org.apache.httpcomponents:httpclient:4.4.1'
         compile 'org.apache.httpcomponents:httpcore:4.4.1'
 
-        compile 'org.apache.httpcomponents:httpclient:4.2.4'
         compile 'org.apache.solr:solr-solrj:5.4.1'
         compile 'org.apache.solr:solr-core:5.4.1'
 
@@ -128,7 +119,7 @@ grails.project.dependency.resolution = {
         build ':tomcat:7.0.54'
 
         compile ':hibernate:3.6.10.19'
-        compile ':rest-client-builder:2.0.1'
+        compile ':rest-client-builder:2.1.1'
         compile ':cache-ehcache:1.0.5'
         compile ':quartz:1.0-RC2'
         // Not compatible with spring security 3.2 yet
@@ -147,9 +138,9 @@ grails.project.dependency.resolution = {
 
         if (!dm) {
             runtime ':smart-r:1.0-STABLE-SNAPSHOT'
-            compile ':rdc-rmodules:16.1'
-            runtime ':transmart-core:16.1'
-            compile ':transmart-gwas:16.1'
+            compile ':rdc-rmodules:16.2-SNAPSHOT'
+            runtime ':transmart-core:16.2-SNAPSHOT'
+            compile ':transmart-gwas:16.2-SNAPSHOT'
             //// already included in transmart-gwas
             //compile ':transmart-legacy-db:16.1'
             //// already included in transmart-gwas
@@ -160,15 +151,14 @@ grails.project.dependency.resolution = {
             //                       folder-management
             //compile ':biomart-domain:16.1
             //// already included in biomart-domain
-            //compile ':transmart-java:16.1'
-            // -- Genome Browser plugin --
-            //   to inclue the plugin, uncomment the following two lines
-            //   and see related comment block above 
-            // runtime ':dalliance-plugin:unknown'
-            // runtime ':transmart-mydas:unknown'
+            //compile ':transmart-java:16.2-SNAPSHOT'
+            runtime ':dalliance-plugin:16.2-SNAPSHOT'
+            runtime ':transmart-mydas:16.2-SNAPSHOT'
             runtime ':transmart-rest-api:16.2-SNAPSHOT'
             runtime ':blend4j-plugin:16.2-SNAPSHOT'
             runtime ':transmart-metacore-plugin:16.2-SNAPSHOT'
+            runtime ':transmart-xnat-importer:16.2-SNAPSHOT'
+            runtime ':xnat-viewer:16.2-SNAPSHOT'
 
             test ':transmart-core-db-tests:16.2-SNAPSHOT'
         } else {

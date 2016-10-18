@@ -15,7 +15,7 @@ class GwavaStatusService {
     def getStatus() {
 
         def urlString = Holders.config.com.recomdata.rwg.webstart.codebase
-        def enabled = isGwavaEmabled()
+        def enabled = isGwavaEnabled()
         def canConnect = canConnect(urlString);
 
         def settings = [
@@ -30,7 +30,7 @@ class GwavaStatusService {
         return status
     }
 
-    def isGwavaEmabled() {
+    def isGwavaEnabled() {
         return !!Holders.config.com.recomdata.rwg.webstart.transmart.url;
     }
 
@@ -41,7 +41,7 @@ class GwavaStatusService {
         try {
             gwava = new URL(urlString)
             gwava.eachLine {line ->
-                errorString = "URL responded with unexpected text"
+                errorMessage = ""
                 if (line.contains("GWAVA QuickStart")) {
                     sawText = true;
                 }
@@ -50,8 +50,8 @@ class GwavaStatusService {
             errorMessage = "MalformedURLException: " + e.message
         } catch (IOException e1) {
             errorMessage = "IOException: " + e1.message
-        } catch (all) {
-            errorMessage = "Unexpected Error"
+        } catch (Exception ex) {
+            errorMessage = "Unexpected error: " + ex.message
         }
         return sawText
     }
