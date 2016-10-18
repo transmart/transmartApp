@@ -1128,7 +1128,7 @@ class I2b2HelperService {
                 newrow.put("subject", subject);
                 def arr = row.SOURCESYSTEM_CD?.split(":")
                 newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM]
+                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM as Long]
                 newrow.put("SAMPLE_CDS", cds ? cds : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
@@ -1152,24 +1152,24 @@ class I2b2HelperService {
         def map = [:]
         def sampleCodesTable = new Sql(dataSource).rows("""
 			SELECT DISTINCT
-                f.PATIENT_NUM,
+                f.PATIENT_ID,
                 f.SAMPLE_CD
 			FROM
-                observation_fact f
+                de_subject_sample_mapping f
             WHERE
-                f.PATIENT_NUM IN (
+                f.PATIENT_ID IN (
                     SELECT
                         DISTINCT patient_num
                     FROM
                         qt_patient_set_collection
                     WHERE
                         result_instance_id = ? )
-			ORDER BY PATIENT_NUM, SAMPLE_CD
+			ORDER BY PATIENT_ID, SAMPLE_CD
 			""", resultInstanceId
         )
 
         for (row in sampleCodesTable) {
-            def patientNum = row.PATIENT_NUM
+            def patientNum = row.PATIENT_ID
             if (!patientNum) continue
             def sampleCd = row.SAMPLE_CD
             if (!sampleCd) continue
