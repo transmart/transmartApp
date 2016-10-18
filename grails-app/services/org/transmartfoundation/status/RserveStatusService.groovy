@@ -12,6 +12,7 @@ class RserveStatusService {
     static String REQUIRED_PACKAGES_NAME = "required.packages";
     static String[] REQUIRED_PACKAGES_ARRAY = ["reshape2", "ggplot2", "data.table", "Cairo",
         "snowfall", "gplots", "Rserve", "foreach", "doParallel", "visreg",
+        "pROC", "jsonlite", "RUnit",
         "WGCNA", "impute", "multtest", "CGHbase", "CGHtest","CGHtestpar",
         "edgeR", "snpStats", "preprocessCore", "GO.db", "AnnotationDbi"] as String[]
     static String MISSING_PACKAGES_EXPRESSION =
@@ -74,21 +75,21 @@ class RserveStatusService {
 
         REXP results = evaluate(c,SIMPLE_EXPRESSION);
         if (results == null) {
-            lastErrorMessage = "Probe = simple epression; returned null";
+            lastErrorMessage = "Probe = simple expression; returned null";
             return false;
         }
         try {
             d = evaluate(c,SIMPLE_EXPRESSION).asDoubles();
         } catch (REXPMismatchException e) {
             System.out.println(e.getLocalizedMessage());
-            lastErrorMessage = "Probe = simple epression; exception = " + e.getLocalizedMessage();
+            lastErrorMessage = "Probe = simple expression; exception = " + e.getLocalizedMessage();
             return false;
         }
         if (d.length == 10) {
             lastErrorMessage = "";
             return true;
         }
-        lastErrorMessage = "Probe = simple epression; wrong returned value.";
+        lastErrorMessage = "Probe = simple expression; wrong returned value.";
         return false;
     }
 
@@ -98,16 +99,18 @@ class RserveStatusService {
         List<String> list = determineMissingPackages(c);
         if (list == null) {
             // determineMissingPackages will have set lastErrorMessage
-            logger.debug("Return from hasNecessaryDependencies because missing packages array is null");
+            log.debug("Return from hasNecessaryDependencies because missing packages array is null");
             return false;
         }
 
         boolean ok = (list.size() == 0);
 
         if (!ok) {
-            lastErrorMessage = "list of dependencies is not empty";
+            log.debug("list of dependencies is not empty: ${list}");
+            log.debug("lastErrorMessage from determineMissingPackages: ${lastErrorMessage}");
+            lastErrorMessage = "Packages not found: ${list}";
         }
-        lastErrorMessage = "";
+
         return ok;
     }
 
@@ -116,8 +119,8 @@ class RserveStatusService {
         try {
             c.assign(REQUIRED_PACKAGES_NAME,REQUIRED_PACKAGES_ARRAY);
         } catch (REngineException e) {
-            logger.debug("Return from determineMissingPackages because assignment failed!");
-            logger.debug("  " + e.getLocalizedMessage());
+            log.debug("Return from determineMissingPackages because assignment failed!");
+            log.debug("  " + e.getLocalizedMessage());
             lastErrorMessage = "exception in assignment of required packages: " + e.getLocalizedMessage();
             return null;
         }
@@ -127,8 +130,8 @@ class RserveStatusService {
             try {
                 array = results.asStrings();
             } catch (REXPMismatchException e) {
-                logger.debug("Return from determineMissingPackages because conversion of package array failed!");
-                logger.debug("  " + e.getLocalizedMessage());
+                log.debug("Return from determineMissingPackages because conversion of package array failed!");
+                log.debug("  " + e.getLocalizedMessage());
                 lastErrorMessage = "Exception in converting results to an String array: " + e.getLocalizedMessage();
                 return null;
             }
