@@ -289,8 +289,8 @@ function omicsSliderUpdated(ui) {
     omicsSliderHighHandleRatio = (high - min) / (max - min);
     jQuery("#highdimension-amount-min").val(low.toFixed(3));
     jQuery("#highdimension-amount-max").val(high.toFixed(3));
-    jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= low;})
-        .filter(function(el, idx, array) {return el <= high;})
+    jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= parseFloat(low.toFixed(3));})
+        .filter(function(el, idx, array) {return el <= parseFloat(high.toFixed(3));})
         .length)
 }
 
@@ -311,7 +311,7 @@ function getOmicsFilterParams() {
             value: omics_filter_info.filter ? jQuery("#highdimension-amount-min").val() + ":" + jQuery("#highdimension-amount-max").val() : "",
             operator: omics_filter_info.filter ? "BETWEEN" : "",
             projection_type: jQuery("#highdimension-filter-projection").find("option:selected").val(),
-            projection_pretty_name: jQuery("#highdimension-filter-projection").find("option:selected").val(),
+            projection_pretty_name: jQuery("#highdimension-filter-projection").find("option:selected").text(),
             type: omics_filter_info.platform.markerType,
             hist_bins: omics_filter_info.filter ? jQuery("#highdimension-amount-bins").val() : ""
         };
@@ -362,11 +362,10 @@ function getOmicsFilterValueText(params)
     var result = "";
 
     switch (params.type) {
-        case "Gene Expression":
-        case "RNASEQ_RCNT":
-        case "PROTEOMICS":
-        case "MIRNA_QPCR":
-        case "Chromosomal":
+        case "VCF":
+            result = "Dummy VCF filter";
+            break;
+        default:
             switch (params.operator) {
                 case "BETWEEN":
                     var thresholds = params.value.split(":");
@@ -378,9 +377,6 @@ function getOmicsFilterValueText(params)
                     }
                     break;
             }
-            break;
-        case "VCF":
-            result = "Dummy VCF filter";
             break;
     }
     return "<em>" + result + "</em>";
