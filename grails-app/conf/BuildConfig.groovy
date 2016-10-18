@@ -41,7 +41,6 @@ grails.project.dependency.resolution = {
 
     if (!dm) {
         repositories {
-            mavenLocal()
             grailsCentral()
             mavenLocal()
             mavenCentral()
@@ -60,7 +59,7 @@ grails.project.dependency.resolution = {
 
         runtime 'org.javassist:javassist:3.16.1-GA'
 
-        compile 'org.transmartproject:transmart-core-api:16.1'
+        compile 'org.transmartproject:transmart-core-api:16.2-SNAPSHOT'
 
         compile 'antlr:antlr:2.7.7'
         compile 'net.sf.opencsv:opencsv:2.3'
@@ -142,14 +141,14 @@ grails.project.dependency.resolution = {
             runtime ':transmart-core:16.2-SNAPSHOT'
             compile ':transmart-gwas:16.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':transmart-legacy-db:16.1'
+            //compile ':transmart-legacy-db:16.2-SNAPSHOT'
             //// already included in transmart-gwas
-            //compile ':folder-management:16.1'
+            //compile ':folder-management:16.2-SNAPSHOT'
             //// already included in transmart-gwas, folder-management
-            //compile ':search-domain:16.1'
+            //compile ':search-domain:16.2-SNAPSHOT'
             //// already included in search-domain, transmart-gwas,
             //                       folder-management
-            //compile ':biomart-domain:16.1
+            //compile ':biomart-domain:16.2-SNAPSHOT'
             //// already included in biomart-domain
             //compile ':transmart-java:16.2-SNAPSHOT'
             runtime ':dalliance-plugin:16.2-SNAPSHOT'
