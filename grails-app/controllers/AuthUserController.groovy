@@ -1,3 +1,4 @@
+import org.apache.commons.lang.RandomStringUtils
 import org.codehaus.groovy.grails.exceptions.InvalidPropertyException
 import org.springframework.transaction.TransactionStatus
 import org.transmart.searchapp.*
@@ -136,8 +137,12 @@ class AuthUserController {
 
             person.passwd = springSecurityService.encodePassword(params.passwd)
         } else if (create) {
-            flash.message = 'Password must be provided';
-            return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
+            if (grailsApplication.config.transmartproject.authUser.create.passwordRequired != false) {
+                flash.message = 'Password must be provided';
+                return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
+            } else {
+                person.passwd = springSecurityService.encodePassword(params.passwd?:"FilledByAuthUserController_" + RandomStringUtils.random(12, true, true));
+            }
         }
 
         person.name = person.userRealName
