@@ -1,5 +1,6 @@
 package com.recomdata.security
 
+import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.springframework.ldap.core.DirContextAdapter
@@ -7,6 +8,7 @@ import org.springframework.ldap.core.DirContextOperations
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.ldap.userdetails.UserDetailsContextMapper
 import org.springframework.util.Assert
 import org.transmart.searchapp.AccessLog
@@ -67,7 +69,18 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
         String email = ctx.getStringAttribute('mail')
         String password = mapPassword(ctx)
 
-        def user = AuthUser.findOrCreateWhere((mappedUsernameProperty): username)
+        def ldapConfig = Holders.config.transmartproject.ldap
+
+        AuthUser user
+        if (ldapConfig.caseInsensitive) {
+            user = AuthUser.createCriteria().get { eq(mappedUsernameProperty, username, [ignoreCase: true])}
+            if (user == null) {
+                user = AuthUser.create()
+                user.username = username
+            }
+        } else {
+            user = AuthUser.findOrCreateWhere((mappedUsernameProperty): username)
+        }
         user.name = fullName
         user.passwd = password
         user.userRealName = fullName
@@ -75,52 +88,58 @@ public class LdapAuthUserDetailsMapper implements UserDetailsContextMapper {
 
         def created = !user.id
         def willGenerateUsername = false
-        if (created) {
-            user.emailShow = true
-            user.enabled = true
-            if (mappedUsernameProperty != 'username') {
-                // we will set username later
-                if (!newUsernamePattern) {
-                    user.username = username
-                } else if (UsernameUtils.patternHasId(newUsernamePattern))  {
-                    willGenerateUsername = true
-                    user.username = UsernameUtils.randomName()
-                } else {
-                    user.username = UsernameUtils.evaluatePattern(user, newUsernamePattern)
+
+        if (created && ldapConfig.doNotCreateUserIfNotExist) {
+            logger.warn("Can't create user '${username}' because transmartproject.ldap.doNotCreateUserIfNotExist is set.")
+            throw new UsernameNotFoundException("User '${username}' does not exist in transmart DB.")
+        } else {
+            if (created) {
+                user.emailShow = true
+                user.enabled = true
+                if (mappedUsernameProperty != 'username') {
+                    // we will set username later
+                    if (!newUsernamePattern) {
+                        user.username = username
+                    } else if (UsernameUtils.patternHasId(newUsernamePattern)) {
+                        willGenerateUsername = true
+                        user.username = UsernameUtils.randomName()
+                    } else {
+                        user.username = UsernameUtils.evaluatePattern(user, newUsernamePattern)
+                    }
                 }
             }
-        }
-        user.save(flush: true)
-
-        // generate user name after initial save, because it can use identifier
-        if (!user.hasErrors() && willGenerateUsername) {
-            user.username = UsernameUtils.evaluatePattern(user, newUsernamePattern)
             user.save(flush: true)
+
+            // generate user name after initial save, because it can use identifier
+            if (!user.hasErrors() && willGenerateUsername) {
+                user.username = UsernameUtils.evaluatePattern(user, newUsernamePattern)
+                user.save(flush: true)
+            }
+
+            if (user.hasErrors()) {
+                logger.error("Can't save User: ${username}:")
+                user.errors.allErrors.each { logger.error(it) }
+                return null;
+            }
+
+            if (created) {
+                def authorities = defaultAuthorities ?: [Role.SPECTATOR_ROLE]
+                Role.findAllByAuthorityInList(authorities).each { user.addToAuthorities(it) }
+
+                new AccessLog(
+                        username: "LDAP",
+                        event: "User Created",
+                        eventmessage: "User '${user.username}' for ${user.userRealName} created",
+                        accesstime: new Date()).save()
+            }
+
+            if (!user.enabled) {
+                logger.error("User is disabled: ${username}")
+                return null
+            }
+
+            return user
         }
-
-        if (user.hasErrors()) {
-            logger.error("Can't save User: ${username}:")
-            user.errors.allErrors.each { logger.error(it) }
-            return null;
-        }
-
-        if (created) {
-            def authorities = defaultAuthorities ?: [Role.SPECTATOR_ROLE]
-            Role.findAllByAuthorityInList(authorities).each { user.addToAuthorities(it) }
-
-            new AccessLog(
-                    username: "LDAP",
-                    event: "User Created",
-                    eventmessage: "User '${user.username}' for ${user.userRealName} created",
-                    accesstime: new Date()).save()
-        }
-
-        if (!user.enabled) {
-            logger.error("User is disabled: ${username}")
-            return null
-        }
-
-        return user
     }
 
 
