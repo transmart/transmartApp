@@ -14,7 +14,8 @@ class RserveStatusService {
         "snowfall", "gplots", "Rserve", "foreach", "doParallel", "visreg",
         "pROC", "jsonlite", "RUnit",
         "WGCNA", "impute", "multtest", "CGHbase", "CGHtest","CGHtestpar",
-        "edgeR", "snpStats", "preprocessCore", "GO.db", "AnnotationDbi"] as String[]
+        "edgeR", "snpStats", "preprocessCore",
+        "GO.db", "AnnotationDbi", "QDNAseq"] as String[]
     static String MISSING_PACKAGES_EXPRESSION =
             "required.packages[!(required.packages %in% installed.packages()[,\"Package\"])]"
 
