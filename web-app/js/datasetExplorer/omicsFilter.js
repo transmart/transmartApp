@@ -121,7 +121,7 @@ function applyOmicsFilterDialog(validation) {
 
 function addOmicsFilterAutocomplete() {
     var searchbox = jQuery("#highdimension-filter-selector");
-    searchbox.uiAutocomplete({
+    searchbox.autocomplete({
         position:{my:"left top",at:"left bottom",collision:"none"},
         appendTo:"#omicsFilterWindow",
         source: function(request, response) {
@@ -167,13 +167,13 @@ function addOmicsFilterAutocomplete() {
         }
 
         return jQuery('<li></li>')
-            .data("item.uiAutocomplete", item )
+            .data("item.autocomplete", item )
             .append(resulta)
             .appendTo(ul);
     };
     jQuery(".ui-autocomplete").css({"max-height": "300px", "overflow-y": "auto", "overflow-x": "hidden", "padding-right": "20px"});
     jQuery("#highdimension-search-property").find('input').click(function() {
-        searchbox.uiAutocomplete('source', omics_filter_info.auto_complete_source + "&search_property=" + encodeURIComponent(jQuery(this).val()));
+        searchbox.autocomplete('source', omics_filter_info.auto_complete_source + "&search_property=" + encodeURIComponent(jQuery(this).val()));
     });
 }
 
