@@ -23,7 +23,7 @@ function addSelectCategories()	{
 	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
 	
 	jQuery("#search-categories").change(function() {
-		jQuery('#search-ac').uiAutocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
+		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
 		jQuery.ajax({
 			url:updateSearchCategoryURL,
 			data: {id: jQuery("#search-categories").val()}
@@ -44,7 +44,7 @@ function addSelectCategories()	{
 		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
 		
 		jQuery("#search-categories").val(sessionSearchCategory);
-		jQuery('#search-ac').uiAutocomplete('option', 'source', sourceURL + "?category=" + jQuery('#search-categories').val());
+		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + jQuery('#search-categories').val());
 
     });
 	
@@ -82,7 +82,7 @@ function addFilterCategories() {
 
 //Method to add the autocomplete for the search keywords
 function addSearchAutoComplete()	{
-	jQuery("#search-ac").uiAutocomplete({
+	jQuery("#search-ac").autocomplete({
 		position:{my:"left top",at:"left bottom",collision:"none"},
 		source: sourceURL,
 		minLength:1,
@@ -94,7 +94,7 @@ function addSearchAutoComplete()	{
 			var category = jQuery("#search-categories").val();
 			return false;
 		}
-	}).data("uiAutocomplete")._renderItem = function( ul, item ) {
+	}).data("autocomplete")._renderItem = function( ul, item ) {
 		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;';
 		if (item.synonyms != null) {
 			resulta += (item.synonyms + '</a>');
@@ -104,7 +104,7 @@ function addSearchAutoComplete()	{
 		}
 		
 		return jQuery('<li></li>')		
-		  .data("item.uiAutocomplete", item )
+		  .data("item.autocomplete", item )
 		  .append(resulta)
 		  .appendTo(ul);
 	};	
@@ -112,7 +112,7 @@ function addSearchAutoComplete()	{
 	// Capture the enter key on the slider and fire off the search event on the autocomplete
 	jQuery("#search-categories").keypress(function(event)	{
 		if (event.which == 13)	{
-			jQuery("#search-ac").uiAutocomplete('search');
+			jQuery("#search-ac").autocomplete('search');
 		}
 	});
 	
@@ -528,7 +528,7 @@ function clearSearch()	{
 	
 	// Change the category picker back to ALL and set autocomplete to not have a category (ALL by default)
 	document.getElementById("search-categories").selectedIndex = 0;
-	jQuery('#search-ac').uiAutocomplete('option', 'source', sourceURL);
+	jQuery('#search-ac').autocomplete('option', 'source', sourceURL);
 
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
