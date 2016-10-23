@@ -12,8 +12,8 @@ import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
-import org.transmartproject.db.querytool.QtPatientSetCollection
 import org.transmartproject.db.ontology.AcrossTrialsOntologyTerm
+import org.transmartproject.db.querytool.QtPatientSetCollection
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -27,13 +27,10 @@ import javax.xml.xpath.XPathFactory
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
-import java.net.URL;
-import java.net.MalformedURLException;
-
-import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TABLE_CODE
-import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TOP_TERM_NAME
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TABLE_CODE
+import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TOP_TERM_NAME
 
 class I2b2HelperService {
 
@@ -1131,7 +1128,7 @@ class I2b2HelperService {
                 newrow.put("subject", subject);
                 def arr = row.SOURCESYSTEM_CD?.split(":")
                 newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM]
+                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM as Long]
                 newrow.put("SAMPLE_CDS", cds ? cds : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
@@ -1155,24 +1152,24 @@ class I2b2HelperService {
         def map = [:]
         def sampleCodesTable = new Sql(dataSource).rows("""
 			SELECT DISTINCT
-                f.PATIENT_NUM,
+                f.PATIENT_ID,
                 f.SAMPLE_CD
 			FROM
-                observation_fact f
+                de_subject_sample_mapping f
             WHERE
-                f.PATIENT_NUM IN (
+                f.PATIENT_ID IN (
                     SELECT
                         DISTINCT patient_num
                     FROM
                         qt_patient_set_collection
                     WHERE
                         result_instance_id = ? )
-			ORDER BY PATIENT_NUM, SAMPLE_CD
+			ORDER BY PATIENT_ID, SAMPLE_CD
 			""", resultInstanceId
         )
 
         for (row in sampleCodesTable) {
-            def patientNum = row.PATIENT_NUM
+            def patientNum = row.PATIENT_ID
             if (!patientNum) continue
             def sampleCd = row.SAMPLE_CD
             if (!sampleCd) continue
@@ -5884,7 +5881,11 @@ class I2b2HelperService {
                             selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
                             projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
                             pw.write(selector)
-                            if (value_type.equals("Gene Expression") || value_type.equals("RNASEQ_RCNT") || value_type.equals("Chromosomal")) {
+                            if (value_type.equals('VCF')) {
+                                // TBD
+                            }
+                            // else if (value_type.equals {}   // other non-standard high-dim types here
+                            else {
                                 pw.write(" - " + Projection.prettyNames.get(projection, projection) + " " + operator + " ")
                                 if (operator.equals("BETWEEN")) {
                                     String[] bounds = constraints.split(":")
