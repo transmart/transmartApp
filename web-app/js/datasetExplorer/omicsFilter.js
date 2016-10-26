@@ -129,7 +129,8 @@ function addOmicsFilterAutocomplete() {
                 url: omics_filter_info.auto_complete_source,
                 dataType: "json",
                 data: {
-                    term : request.term,
+
+                    term : request.term == '' ? '%' : request.term,
                     concept_key : omics_filter_info.concept_key,
                     search_property : jQuery("#highdimension-search-property").find("option:selected").val()
                 },
@@ -138,6 +139,7 @@ function addOmicsFilterAutocomplete() {
                 }
             });
         },
+        minLength: 0,
         delay: 500,
         select: function(event, ui) {
             jQuery("#highdimension-filter-selector").val(ui.item.label);
