@@ -157,7 +157,7 @@ function addOmicsFilterAutocomplete() {
         response: function(event, ui) {
             omicsAutoCompleteList = ui.content.map(function(item) {return item.label;});
         }
-    }).data("autocomplete")._renderItem = function( ul, item ) {
+    }).data("uiAutocomplete")._renderItem = function( ul, item ) {
         var resulta = '<a><span class="category-gene"><b>' + item.label + '</b>';
         if (item.synonyms != null) {
             resulta += (item.synonyms + '</a>');
