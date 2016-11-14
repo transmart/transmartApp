@@ -356,7 +356,7 @@ addDiseaseTag = function(diseaseHierarchy, sourceAndCode, escapedFieldName) {
     var existingDiseases = $j('#' + escapedFieldName + ' option');
     for (var i = 0; i < existingDiseases.length; i++) {
         var pathToExamine = $j(existingDiseases[i]).text();
-        if (pathToExamine.startsWith(diseasePath) || diseasePath.startsWith(pathToExamine)) {
+        if (pathToExamine.indexOf(diseasePath) === 0 || diseasePath.indexOf(pathToExamine) == 0) {
             conflicts.push(i);
         }
     }
