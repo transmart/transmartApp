@@ -12,7 +12,7 @@ jQuery(document).ready(function() {
 			jQuery("#" + escapedFieldName).val(id);
 			return false;
 		}
-	}).data("uiAutocomplete")._renderItem = function( ul, item ) {
+	}).data("ui-autocomplete")._renderItem = function( ul, item ) {
 		return jQuery('<li></li>')
 		  .data("item.autocomplete", item )
 		  .append('<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;' + item.synonyms + '</a>')
