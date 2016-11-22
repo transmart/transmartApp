@@ -10,35 +10,23 @@ import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator
 import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.renderer.category.BarRenderer
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer
-import org.jfree.chart.renderer.category.CategoryItemRendererState
-import org.jfree.chart.renderer.category.ScatterRenderer
-import org.jfree.chart.renderer.category.StandardBarPainter
+import org.jfree.chart.renderer.category.*
 import org.jfree.chart.renderer.xy.StandardXYBarPainter
 import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
-import org.jfree.data.statistics.BoxAndWhiskerCalculator
-import org.jfree.data.statistics.BoxAndWhiskerItem
-import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
-import org.jfree.data.statistics.DefaultMultiValueCategoryDataset
-import org.jfree.data.statistics.HistogramDataset
-import org.jfree.data.statistics.MultiValueCategoryDataset
+import org.jfree.data.statistics.*
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jfree.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
-import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 import java.awt.*
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
-
 /**
  * Created by Florian Guitton <f.guitton@imperial.ac.uk> on 17/12/2014.
  */
@@ -439,7 +427,7 @@ class ChartService {
                         max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
                     }
                 }.each { k, v ->
-                    if (k && v.size()) set.addSeries(k, (double [])v.toArray(), 10, min, max)
+                    if (k && v.size()) set.addSeries(k, (double [])v.toArray(), bins, min, max)
                 }
 
                 chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)
