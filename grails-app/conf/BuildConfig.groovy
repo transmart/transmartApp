@@ -121,8 +121,7 @@ grails.project.dependency.resolution = {
         compile ':rest-client-builder:2.1.1'
         compile ':cache-ehcache:1.0.5'
         compile ':quartz:1.0-RC2'
-        // Not compatible with spring security 3.2 yet
-        //compile ':spring-security-kerberos:0.1'
+        compile ':spring-security-kerberos:1.0.0'
         compile ':spring-security-ldap:2.0-RC2'
         compile ':spring-security-core:2.0-RC5'
         compile ':spring-security-oauth2-provider:2.0-RC5'
