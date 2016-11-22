@@ -5,7 +5,7 @@
             <td align="center">
             <g:if test="${concept.value}">
                 <hr style="margin-bottom: 30px"/>
-                <div class="analysistitle">Analysis of ${concept.value.commons.conceptName}</div>
+                <div class="analysistitle" title="${concept.value.commons.conceptPath}">Analysis of ${concept.value.commons.conceptName}</div>
                 <g:if test="${concept.value?.commons?.omics_params != null}">
                     <div class="analysissubtitle">${concept.value?.commons?.conceptKey ?: ""}</div>
                 </g:if>

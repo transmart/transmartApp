@@ -436,7 +436,7 @@ function exportHeatmapData(analysisId, exportType)
 	//Export all probes on the current page
 		    
 		
-		//TODO: Those code is duplicated and should be moved to a seperate function
+		//TODO: This code is duplicated and should be moved to a separate function
 	    // make sure we are getting number of probes per page for current element
 	    var probesPerPageElement = document.getElementById("probesPerPage_" + analysisId);
 		var numberOfProbesPerPage = probesPerPageElement.options[probesPerPageElement.selectedIndex].value;

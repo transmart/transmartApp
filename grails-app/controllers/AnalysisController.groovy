@@ -35,7 +35,7 @@ class AnalysisController {
 
     def heatmapvalidate = {
         def platform = "";
-        log.debug("Recieved heatmap validation request");
+        log.debug("Received heatmap validation request");
         String resultInstanceID1 = request.getParameter("result_instance_id1");
         if (resultInstanceID1 != null && resultInstanceID1.length() == 0) {
             resultInstanceID1 = null;

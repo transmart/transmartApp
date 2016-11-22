@@ -61,6 +61,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
         var concepts = Ext.decode(response.responseText);
 
         var matchList = GLOBAL.PathToExpand.split(",");
+
         for (i = 0; i < concepts.length; i++) {
             var c = getTreeNodeFromJsonNode(concepts[i]);
             if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
@@ -69,7 +70,7 @@ Ext.ux.OntologyTreeLoader = Ext.extend(Ext.tree.TreeLoader, {
                 //However, don't filter studies/top folders out if a higher-level match exists
                 var highLevelMatchFound = false;
                 for (var j = 0; j < matchList.length-1; j++) { //-1 here - leave out last result (trailing comma)
-                    if (c.id.startsWith(matchList[j]) && c.id != matchList[j]) {
+                    if (c.id.indexOf(matchList[j]) === 0 && c.id != matchList[j]) {
                         highLevelMatchFound = true;
                         break;
                     }
@@ -107,6 +108,39 @@ function getConceptPatientCount(node) {
                 concept_key: node.attributes.id})
         });
 }
+
+function parseJson (response, node) {
+        // shorthand
+        var Tree = Ext.tree;
+
+        var concepts = Ext.decode(response.responseText)
+
+        var matchList = GLOBAL.PathToExpand.split(",");
+        for (i = 0; i < concepts.length; i++) {
+            var c = getTreeNodeFromJsonNode(concepts[i]);
+            if(c.attributes.id.indexOf("SECURITY")>-1) {continue;}
+            //For search results - if the node level is 1 (study) or below and it doesn't appear in the search results, filter it out.
+            if(c.attributes.level <= '1' && GLOBAL.PathToExpand != '' && GLOBAL.PathToExpand.indexOf(c.attributes.id) == -1) {
+                //However, don't filter studies/top folders out if a higher-level match exists
+                var highLevelMatchFound = false;
+                for (var j = 0; j < matchList.length -1; j++) { //-1 here - leave out last result (trailing comma)
+                    if (c.id.indexOf(matchList[j]) === 0 && c.id != matchList[j]) {
+                        highLevelMatchFound = true;
+                        break;
+                    }
+                }
+                if (!highLevelMatchFound) {
+                    continue;
+                }
+            }
+   		 
+            //If the node has been disabled, ignore all children
+            if (!node.disabled) {
+                node.appendChild(c);
+            }
+        }
+        
+ }
 
 function getConceptPatientCountComplete(result, node) {
     node.setText(node.text + " <b>(" + result.responseText + ")</b>");

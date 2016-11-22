@@ -8,11 +8,13 @@
 
     <g:javascript library="jquery" />
     <r:require module="extjs" />
+    <g:layoutHead/>
     <r:layoutResources/>
 
     <script type="text/javascript" charset="utf-8">
 
         Ext.BLANK_IMAGE_URL = "${resource(dir:'js', file:'ext/resources/images/default/s.gif')}";
+        // set ajax to 180*1000 milliseconds
         Ext.Ajax.timeout = 180000;
         Ext.QuickTips.init();
 
@@ -20,8 +22,6 @@
 
     </script>
 
-    <g:layoutHead/>
-    <r:layoutResources/>
 </head>
 
 <body>

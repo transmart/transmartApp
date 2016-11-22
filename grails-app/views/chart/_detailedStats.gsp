@@ -10,6 +10,7 @@
         <th>Subset ${subset.key} (%n)
         </th>
     </tr>
+    <g:set var="total" value="${subset.value.patientCount}" />
     <g:set var="total" value="${subset.value."${prefix}Data".values().sum()}" />
     <g:each in="${subset.value."${prefix}Data".entrySet()}" var="point">
         <tr>

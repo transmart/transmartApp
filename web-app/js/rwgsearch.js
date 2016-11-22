@@ -87,12 +87,14 @@ function addSearchAutoComplete()	{
 		source: sourceURL,
 		minLength:1,
 		select: function(event, ui) {  
+		    if (ui.item != null && ui.item != "") {
 			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
 			addSearchTerm(searchParam);
+		    }
 			
 			//If category is ALL, add this as free text as well
 			var category = jQuery("#search-categories").val();
-			return false;
+		    return false;
 		}
 	}).data("uiAutocomplete")._renderItem = function( ul, item ) {
 		var resulta = '<a><span class="category-' + item.category.toLowerCase() + '">' + item.category + '&gt;</span>&nbsp;<b>' + item.label + '</b>&nbsp;';
@@ -967,7 +969,7 @@ jQuery(document).ready(function() {
 			ids.push(jQuery(checkboxes[i]).attr('name'));
 		}
 
-		if (ids.size() == 0) {return false;}
+		if (ids.length == 0) {return false;}
 
 		window.location = exportURL + "?id=" + ids.join(',');
 		   
@@ -977,7 +979,7 @@ jQuery(document).ready(function() {
 			url:exportRemoveURL,
 			data: {id: ids.join(',')},			
 			success: function(response) {
-				for(j=0; j<ids.size(); j++){
+				for(j=0; j<ids.length; j++){
 					jQuery(checkboxes[j]).closest("tr").remove();
 					jQuery('#cartcount').show().text(response);
 					updateExportCount();
@@ -1115,7 +1117,7 @@ function loadSearchFromSession() {
 	
 	for (var i = 0; i < sessionFilters.length; i++) {
 		var item = sessionFilters[i];
-		if (item != null && item != "") {
+		if (item != undefined && item != "") {
 			var itemData = item.split("|");
 			var itemSearchData = itemData[1].split(";");
 			var searchParam = {id: itemSearchData[2], display: itemData[0], category: itemSearchData[0], keyword: itemSearchData[1]};
