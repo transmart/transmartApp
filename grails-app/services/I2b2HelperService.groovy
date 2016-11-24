@@ -856,7 +856,7 @@ class I2b2HelperService {
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
 		    where concept_path LIKE ? escape '\\'))))""";
         sql.eachRow(sqlt, [fullname.asLikeLiteral() + "%"], { row ->
-            i = row[1];
+            i = row[0];
         })
         return i;
     }
