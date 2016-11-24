@@ -178,7 +178,10 @@ class ChartService {
                 p.exists
             }.each { n, p ->
 
-                p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                if (p.instance != "")
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                else
+                    p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
                 // Getting the concept data
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForValueConceptFromCode(result.commons.conceptCode, p.instance).toList()
@@ -238,6 +241,11 @@ class ChartService {
                         concept,
                         (p.instance == "" ? null : p.instance as Long)).collect {k, v -> v}
 
+                if (p.instance != "")
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                else
+                    p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
+
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
                 conceptPlotHandle["Subset $n"] = p.conceptStats
@@ -282,7 +290,10 @@ class ChartService {
                 p.exists
             }.each { n, p ->
 
-                p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                if (p.instance != "")
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                else
+                    p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
                 // Getting the concept data
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance)
