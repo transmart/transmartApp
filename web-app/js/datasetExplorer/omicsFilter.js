@@ -291,6 +291,10 @@ function omicsSliderUpdated(ui) {
     var max = slider.slider('option', 'max');
     omicsSliderLowHandleRatio = (low - min) / (max - min);
     omicsSliderHighHandleRatio = (high - min) / (max - min);
+    // there seems to be an issue with the slider not being able to reach its slider_max value completely
+    if (omicsSliderHighHandleRatio > 0.995) {
+        omicsSliderHighHandleRatio = 1.0;
+    }
     jQuery("#highdimension-amount-min").val(low.toFixed(3));
     jQuery("#highdimension-amount-max").val(high.toFixed(3));
     jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= parseFloat(low.toFixed(3));})
@@ -452,11 +456,15 @@ function omicsValuesObtained(values) {
     if (omicsFilterValues.length > 0) {
         omicsFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather than string-based
         var slider = jQuery("#highdimension-range");
-        slider.slider('option',{'min': omicsFilterValues[0] * 0.999, // add a little bit of room to include min and max patient as we will be rounding to 3 digits later on
-                                'max': omicsFilterValues[omicsFilterValues.length - 1] * 1.001,
-                                'step': (omicsFilterValues[omicsFilterValues.length - 1] * 1.001 - omicsFilterValues[0] * 0.999) / omicsSliderSteps});
-        slider.slider('values', 0, slider.slider('option','min') + omicsSliderLowHandleRatio * (slider.slider('option','max') - slider.slider('option','min')));
-        slider.slider('values', 1, slider.slider('option','min') + omicsSliderHighHandleRatio * (slider.slider('option','max') - slider.slider('option','min')));
+        // add one slider step of room to min and max so we are sure to include all patients
+        var room = 2 * (omicsFilterValues[omicsFilterValues.length -1] - omicsFilterValues[0]) / omicsSliderSteps;
+        var slider_min = omicsFilterValues[0] - room;
+        var slider_max = omicsFilterValues[omicsFilterValues.length -1] + room;
+        slider.slider('option',{'min': slider_min,
+                                'max': slider_max,
+                                'step': (slider_max - slider_min) / omicsSliderSteps});
+        slider.slider('values', 0, slider_min + omicsSliderLowHandleRatio * (slider_max - slider_min));
+        slider.slider('values', 1, slider_min + omicsSliderHighHandleRatio * (slider_max - slider_min));
         omicsSliderUpdated(null);
         repopulateOmicsFilterRange();
     }
