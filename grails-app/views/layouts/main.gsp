@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Transmart Login</title>
+    <title>Transmart</title>
 
     <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="shortcut icon" />
     <link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="icon" />
