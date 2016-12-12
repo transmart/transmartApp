@@ -4,6 +4,8 @@ import com.recomdata.genepattern.JobStatus
 import com.recomdata.genepattern.WorkflowStatus
 import grails.converters.JSON
 import org.json.JSONObject;
+import org.transmartproject.core.users.User
+import org.transmartproject.core.log.AccessLogEntryResource
 
 class AsyncJobController {
     def quartzScheduler
@@ -12,6 +14,11 @@ class AsyncJobController {
     def jobResultsService
     def dataSource
     def asyncJobService
+
+    AccessLogEntryResource accessLogService
+    def auditLogService
+    def studyIdService
+    User currentUserBean
 
     static String ASYNC_JOB_WHITE_SPACE_DEFAULT = "0";
     static String ASYNC_JOB_WHITE_SPACE_EMPTY = "";
@@ -49,7 +56,18 @@ class AsyncJobController {
     }
 
     def createnewjob = {
+
+        def studies = getStudyIds(params)
+        def workflow = getWorkflow(params)
+
         def result = asyncJobService.createnewjob(params)
+
+        auditLogService.report("Run advanced workflow", request,
+                               user: currentUserBean,
+                               study: studies,
+                               jobname: result.jobName,
+                               workflow: workflow
+                              )
 
         response.setContentType("text/json")
         response.outputStream << result?.toString()
@@ -135,5 +153,54 @@ class AsyncJobController {
         def wfstatus = session["workflowstatus"]
         wfstatus.setCancelled();
         render(wfstatus.jobStatusList as JSON)
+    }
+
+    def getWorkflow = {
+        if (params.jobType != null)
+            return params.jobType
+
+        if (params.analysisConstraints?.job_type != null)
+            return params.analysisConstraints.job_type
+
+        return "unknownWorkflow"
+    }
+
+    def getStudyIds = {
+        String concept_key
+        String concept_table
+
+        Set<String> studyIds = []
+
+        if (params.analysisConstraints != null) {
+            def analysisConstraints = params.analysisConstraints
+
+            def jsonAnalysisConstraints = JSON.parse(params.analysisConstraints)
+            if (jsonAnalysisConstraints.assayConstraints?.patient_set != null)
+                studyIds += studyIdService.getStudyIdsForQueries(jsonAnalysisConstraints.assayConstraints.patient_set);
+        }
+
+        // for concept paths we have to make sure they start with \\top node
+        // note the string is escaped so we are adding a double backslash at the start
+        if (params.independentVariable != null) {
+            concept_key = params.independentVariable.split("\\|")[0]
+            concept_table = concept_key.split("\\\\")[1]
+            studyIds += studyIdService.getStudyIdForConceptKey('\\\\' + concept_table + concept_key)
+        }
+
+        if (params.dependentVariable != null) {
+            concept_key = params.dependentVariable.split("\\|")[0]
+            concept_table = concept_key.split("\\\\")[1]
+            studyIds += studyIdService.getStudyIdForConceptKey('\\\\' + concept_table + concept_key)
+        }
+
+        if (params.variablesConceptPaths != null) {
+            concept_key = params.variablesConceptPaths.split("\\|")[0]
+            concept_table = concept_key.split("\\\\")[1]
+            studyIds += studyIdService.getStudyIdForConceptKey('\\\\' + concept_table + concept_key)
+        }
+
+        List<String> studyIdList = studyIds as List
+        studyIdList.sort()
+        studyIdList.join(',')
     }
 }

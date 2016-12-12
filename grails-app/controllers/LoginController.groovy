@@ -11,6 +11,7 @@ import org.springframework.security.authentication.LockedException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder as SCH
 import org.springframework.security.core.userdetails.UserDetails
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.web.WebAttributes
 import org.transmart.searchapp.AccessLog
 
@@ -55,7 +56,7 @@ class LoginController {
         def guestAutoLogin = grailsApplication.config.com.recomdata.guestAutoLogin;
         boolean guestLoginEnabled = (guestAutoLogin == 'true' || guestAutoLogin.is(true))
         log.info("enable guest login: " + guestLoginEnabled)
-        //log.info("requet:"+request.getQueryString())
+        //log.info("request:"+request.getQueryString())
         boolean forcedFormLogin = request.getQueryString() != null
         log.info("User is forcing the form login? : " + forcedFormLogin)
 
@@ -64,22 +65,17 @@ class LoginController {
             log.info("proceeding with auto guest login")
             def guestuser = grailsApplication.config.com.recomdata.guestUserName;
 
-            UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
-            if (ud != null) {
+            try {
+                UserDetails ud = userDetailsService.loadUserByUsername(guestuser)
                 log.debug("We have found user: ${ud.username}")
                 springSecurityService.reauthenticate(ud.username)
                 redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-
-            } else {
+            }
+            catch (UsernameNotFoundException e) {
                 log.info("can not find the user:" + guestuser);
             }
         }
 
-        /*if (springSecurityService.isLoggedIn()) {
-			redirect uri: SpringSecurityUtils.securityConfig.successHandler.defaultTargetUrl
-		} else	{
-            render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
-        }*/
         render view: 'auth', model: [postUrl: request.contextPath + SpringSecurityUtils.securityConfig.apf.filterProcessesUrl]
     }
 
@@ -133,7 +129,7 @@ class LoginController {
                     //Extra condition to escape confusion with last login attempt that would be ignored anyway
                     // because user would be locked at that time.
                     //That's confusion caused by the fact that spring event listener for failed attempt is triggered
-                    // after user status (e.g. locked) is red by spring security.
+                    // after user status (e.g. locked) is read by spring security.
                     || username && bruteForceLoginLockService.remainedAttempts(username) <= 0) {
                 msg = g.message(code: "springSecurity.errors.login.locked",
                         args: [ bruteForceLoginLockService.lockTimeInMinutes ])

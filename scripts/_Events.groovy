@@ -11,6 +11,7 @@ eventCreateWarStart = { warname, stagingDir ->
     event("BuildInfoAddPropertiesStart", [warname, stagingDir])
     writeProperties(getEnvProperties(), "${stagingDir}/WEB-INF/classes/application.properties")
     event("BuildInfoAddPropertiesEnd", [warname, stagingDir])
+    ant.delete(dir:"${stagingDir}/WEB-INF/lib/", includes: "jfreechart-1.0.11.jar", verbose: true)
 }
 
 eventCompileStart = { kind ->

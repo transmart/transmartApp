@@ -1,12 +1,14 @@
 <html>
 <head>
-    <title><g:layoutTitle default=""/></title>
-    <r:require module="admin"/>
-    <g:setProvider library="jquery"/>
+    <title>Transmart Administration</title>
+
+    <g:javascript library="jquery" />
+    <r:require module="adminTab" />
+
     <r:script>
 			Ext.BLANK_IMAGE_URL = "${resource(dir: 'js', file: 'ext/resources/images/default/s.gif')}";
 
-			// set ajax to 90*1000 milliseconds
+			// set ajax to 180*1000 milliseconds
 			Ext.Ajax.timeout = 180000;
 			var pageInfo;
 
@@ -36,7 +38,7 @@
 				}
 	        });
     </r:script>
-    <g:layoutHead/>
+    %{--<g:layoutHead/>--}%
     <r:layoutResources/>
 </head>
 

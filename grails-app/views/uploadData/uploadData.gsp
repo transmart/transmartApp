@@ -25,8 +25,9 @@
 	<![endif]-->
 		
 		<g:javascript library="prototype" />
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.8.3.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
+<g:javascript library="jquery" />
+<r:require module="uploadDataTab" />
+<r:layoutResources/>
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 <script type="text/javascript" charset="utf-8">
@@ -60,7 +61,6 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
     helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 </script>
 <!-- ************************************** -->
-<r:layoutResources/>
 </head>
 <body>
 <div id="header-div">

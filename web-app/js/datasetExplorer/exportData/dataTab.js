@@ -259,8 +259,8 @@ DataExport.prototype.displayResult = function (records, options, success) {
 
         _selectedCohortData['dataTypeId'] = '';
         _selectedCohortData['dataTypeName'] = 'Selected Cohort';
-        _selectedCohortData['subset1'] = getQuerySummary(1);
-        _selectedCohortData['subset2'] = getQuerySummary(2);
+        _selectedCohortData['subset1'] = getSubsetQuerySummary(1);
+        _selectedCohortData['subset2'] = getSubsetQuerySummary(2);
 
         var _columns = _this.prepareColumnModel(_this.exportMetaDataStore, _selectedCohortData);
         var _newStore = _this.prepareNewStore(_this.exportMetaDataStore, _columns, _selectedCohortData);
@@ -269,7 +269,10 @@ DataExport.prototype.displayResult = function (records, options, success) {
         _dataTypesGridPanel.records = _this.records;
         _dataTypesGridPanel.on("afterrender", _dataTypesGridPanel.dropZonesChecker);
 
-        // add gridPanel to the main panel
+        var prevDataGridPanel = analysisDataExportPanel.findById(_dataTypesGridPanel.id);
+        if(prevDataGridPanel) {
+            analysisDataExportPanel.remove(prevDataGridPanel);
+        }
         analysisDataExportPanel.add(_dataTypesGridPanel);
         analysisDataExportPanel.doLayout();
 
@@ -351,9 +354,9 @@ DataExport.prototype.createSelectBoxHtml = function (file, subset, dataTypeId) {
     outStr += '&nbsp;<select id="file_type_' + subset + '_' + dataTypeId + '"';
     outStr += ' name="file_type" ' + (file.patientsNumber < 1 || file.exporters.length < 2 ? 'disabled' : '') +'>';
     if(file.exporters) {
-        file.exporters.each(function (exporter) {
+        jQuery.each(file.exporters, function (index, exporter) {
             outStr += '<option value="{subset: ' + subset + ', dataTypeId: \'' + dataTypeId + '\', fileType: \'' + exporter.format + '\'}">' + exporter.format + '</option>';
-        });
+        })
     }
     outStr += '</select><br/>';
 
@@ -443,8 +446,8 @@ DataExport.prototype.createDataExportJob = function (gridPanel) {
         },
         timeout: '1800000',
         params: {
-            querySummary1: getQuerySummary(1),
-            querySummary2: getQuerySummary(2),
+            querySummary1: getSubsetQuerySummary(1),
+            querySummary2: getSubsetQuerySummary(2),
             analysis: "DataExport"
         }
     });

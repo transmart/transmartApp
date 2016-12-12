@@ -89,6 +89,7 @@ grails.mime.types = [html         : [
                      jnlp         : 'application/x-java-jnlp-file'
 ]
 // The default codec used to encode data with ${}
+grails.views.javascript.library="jquery"
 grails.views.default.codec = "none" // none, html, base64
 grails.views.gsp.encoding = "UTF-8"
 grails.converters.encoding = "UTF-8"
@@ -187,6 +188,8 @@ com.recomdata.skipdisclaimer = true
 grails.spring.bean.packages = []
 
 org.transmart.security.spnegoEnabled = false
+org.transmart.security.sniValidation = true
+org.transmart.security.sslValidation = true
 
 // requires NIO connector though. If you use apache in front of tomcat in the
 // same server, you can set this to false and set .apache = true
@@ -269,3 +272,4 @@ grails.plugin.springsecurity.oauthProvider.refreshTokenLookup.className = 'org.t
 grails.plugin.springsecurity.ldap.active = false
 org.transmart.security.ldap.mappedUsernameProperty = 'username'
 org.transmart.security.ldap.inheritPassword = true
+grails.plugin.springsecurity.kerberos.active = false

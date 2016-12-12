@@ -23703,8 +23703,8 @@ Ext.tree.TreeNodeUI.prototype = {
             this.hide();
         }
         var ot = this.node.getOwnerTree();
-        var dd = ot.enableDD || ot.enableDrag || ot.enableDrop;
-        if(dd && (!this.node.isRoot || ot.rootVisible)){
+        var dd = ot && (ot.enableDD || ot.enableDrag || ot.enableDrop);
+        if(ot && dd && (!this.node.isRoot || ot.rootVisible)){
             Ext.dd.Registry.register(this.elNode, {
                 node: this.node,
                 handles: this.getDDHandles(),

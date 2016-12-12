@@ -17,4 +17,3 @@
         <g:render template="showBrowseStudyInfo" model="browseStudyInfo"/>
     </g:if>
 </g:else>
-

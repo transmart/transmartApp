@@ -42,7 +42,7 @@ class ChildProcessAppenderTests {
 
     static sh(cmd) { return ['sh', '-c', cmd] }
     // escape shell strings, based on http://stackoverflow.com/a/1250279/264177
-    static path(File file) { "'${file.path.replaceAll("'", "'\"'\"'")}'" }
+    static path(File file) { "'${file.path.replaceAll("'", "'\"'\"'").replaceAll("\\\\","\\\\")}'" }
 
     static void waitForChild(ChildProcessAppender a) {
         a.input.close()
@@ -57,7 +57,7 @@ class ChildProcessAppenderTests {
         p.doAppend(e)
         p.close()
         waitForChild(p)
-        assertThat readFileToString(output), is('{"foo":"bar","baz":"quux"}\n')
+        assertThat readFileToString(output), is(String.format('{"foo":"bar","baz":"quux"}%n'))
     }
 
     @Test

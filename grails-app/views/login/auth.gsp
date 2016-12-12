@@ -140,7 +140,7 @@
                                                 Not a user ? Contact <a
                                                     href="mailto:${grailsApplication.config.com.recomdata.administrator}"
                                                     target="_blank"
-                                                    style="text-decoration:underline;color:#0000FF">administrator</a> to request an account
+                                                    style="text-decoration:underline;color:#0000FF">administrator</a> to request an account.
                                             </td>
                                         </tr>
                                         <g:if test='${grailsApplication.config.org.transmart.security.samlEnabled}'>
@@ -166,16 +166,33 @@
             </td>
         </tr>
         <tr><td>&nbsp;</td></tr>
+        <g:if test='${grailsApplication.config.ui.loginScreen.disclaimer}'>
+            <tr>
+                <td style="font-weight: bold;text-align:center;color:#CC0000;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
+                    <div style="margin-right:auto;margin-left:auto;width:435px">
+                        ${grailsApplication.config.ui.loginScreen.disclaimer}
+                     </div>
+                </td>
+            </tr>
+        </g:if>
+        <tr><td>&nbsp;</td></tr>
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
                 <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
+                <g:set var="providerLogo" value="${grailsApplication.config?.com?.recomdata?.providerLogo}"/>
                 <g:if test="${providerName}">
                     <a id="providerpowered" target="_blank"
                        href="${grailsApplication.config?.com?.recomdata?.providerURL}" style="text-decoration: none;">
                         <div>
                             <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">Powered by&nbsp;</span>
-                            <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
-                                 style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+			    <g:if test="{$providerLogo}">
+                                <img src="${providerLogo}" alt="${providerName}"
+                                     style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                            </g:if>
+                            <g:else>
+                               <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
+                                     style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                            </g:else>
                         </div>
                     </a>
                 </g:if>

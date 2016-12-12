@@ -4,71 +4,25 @@
 <!-- Force Internet Explorer 8 to override compatibility mode -->
 <meta http-equiv="X-UA-Compatible" content="IE=Edge">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
 <title>${grailsApplication.config.com.recomdata.appTitle}</title>
 
-<!-- jQuery CSS for cupertino theme -->
-<link rel="stylesheet" href="${resource(dir: 'css/jquery/ui', file: 'jquery-ui-1.9.1.custom.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css/jquery/skin', file: 'ui.dynatree.css')}">
+<link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="shortcut icon" />
+<link href="${resource(dir: 'images', file: 'searchtool.ico')}" rel="icon" />
 
-<!-- Our CSS -->
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery.loadmask.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'main.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'rwg.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'colorbox.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/simpleModal.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/multiselect/ui.multiselect.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/multiselect/common.css')}">
-<link rel="stylesheet" href="${resource(dir: 'css', file: 'jquery/jqueryDatatable.css')}">
-
-<!-- jQuery JS libraries -->
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.min.js')}"></script>
-
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery-ui-1.9.1.custom.min.js')}"></script>
-
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.cookie.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.dynatree.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.paging.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.loadmask.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.ajaxmanager.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.numeric.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.colorbox-min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.simplemodal.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/jquery.dataTables.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'facetedSearch/facetedSearchBrowse.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'jQuery/ui.multiselect.js')}"></script>
-
-
-<!--Datatable styling and scripts-->
-<script type="text/javascript" src="${resource(dir: 'js/', file: 'jquery.dataTables.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js/', file: 'ColVis.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js/', file: 'ColReorderWithResize.js')}"></script>
-
-<!--  SVG Export -->
-<%--<script type="text/javascript" src="${resource(dir:'js', file:'svgExport/rgbcolor.js')}"></script>  --%>
-
-<script type="text/javascript">
-    var $j = jQuery.noConflict();
-</script>
-<script type="text/javascript"
-        src="${resource(dir: 'plugins/prototype-1.0/js/prototype', file: 'prototype.js')}"></script>
-
-
-<!-- Our JS -->
-<script type="text/javascript" src="${resource(dir: 'js', file: 'rwg.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'rwgsearch.js')}"></script>
-<script type="text/javascript" src="${resource(dir: 'js', file: 'maintabpanel.js')}"></script>
-
-<!-- Protovis Visualization library and IE plugin (for lack of SVG support in IE8 -->
-<%-- <script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-r3.2.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/protovis', file:'protovis-msie.min.js')}"></script> --%>
-
+<g:javascript library="jquery" />
+<r:require module="browseTab" />
+<r:layoutResources/>
 <tmpl:/RWG/urls/>
+
 <script type="text/javascript" charset="utf-8">
     var mouse_inside_options_div = false;
     var sessionSearch = "${rwgSearchFilter}";
     var sessionOperators = "${rwgSearchOperators}";
     var sessionSearchCategory = "${rwgSearchCategory}";
     var searchPage = "RWG";
+
+    var $j = window.$j = jQuery.noConflict();
 
     jQuery(document).ready(function () {
 
@@ -114,8 +68,7 @@
                 return false;
             }
 
-            var protoForm = $('editMetadataForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#editMetadataForm').serialize();
             jQuery('#savemetadatabutton').addClass('buttonloading').html("&nbsp;");
 
             jQuery.ajax({
@@ -147,8 +100,7 @@
         });
 
         jQuery("#createAssayOverlay").on('click', '#saveassaybutton', function () {
-            var protoForm = $('createAssayForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createAssayForm').serialize();
             jQuery('#saveassaybutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveAssayURL + "?" + serializedForm,
@@ -181,8 +133,7 @@
         });
 
         jQuery("#createFolderOverlay").on('click', '#savefolderbutton', function () {
-            var protoForm = $('createFolderForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createFolderForm').serialize();
             jQuery('#savefolderbutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveFolderURL + "?" + serializedForm,
@@ -215,8 +166,7 @@
         });
 
         jQuery("#createStudyOverlay").on('click', '#savestudybutton', function () {
-            var protoForm = $('createStudyForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createStudyForm').serialize();
             jQuery('#savestudybutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveStudyURL + "?" + serializedForm,
@@ -249,8 +199,7 @@
 
         jQuery("#createProgramOverlay").on('click', '#saveprogrambutton', function () {
 
-            var protoForm = $('createProgramForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createProgramForm').serialize();
             jQuery('#saveprogrambutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveProgramURL + "?" + serializedForm,
@@ -282,8 +231,7 @@
 
         jQuery("#createAnalysisOverlay").on('click', '#saveanalysisbutton', function () {
 
-            var protoForm = $('createAnalysisForm');
-            var serializedForm = jQuery(protoForm).serialize();
+            var serializedForm = jQuery('#createAnalysisForm').serialize();
             jQuery('#saveanalysisbutton').addClass('buttonloading').html("&nbsp;");
             jQuery.ajax({
                 url: saveAnalysisURL + "?" + serializedForm,
@@ -335,8 +283,6 @@
 
         jQuery('#sidebar').trigger("resize");
 
-        var xpos = jQuery('#menuLinks').offset()['right'];
-
     });
 
     jQuery(window).resize(function () {
@@ -344,6 +290,7 @@
     });
 
     function resizeAccordion() {
+
         var windowHeight = jQuery(window).height();
         jQuery('#sidebar').height(jQuery(window).height() - 30);
         jQuery('#main').height(jQuery(window).height() - 30);
@@ -470,8 +417,6 @@
     });
 </script>
 
-
-<r:layoutResources/><%-- XXX: Use template --%>
 </head>
 
 <body>

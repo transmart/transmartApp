@@ -169,7 +169,7 @@ class ExperimentAnalysisController {
 
         log.info "Parent = " + parent
 
-//		def analysisFolders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :folderType and fd.folderLevel = :level and fd.folderFullName like '" + parent.folderFullName + "%' order by folderName", [folderType: FolderType.ANALYSIS.name(), level: parent.folderLevel + 1])
+//		def analysisFolders = FmFolder.executeQuery("from FmFolder as fd where fd.folderType = :folderType and fd.folderLevel = :level and fd.folderFullName like '" + parent.folderFullName + "%' escape '*' order by folderName", [folderType: FolderType.ANALYSIS.name(), level: parent.folderLevel + 1])
 
 //		log.info "Subfolders = " + analysisFolders
 

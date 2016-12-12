@@ -48,17 +48,18 @@ abstract class AbstractChromosomalRegionBedExporter implements HighDimExporter {
                     return
                 }
 
+                int rowNumber = 0
                 for (AssayColumn assay : assayList) {
                     if (isCancelled && isCancelled()) {
                         return
                     }
                     if (!datarow[assay]) {
-                        log.warn("(datrow.id=${datarow.id}, assay.id=${assay.id}) No cell data.")
+                        log.debug("(datrow.id=${datarow.id}, assay.id=${assay.id}) No cell data.")
                         continue
                     }
                     List row = calculateRow(datarow, assay)
                     if (row[0..2].any { !it }) {
-                        log.warn("(datrow.id=${datarow.id}, assay.id=${assay.id}) Row has not required values: ${row}. Skip it.")
+                        log.debug("(datrow.id=${datarow.id}, assay.id=${assay.id}) Row has not required values: ${row}. Skip it.")
                         continue
                     }
                     Writer writer = streamsPerSample[assay.id]
@@ -86,6 +87,10 @@ abstract class AbstractChromosomalRegionBedExporter implements HighDimExporter {
                         row[CHROMOSOME_COLUMN_POSITION - 1] = "chr${chromosome}"
                     }
                     writer << row.join(COLUMN_SEPARATOR) << '\n'
+                    rowNumber += 1
+                }
+                if (rowNumber < assayList.size()) {
+                    log.warn("${assayList.size() - rowNumber} rows from ${assayList.size()} were skipped.")
                 }
             }
         } finally {

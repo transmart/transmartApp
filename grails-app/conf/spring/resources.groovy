@@ -12,19 +12,19 @@ import org.springframework.security.web.access.AccessDeniedHandlerImpl
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.security.web.authentication.session.ConcurrentSessionControlStrategy
 import org.springframework.security.web.session.ConcurrentSessionFilter
+import org.transmart.SavedRequestAwareAndResponseHeaderSettingKerberosAuthenticationSuccessHandler
 import org.transmart.authorization.CurrentUserBeanFactoryBean
 import org.transmart.authorization.CurrentUserBeanProxyFactory
 import org.transmart.authorization.QueriesResourceAuthorizationDecorator
 import org.transmart.marshallers.MarshallerRegistrarService
 import org.transmart.spring.QuartzSpringScope
 
-// plugin is not functional at this point
-//import org.springframework.security.extensions.kerberos.web.SpnegoAuthenticationProcessingFilter
 import org.transmartproject.core.users.User
 import org.transmartproject.export.HighDimExporter
 import org.transmartproject.security.AuthSuccessEventListener
 import org.transmartproject.security.BadCredentialsEventListener
 import org.transmartproject.security.BruteForceLoginLockService
+import org.transmartproject.security.SSLCertificateValidation
 
 def logger = Logger.getLogger('com.recomdata.conf.resources')
 
@@ -77,6 +77,21 @@ beans = {
                 type: 'assignable',
                 expression: HighDimExporter.canonicalName)
     }
+
+
+    // We need to inject the RestBuilder with its bean declaration because its *crappy* constructor
+    // would reinitialize the JSON marshaller we use later; rendering the application incompetent
+    // It is important this falls first !
+    if (!grailsApplication.config.org.transmart.security.sniValidation) {
+        logger.info "Disabling server name indication extension"
+        System.setProperty("jsse.enableSNIExtension", "false");
+    }
+    if (!grailsApplication.config.org.transmart.security.sslValidation) {
+        logger.info "Disabling hostname and certification verification"
+        SSLCertificateValidation.disable()
+    }
+    restBuilder(grails.plugins.rest.client.RestBuilder)
+
 
     sessionRegistry(SessionRegistryImpl)
     sessionAuthenticationStrategy(ConcurrentSessionControlStrategy, sessionRegistry) {
@@ -141,20 +156,10 @@ beans = {
                 userDetailsContextMapper = ref('ldapUserDetailsMapper')
             }
         }
-    }
 
-    if (grailsApplication.config.org.transmart.security.spnegoEnabled) {
-        // plugin is not functional at this point
-//        SpnegoAuthenticationProcessingFilter(SpnegoAuthenticationProcessingFilter) {
-//            authenticationManager = ref('authenticationManager')
-//            failureHandler = ref('failureHandler')
-//        }
-    } else {
-        // plugin is not functional at this point
-//        SpringSecurityKerberosGrailsPlugin.metaClass.getDoWithSpring = {->
-//            logger.info "Skipped Kerberos Grails plugin initialization"
-//            return {}
-//        }
+        if (grailsApplication.config.grails.plugin.springsecurity.providerNames.contains("kerberosServiceAuthenticationProvider")) {
+            authenticationSuccessHandler(SavedRequestAwareAndResponseHeaderSettingKerberosAuthenticationSuccessHandler) // only active this if both LDAP & Kerberos providers are enabled to avoid ClassCastException (due to https://github.com/grails-plugins/grails-spring-security-kerberos/issues/3 )
+        }
     }
 
     if (!('clientCredentialsAuthenticationProvider' in

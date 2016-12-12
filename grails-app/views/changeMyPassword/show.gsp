@@ -2,7 +2,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <r:require module="main_mod"/>
-    <r:require module="jqueryui"/>
     <title>Change My Password</title>
     <r:layoutResources/>
 </head>

@@ -8,11 +8,12 @@ import org.transmart.searchapp.AuthUser
 import org.transmart.searchapp.AuthUserSecureAccess
 import org.transmart.searchapp.SecureAccessLevel
 import org.transmart.searchapp.SecureObjectPath
+import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.ontology.OntologyTerm
 import org.transmartproject.db.i2b2data.ConceptDimension
 import org.transmartproject.db.i2b2data.ObservationFact
-import org.transmartproject.db.querytool.QtPatientSetCollection
 import org.transmartproject.db.ontology.AcrossTrialsOntologyTerm
+import org.transmartproject.db.querytool.QtPatientSetCollection
 import org.w3c.dom.Document
 import org.w3c.dom.Node
 import org.w3c.dom.NodeList
@@ -26,13 +27,10 @@ import javax.xml.xpath.XPathFactory
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
-import java.net.URL;
-import java.net.MalformedURLException;
-
-import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TABLE_CODE
-import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TOP_TERM_NAME
 
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TABLE_CODE
+import static org.transmartproject.db.ontology.AbstractAcrossTrialsOntologyTerm.ACROSS_TRIALS_TOP_TERM_NAME
 
 class I2b2HelperService {
 
@@ -133,15 +131,8 @@ class I2b2HelperService {
      */
     def String getShortNameFromKey(String concept_key) {
         String[] splits = concept_key.split("\\\\");
-        String concept_name = "";
-        if (splits.length > 2) {
-            concept_name = "...\\" + splits[splits.length - 3] + "\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
-        } else if (splits.length > 1) {
-            concept_name = "...\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
-        } else {
-            concept_name = splits[splits.length - 1]
-        };
-        return concept_name;
+        
+        return splits[splits.length - 1]
     }
 
     /**
@@ -198,7 +189,7 @@ class I2b2HelperService {
      */
     def String getConceptKeyForAnalysis(String concept_key_in) {
         if (isLeafConceptKey(concept_key_in)) {
-            if (isValueConceptKey(concept_key_in)) {
+            if (isValueConceptKey(concept_key_in) || isHighDimensionalConceptKey(concept_key_in)) {
                 return concept_key_in; //just use me cause im a value node
             } else {
                 return getParentConceptKey(concept_key_in)
@@ -264,6 +255,16 @@ class I2b2HelperService {
         def ret = isValueConceptCode(concept_code)
         log.trace "isValueConceptKey returns " + ret;
         return ret
+    }
+
+    /**
+     * Determines if a concept key is a high dimensional concept or not
+     * Will return true for keys of the form ...\Human Affymetrix ...\
+     * as well as ...\Human Affymetrix ...\TNF
+     */
+    def Boolean isHighDimensionalConceptKey(String concept_key) {
+        def code = getConceptCodeFromKey(concept_key)
+        return isHighDimensionalConceptCode(code)
     }
 
     /**
@@ -348,10 +349,9 @@ class I2b2HelperService {
      * Gets the data associated with a value type concept from observation fact table
      * for display in a distribution histogram
      */
-    def getConceptDistributionDataForValueConcept(String concept_key) {
-        log.trace("Getting concept distribution data for value concept: " + concept_key);
+    def getConceptDistributionDataForValueConcept(String concept_cd) {
+        log.trace("Getting concept distribution data for value concept: " + concept_cd);
         Sql sql = new Sql(dataSource);
-        String concept_cd = getConceptCodeFromKey(concept_key);
         ArrayList<Double> values = new ArrayList<Double>();
         sql.eachRow("SELECT NVAL_NUM FROM OBSERVATION_FACT f WHERE CONCEPT_CD = ?", [concept_cd], { row ->
             if (row.NVAL_NUM != null) {
@@ -428,7 +428,7 @@ class I2b2HelperService {
         ArrayList<Double> returnvalues = new ArrayList<Double>(values.size());
         if (result_instance_id == "") {
             log.debug("getConceptDistributionDataForValueConceptFromCode called with no result_istance_id");
-            return returnvalues;
+            return getConceptDistributionDataForValueConcept(concept_cd);
         }
         log.trace("Getting concept distribution data for value concept code:" + concept_cd);
         Sql sql = new Sql(dataSource);
@@ -575,6 +575,31 @@ class I2b2HelperService {
         log.trace("METADATA XML:" + xml);
 
         res = nodeXmlRepresentsValueConcept(xml)
+        return res;
+    }
+
+    /**
+     * Determines if a concept code is a high-dimensional concept code by checking the visual
+     * style.
+     * TODO: when omics data have proper metadata, change this to check to metadata!
+     * @param concept_code the concept code to check
+     * @return true if i2b2metadata.i2b2.c_visualattributes equals "LAH" for the given concept code
+     */
+    def Boolean isHighDimensionalConceptCode(String concept_code) {
+        log.info "Checking isHighDimensionalConceptCode for code:" + concept_code
+        Boolean res = false;
+        Sql sql = new Sql(dataSource);
+        String sqlt = "SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?";
+        sql.eachRow(sqlt, [concept_code], { row ->
+            if (row.c_visualattributes == "LAH") {
+                res = true;
+                log.info("Positive for high dimensional node");
+            }
+            else {
+                log.info("Negative for high dimensional node");
+            }
+        })
+
         return res;
     }
 
@@ -831,7 +856,7 @@ class I2b2HelperService {
 		    WHERE (((concept_cd IN (select concept_cd from i2b2demodata.concept_dimension c
 		    where concept_path LIKE ? escape '\\'))))""";
         sql.eachRow(sqlt, [fullname.asLikeLiteral() + "%"], { row ->
-            i = row[1];
+            i = row[0];
         })
         return i;
     }
@@ -1023,7 +1048,7 @@ class I2b2HelperService {
                         select distinct patient_num
                         from qt_patient_set_collection
                         where result_instance_id = ?)
-            ) subjectList
+            ) as subjectList
         """
         log.trace(sqlt);
         sql.eachRow(sqlt, [
@@ -1103,7 +1128,7 @@ class I2b2HelperService {
                 newrow.put("subject", subject);
                 def arr = row.SOURCESYSTEM_CD?.split(":")
                 newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM]
+                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM as Long]
                 newrow.put("SAMPLE_CDS", cds ? cds : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
@@ -1127,24 +1152,24 @@ class I2b2HelperService {
         def map = [:]
         def sampleCodesTable = new Sql(dataSource).rows("""
 			SELECT DISTINCT
-                f.PATIENT_NUM,
+                f.PATIENT_ID,
                 f.SAMPLE_CD
 			FROM
-                observation_fact f
+                de_subject_sample_mapping f
             WHERE
-                f.PATIENT_NUM IN (
+                f.PATIENT_ID IN (
                     SELECT
                         DISTINCT patient_num
                     FROM
                         qt_patient_set_collection
                     WHERE
                         result_instance_id = ? )
-			ORDER BY PATIENT_NUM, SAMPLE_CD
+			ORDER BY PATIENT_ID, SAMPLE_CD
 			""", resultInstanceId
         )
 
         for (row in sampleCodesTable) {
-            def patientNum = row.PATIENT_NUM
+            def patientNum = row.PATIENT_ID
             if (!patientNum) continue
             def sampleCd = row.SAMPLE_CD
             if (!sampleCd) continue
@@ -1511,7 +1536,7 @@ class I2b2HelperService {
         log.trace(sqlt)
 
         sql.eachRow(sqlt, [result_instance_id], { row ->
-            if (row[1] != 0) {
+            if (row[0] != null && row[1] != 0) {
                 results.put(row[0], row[1])
                 //log.trace("in row getting patient demographic data for subset")
                 //log.trace("Selected: " + row[0] + ", " + row[1])
@@ -5827,17 +5852,57 @@ class I2b2HelperService {
                         }
 
                         Node key = (Node) xpath.evaluate("item_key", item, XPathConstants.NODE)
+
+                        String textContent = key.getTextContent()
+                        log.debug("Found item ${textContent}")
+
                         Node valueinfo = (Node) xpath.evaluate("constrain_by_value", item, XPathConstants.NODE)
                         String operator = "";
                         String constraints = "";
 
+                        pw.write(textContent);
+
                         if (valueinfo != null) {
                             operator = ((Node) xpath.evaluate("value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
                             constraints = ((Node) xpath.evaluate("value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+                            pw.write(" " + operator + " " + constraints)
                         }
-                        String textContent = key.getTextContent()
-                        log.debug("Found item ${textContent}")
-                        pw.write(textContent + " " + operator + " " + constraints)
+
+                        valueinfo = (Node) xpath.evaluate("constrain_by_omics_value", item, XPathConstants.NODE)
+                        operator = ""
+                        constraints = ""
+                        String value_type = ""
+                        String selector = ""
+                        String projection = ""
+                        if (valueinfo != null) {
+                            value_type = ((Node) xpath.evaluate("omics_value_type", valueinfo, XPathConstants.NODE)).getTextContent()
+                            operator = ((Node) xpath.evaluate("omics_value_operator", valueinfo, XPathConstants.NODE)).getTextContent()
+                            constraints = ((Node) xpath.evaluate("omics_value_constraint", valueinfo, XPathConstants.NODE)).getTextContent()
+                            selector = ((Node) xpath.evaluate("omics_selector", valueinfo, XPathConstants.NODE)).getTextContent()
+                            projection = ((Node) xpath.evaluate("omics_projection_type", valueinfo, XPathConstants.NODE)).getTextContent()
+                            pw.write(selector)
+                            if (value_type.equals('VCF')) {
+                                // TBD
+                            }
+                            // else if (value_type.equals {}   // other non-standard high-dim types here
+                            else {
+                                pw.write(" - " + Projection.prettyNames.get(projection, projection) + " " + operator + " ")
+                                if (operator.equals("BETWEEN")) {
+                                    String[] bounds = constraints.split(":")
+                                    if (bounds.length != 2) {
+                                        log.error "BETWEEN constraint type found with values not seperated by ':'"
+                                        pw.write(constraints)
+                                    }
+                                    else {
+                                        pw.write(bounds.join(" and "))
+                                    }
+                                }
+                                else {
+                                    pw.write(constraints)
+                                }
+                            }
+                        }
+
                     }
                     pw.write("<b>)</b>")
                 }
@@ -6330,6 +6395,10 @@ class I2b2HelperService {
         }
     }
 
+    def String getTrialNameByConceptKey(String key) {
+        return conceptsResourceService.getByKey(key).getStudy().getId()
+    }
+
     def List<String> trialsForResultSet (String result_instance_id) {
         checkQueryResultAccess result_instance_id
 
@@ -6350,6 +6419,7 @@ class I2b2HelperService {
 
         return trials
 }
+
 }
 
 class SurvivalConcepts {

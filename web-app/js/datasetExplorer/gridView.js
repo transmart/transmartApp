@@ -1,6 +1,24 @@
 
 Ext.override(Ext.grid.GridPanel, {
 
+    getPatientIDs: function() {
+        var ret = []
+        var cm = this.getColumnModel();
+
+        // get the whole data store
+        var contentRows = this.store.data.items;
+        // except .. when user has selected some rows in the grid
+        if (this.getSelectionModel().getSelections().length > 0) {
+            contentRows = this.getSelectionModel().getSelections();
+        }
+
+        var index = cm.getIndexById('patient')
+        for (var i = 0, l = contentRows.length; i < l; i++) {
+            ret.push(contentRows[i].data[cm.getDataIndex(index)]);
+        }
+        Ext.MessageBox.alert('Patient IDs', ret.join(", "));
+    },
+
     getExcelXml: function(includeHidden) {
         var worksheet = this.createWorksheet(includeHidden);
         var totalWidth = this.getColumnModel().getTotalWidth(includeHidden);
@@ -264,10 +282,10 @@ function gridViewCellFormating(value)
 }
 
 function buildColumnModel(fields) {
-    var size = fields.size();
-    var con = new Array();
+    var size = fields.length;
+    var con = [];
     for (var i = 0; i < size; i++) {
-        var c = new Object();
+        var c = {};
         var f = fields[i];
         c.id = f.name;
         c.dataIndex = f.name;
