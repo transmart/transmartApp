@@ -856,7 +856,7 @@ jQuery(document).ready(function() {
     	var id = jQuery(this).attr('name');
     	var parent = jQuery(this).data('parent');
     	
-    	if (confirm("Are you sure you want to delete this folder and the files and folders beneath it?")) {
+    	if (confirm("Are you sure you want to delete this folder and the files and folders below it?")) {
 			jQuery.ajax({
 				url:deleteFolderURL,
 				data: {id: id},
@@ -905,7 +905,7 @@ jQuery(document).ready(function() {
 		if (confirm("Are you sure you want to delete this study?")) {
 			findChildByParent(id, function (hasChildren) {
 				if (hasChildren) {
-					if (!confirm("This study contain beneath some elements it. Are you sure?")) {
+					if (!confirm("This study contains some elements below it. Are you sure?")) {
 						return;
 					}
 				}
@@ -933,7 +933,7 @@ jQuery(document).ready(function() {
 		if (confirm("Are you sure you want to delete this program?")) {
 			findChildByParent(id, function (hasChildren) {
 				if (hasChildren) {
-					if (!confirm("This program contain beneath some elements it. Are you sure?")) {
+					if (!confirm("This program contains some elements below it. Are you sure?")) {
 						return;
 					}
 				}
