@@ -138,6 +138,7 @@ grails.project.dependency.resolution = {
             compile ':rdc-rmodules:16.2'
             runtime ':transmart-core:16.2'
             compile ':transmart-gwas:16.2'
+            compile ':transmart-gwas-plink:16.2'
             //// already included in transmart-gwas
             //compile ':transmart-legacy-db:16.2'
             //// already included in transmart-gwas
@@ -172,6 +173,7 @@ dm?.with {
     configureInternalPlugin 'runtime', 'transmart-core'
     configureInternalPlugin 'test', 'transmart-core-db-tests'
     configureInternalPlugin 'compile', 'transmart-gwas'
+    configureInternalPlugin 'compile', 'transmart-gwas-plink'
     configureInternalPlugin 'compile', 'transmart-java'
     configureInternalPlugin 'compile', 'biomart-domain'
     configureInternalPlugin 'compile', 'search-domain'
