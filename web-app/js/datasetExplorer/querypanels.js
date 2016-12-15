@@ -5,7 +5,7 @@
  */
 function prepareQueryPanels() {
 
-    var table = jQuery("#queryTable tr:last-of-type td")
+    var table = $j("#queryTable tr:last-of-type td")
     window.queryPanelNumber = 0
 
     for (var i = 0; i < table.size(); i++) {
@@ -13,7 +13,7 @@ function prepareQueryPanels() {
         appendQueryPanelInto(i + 1)
     }
 
-    jQuery("#queryPanel").click(function () {
+    $j("#queryPanel").click(function () {
         resetSelected()
     })
 }
@@ -26,12 +26,12 @@ function prepareQueryPanels() {
  */
 function appendQueryPanelInto(subset) {
 
-    var clone = jQuery("#panelModel").clone().removeAttr('id').each(function () {
-        jQuery(this).html(this.innerHTML.replace(/\$n/g, window.queryPanelNumber++)).find("input[id^='panelInclude']").attr("checked", "checked")
+    var clone = $j("#panelModel").clone().removeAttr('id').each(function () {
+        $j(this).html(this.innerHTML.replace(/\$n/g, window.queryPanelNumber++)).find("input[id^='panelInclude']").attr("checked", "checked")
     }).attr('subset', subset)
 
     // Subsets are inflated by 1
-    jQuery(jQuery("#queryTable tr:last-of-type td")[subset - 1]).append(clone)
+    $j($j("#queryTable tr:last-of-type td")[subset - 1]).append(clone)
     setupQueryPanelClone(clone)
     removeUselessPanels()
 }
@@ -48,9 +48,9 @@ function appendItemFromConceptInto(destination, concept, invert) {
     var _panel = null
 
     if (typeof destination == "number")
-        _panel = jQuery(jQuery("#queryTable tr:last-of-type td")[destination - 1]).find('div[id^=panelBoxList]').last()
+        _panel = $j($j("#queryTable tr:last-of-type td")[destination - 1]).find('div[id^=panelBoxList]').last()
     else
-        _panel = jQuery(destination)
+        _panel = $j(destination)
 
     var _invert = typeof invert !== 'undefined' ? invert : false;
     if (_invert)
@@ -72,10 +72,10 @@ function setupQueryPanelClone(clone) {
     clone.find(".panelRadio").buttonset()
 
     clone.find(".panelDate").button().click(function() {
-        if (jQuery(this).attr('checked') == 'checked')
-            jQuery(this).closest(".panelBox").addClass("withDates")
+        if ($j(this).attr('checked') == 'checked')
+            $j(this).closest(".panelBox").addClass("withDates")
         else
-            jQuery(this).closest(".panelBox").removeClass("withDates")
+            $j(this).closest(".panelBox").removeClass("withDates")
 
         adjustPanelSize()
     })
@@ -92,11 +92,11 @@ function setupQueryPanelClone(clone) {
     var dtrg = new Ext.dd.DropTarget(exto, { ddGroup : 'makeQuery' })
 
     dtrg.notifyEnter = function (source, e, data) {
-        jQuery("#" + e.target.id).parent().find(".holder").addClass('overed')
+        $j("#" + e.target.id).parent().find(".holder").addClass('overed')
     }
 
     dtrg.notifyOut = function (source, e, data) {
-        jQuery(".panelBoxListPlaceholder .holder").removeClass('overed')
+        $j(".panelBoxListPlaceholder .holder").removeClass('overed')
     }
 
     dtrg.notifyDrop = function (source, e, data) {
@@ -138,8 +138,8 @@ function setupQueryPanelClone(clone) {
  */
 function clearQueryPanels()
 {
-    jQuery(".panelModel").each(function (){
-        clearQueryPanel(jQuery(this))
+    $j(".panelModel").each(function (){
+        clearQueryPanel($j(this))
     })
 }
 
@@ -160,10 +160,10 @@ function clearQueryPanel(clone)
  */
 function removeUselessPanels()
 {
-    jQuery("#queryTable tr:last-of-type td").each(function() {
-        jQuery("div[id^='panelBoxList']:not(:last)", this).each(function() {
-            if (jQuery(this).html().trim() == '')
-                jQuery(this).closest(".panelModel").remove()
+    $j("#queryTable tr:last-of-type td").each(function() {
+        $j("div[id^='panelBoxList']:not(:last)", this).each(function() {
+            if ($j(this).html().trim() == '')
+                $j(this).closest(".panelModel").remove()
         })
     })
 
@@ -176,13 +176,13 @@ function removeUselessPanels()
  */
 function adjustPanelSize()
 {
-    jQuery(".panelBox").each(function() {
+    $j(".panelBox").each(function() {
 
-        var _itemNumber = jQuery(".panelBoxListItem", jQuery(this)).size()
-        var _totalHeight = (_itemNumber + 0.5) * jQuery(".panelBoxListItem:first").outerHeight()
+        var _itemNumber = $j(".panelBoxListItem", $j(this)).size()
+        var _totalHeight = (_itemNumber + 0.5) * $j(".panelBoxListItem:first").outerHeight()
 
-        _totalHeight += parseInt(jQuery(".panelBoxList", jQuery(this)).css('padding-top'))
-        jQuery(this).css('height', _totalHeight)
+        _totalHeight += parseInt($j(".panelBoxList", $j(this)).css('padding-top'))
+        $j(this).css('height', _totalHeight)
     })
 
 }
@@ -199,13 +199,13 @@ function refillQueryPanels(subsets) {
     clearQueryPanels()
 
     // Looping through subsets
-    jQuery.each(subsets, function (subset, query) {
+    $j.each(subsets, function (subset, query) {
 
-        jQuery(query).find("panel").each(function () {
+        $j(query).find("panel").each(function () {
 
             //This is dangerous, but time efficient
-            var _panel = jQuery(this)
-            var _panelDOM = jQuery(".panelModel", jQuery("#queryTable tr:last-of-type td")[parseInt(subset) - 1]).last()
+            var _panel = $j(this)
+            var _panelDOM = $j(".panelModel", $j("#queryTable tr:last-of-type td")[parseInt(subset) - 1]).last()
 
             _panelDOM.find(".panelBoxListPlaceholder").hide()
 
@@ -235,7 +235,7 @@ function refillQueryPanels(subsets) {
  */
 function getConceptFromQueryItem(item) {
 
-    var _item = jQuery(item)
+    var _item = $j(item)
     var _concept = {}
 
     _concept["conceptid"] = _item.find("item_key").text()
@@ -311,7 +311,7 @@ function getConceptFromQueryItem(item) {
         }
     })
 
-    jQuery.each(_concept, function(key, value) {
+    $j.each(_concept, function(key, value) {
         if (_concept[key] == undefined) _concept[key] = ""
     })
 
@@ -325,7 +325,7 @@ function getConceptFromQueryItem(item) {
  */
 function getPanelItemFromConcept(concept) {
 
-    var _item = jQuery("<div />")
+    var _item = $j("<div />")
     var _valueText = getSetValueText(
         concept["setvaluemode"],
         concept["setvalueoperator"],
@@ -335,16 +335,16 @@ function getPanelItemFromConcept(concept) {
         concept["setvalueunits"]).trim()
 
     // We try to infer the type when possible to match the icon
-    jQuery.get(pageInfo.basePath + "/concepts/getResource", { concept_key: concept["conceptid"] }, function() {}, 'json')
+    $j.get(pageInfo.basePath + "/concepts/getResource", { concept_key: concept["conceptid"] }, function() {}, 'json')
         .success(function (data) {
-            jQuery("span:first", _item).addClass(getClassForNodeResource(data))
+            $j("span:first", _item).addClass(getClassForNodeResource(data))
         })
 
     _item
-        .append(jQuery("<span />").addClass("x-tree-node-icon"))
-        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname + _valueText))
+        .append($j("<span />").addClass("x-tree-node-icon"))
+        .append($j("<span />").addClass("concept-text").html(concept.conceptname + _valueText))
 
-    jQuery.each(concept, function(key, value) {
+    $j.each(concept, function(key, value) {
         _item.attr(key, value)
     })
 
@@ -375,7 +375,7 @@ function getClassForNodeResource(node) {
     if (_OKToUseValue)
         _iconClass = "valueicon";
 
-    jQuery.each(_visualAttributes, function (index, value) {
+    $j.each(_visualAttributes, function (index, value) {
         if (!_OKToUseValue && (value.toUpperCase() == "LEAF" || value.toUpperCase() == "MULTIPLE"))
             _iconClass = "alphaicon";
         if (value.toUpperCase() == "HIGH_DIMENSIONAL")
@@ -401,9 +401,9 @@ function getClassForNodeResource(node) {
 function getSubsetQuery (subset) {
 
     var _query = ''
-    jQuery(".panelModel[subset='" + subset + "']").each(function () {
-        if (jQuery(this).find(".panelBoxList").html().trim() != '')
-            _query += getQueryPanel(jQuery(this)).html()
+    $j(".panelModel[subset='" + subset + "']").each(function () {
+        if ($j(this).find(".panelBoxList").html().trim() != '')
+            _query += getQueryPanel($j(this)).html()
     })
 
     return _query;
@@ -416,17 +416,17 @@ function getSubsetQuery (subset) {
  */
 function getQuery(subset) {
 
-    var _query = jQuery("<ns4:query_definition />")
+    var _query = $j("<ns4:query_definition />")
 
     _query.attr('xmlns:ns4', 'http://www.i2b2.org/xsd/cell/crc/psm/1.1/')
     _query
-        .append(jQuery("<specificity_scale />").html("0"))
+        .append($j("<specificity_scale />").html("0"))
         .append(getQueryPanels(subset))
 
-    if (jQuery('#queryEncounter_' + subset).attr('checked') == 'checked')
-        _query.append(jQuery('<query_timing />').html('SAMEVISIT'))
+    if ($j('#queryEncounter_' + subset).attr('checked') == 'checked')
+        _query.append($j('<query_timing />').html('SAMEVISIT'))
     else
-        _query.append(jQuery('<query_timing />').html('ANY'))
+        _query.append($j('<query_timing />').html('ANY'))
 
     return _query
 }
@@ -438,12 +438,12 @@ function getQuery(subset) {
  */
 function getQueryPanels(subset) {
 
-    var _panels = jQuery()
+    var _panels = $j()
 
-    jQuery(".panelModel[subset='" + subset + "']").each(function () {
+    $j(".panelModel[subset='" + subset + "']").each(function () {
 
-        if (jQuery(this).find(".panelBoxList").html().trim() != '')
-            _panels = _panels.add(getQueryPanel(jQuery(this)))
+        if ($j(this).find(".panelBoxList").html().trim() != '')
+            _panels = _panels.add(getQueryPanel($j(this)))
 
     })
 
@@ -458,7 +458,7 @@ function getQueryPanels(subset) {
  */
 function getQueryPanel(panel) {
 
-    var _panel = jQuery("<panel />")
+    var _panel = $j("<panel />")
     var _number = panel.find("div[id^='panelBoxList']").attr('id')
     var _invert = panel.find("input[name^=panelRadio]:checked").val()
     var _occurrence = 1
@@ -466,9 +466,9 @@ function getQueryPanel(panel) {
     _number = _number ? _number.substring(_number.indexOf('_') + 1) : new Date().getTime()
     _invert = _invert != undefined ? _invert : 0
     _panel
-        .append(jQuery("<panel_number />").html(_number))
-        .append(jQuery("<invert />").html(_invert))
-        .append(jQuery("<total_item_occurrences />").html(_occurrence))
+        .append($j("<panel_number />").html(_number))
+        .append($j("<invert />").html(_invert))
+        .append($j("<total_item_occurrences />").html(_occurrence))
         .append(getQueryPanelItems(panel))
 
     if (panel.find(".panelDate").attr('checked') == 'checked') {
@@ -480,15 +480,15 @@ function getQueryPanel(panel) {
         _offset = 'T00:00:00.000' + _offset.slice(0, 3) + ':' +_offset.slice(3)
 
         if (_from != '')
-            _panel.append(jQuery("<panel_date_from />").html(_from + _offset))
+            _panel.append($j("<panel_date_from />").html(_from + _offset))
         if (_to != '')
-            _panel.append(jQuery("<panel_date_to />").html(_to + _offset))
+            _panel.append($j("<panel_date_to />").html(_to + _offset))
     }
 
-    if (jQuery('#queryEncounter_' + panel.attr('subset')).attr('checked') == 'checked')
-        _panel.append(jQuery('<panel_timing />').html('SAMEVISIT'))
+    if ($j('#queryEncounter_' + panel.attr('subset')).attr('checked') == 'checked')
+        _panel.append($j('<panel_timing />').html('SAMEVISIT'))
     else
-        _panel.append(jQuery('<panel_timing />').html('ANY'))
+        _panel.append($j('<panel_timing />').html('ANY'))
 
     return _panel
 }
@@ -501,11 +501,11 @@ function getQueryPanel(panel) {
 function getQueryPanelItems(panel) {
 
 
-    var _items = jQuery()
+    var _items = $j()
 
-    jQuery(".panelBoxListItem", panel).each(function () {
+    $j(".panelBoxListItem", panel).each(function () {
 
-        _items = _items.add(getQueryPanelItem(jQuery(this)))
+        _items = _items.add(getQueryPanelItem($j(this)))
 
     })
 
@@ -519,8 +519,8 @@ function getQueryPanelItems(panel) {
  */
 function getQueryPanelItem(item) {
 
-    var _item = jQuery("<item />")
-    var _constrainValue = jQuery('<constrain_by_value />')
+    var _item = $j("<item />")
+    var _constrainValue = $j('<constrain_by_value />')
     var _value = ''
 
     switch (item.attr('setvaluemode').toLowerCase()) {
@@ -531,63 +531,63 @@ function getQueryPanelItem(item) {
                 _value += ' AND ' + item.attr('setvaluehighvalue')
 
             _constrainValue
-                .append(jQuery("<value_operator />").html(item.attr('setvalueoperator')))
-                .append(jQuery("<value_constraint />").html(_value))
-                .append(jQuery("<value_unit_of_measure />").html(item.attr('setvalueunits')))
-                .append(jQuery("<value_type />").html("NUMBER"))
+                .append($j("<value_operator />").html(item.attr('setvalueoperator')))
+                .append($j("<value_constraint />").html(_value))
+                .append($j("<value_unit_of_measure />").html(item.attr('setvalueunits')))
+                .append($j("<value_type />").html("NUMBER"))
 
             break;
         case 'highlow' :
 
             _constrainValue
-                .append(jQuery("<value_operator />").html("EQ"))
-                .append(jQuery("<value_constraint />").html(item.attr('setvaluehighlowselect').substring(0, 1).toUpperCase()))
-                .append(jQuery("<value_unit_of_measure />").html(item.attr('setvalueunits')))
-                .append(jQuery("<value_type />").html("FLAG"))
+                .append($j("<value_operator />").html("EQ"))
+                .append($j("<value_constraint />").html(item.attr('setvaluehighlowselect').substring(0, 1).toUpperCase()))
+                .append($j("<value_unit_of_measure />").html(item.attr('setvalueunits')))
+                .append($j("<value_type />").html("FLAG"))
 
             break;
         case 'text' :
 
             _constrainValue
-                .append(jQuery("<value_operator />").html('LIKE[' + item.attr('setvalueoperator') + ']'))
-                .append(jQuery("<value_constraint />").html('<![CDATA[' + item.attr('***') + ']]>'))
-                .append(jQuery("<value_type />").html("TEXT"))
+                .append($j("<value_operator />").html('LIKE[' + item.attr('setvalueoperator') + ']'))
+                .append($j("<value_constraint />").html('<![CDATA[' + item.attr('***') + ']]>'))
+                .append($j("<value_type />").html("TEXT"))
 
             break;
         case 'list' :
 
             _constrainValue
-                .append(jQuery("<value_operator />").html("IN"))
-                .append(jQuery("<value_constraint />").html(item.attr('***')))
-                .append(jQuery("<value_type />").html("TEXT"))
+                .append($j("<value_operator />").html("IN"))
+                .append($j("<value_constraint />").html(item.attr('***')))
+                .append($j("<value_type />").html("TEXT"))
 
             break;
         case 'omics_value' :
-            _constrainValue = jQuery("<constrain_by_omics_value/>")
+            _constrainValue = $j("<constrain_by_omics_value/>")
             _constrainValue
-                .append(jQuery("<omics_value_operator />").html(item.attr('omicsoperator')))
-                .append(jQuery("<omics_value_constraint />").html(item.attr('omicsvalue')))
-                .append(jQuery("<omics_value_type />").html(item.attr('omicsvaluetype')))
-                .append(jQuery("<omics_property />").html(item.attr('omicsproperty')))
-                .append(jQuery("<omics_selector />").html(item.attr('omicsselector')))
-                .append(jQuery("<omics_projection_type />").html(item.attr('omicsprojection')))
+                .append($j("<omics_value_operator />").html(item.attr('omicsoperator')))
+                .append($j("<omics_value_constraint />").html(item.attr('omicsvalue')))
+                .append($j("<omics_value_type />").html(item.attr('omicsvaluetype')))
+                .append($j("<omics_property />").html(item.attr('omicsproperty')))
+                .append($j("<omics_selector />").html(item.attr('omicsselector')))
+                .append($j("<omics_projection_type />").html(item.attr('omicsprojection')))
     }
 
     _item
-        .append(jQuery("<item_name />").html(item.attr('conceptname').legacyI2B2Escape()))
-        .append(jQuery("<item_key />").html(item.attr('conceptid').legacyI2B2Escape()))
-        .append(jQuery("<tooltip />").html(item.attr('concepttooltip').legacyI2B2Escape()))
-        .append(jQuery("<hlevel />").html(item.attr('conceptlevel')))
-        .append(jQuery("<class />").html("ENC"))
+        .append($j("<item_name />").html(item.attr('conceptname').legacyI2B2Escape()))
+        .append($j("<item_key />").html(item.attr('conceptid').legacyI2B2Escape()))
+        .append($j("<tooltip />").html(item.attr('concepttooltip').legacyI2B2Escape()))
+        .append($j("<hlevel />").html(item.attr('conceptlevel')))
+        .append($j("<class />").html("ENC"))
 
     if (item.attr('ismodifier')) {
 
-        var _constrainModifier = jQuery('<constrain_by_modifier />')
+        var _constrainModifier = $j('<constrain_by_modifier />')
 
         _constrainModifier
-            .append(jQuery("<modifier_name />").html(item.attr('conceptname')))
-            .append(jQuery("<applied_path />").html(item.attr('applied_path')))
-            .append(jQuery("<modifier_key />").html(item.attr('conceptid')))
+            .append($j("<modifier_name />").html(item.attr('conceptname')))
+            .append($j("<applied_path />").html(item.attr('applied_path')))
+            .append($j("<modifier_key />").html(item.attr('conceptid')))
 
         if (_constrainValue.html().length)
             _constrainModifier.append(_constrainValue)
@@ -611,7 +611,7 @@ function getSubsetQuerySummary(subset) {
 
     _panels.each(function() {
 
-        var _e = jQuery(this)
+        var _e = $j(this)
         var _item = ""
 
         if (_summary.trim() != '')
