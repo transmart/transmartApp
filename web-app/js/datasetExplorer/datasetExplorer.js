@@ -406,7 +406,7 @@ Ext.onReady(function () {
             activate: function (p) {
                 if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysisGridPanel')) {
                     runAllQueries(getSummaryGridData, p);
-                    activateTab();
+                    activateTabResults();
                     onWindowResize();
                 } else {
                     getSummaryGridData();
@@ -437,7 +437,7 @@ Ext.onReady(function () {
                 if (isSubsetQueriesChanged(p.subsetQueries) || !Ext.get('analysis_title')) {
                     p.body.mask("Loading...", 'x-mask-loading');
                     runAllQueries(getSummaryStatistics, p);
-                    activateTab();
+                    activateTabResults();
                     onWindowResize();
                 }
             },
@@ -532,7 +532,7 @@ Ext.onReady(function () {
                  * @private
                  */
                 var _activateAdvancedWorkflow = function () {
-                    activateTab();
+                    activateTabResults();
                     GLOBAL.Analysis="dataAssociation";
                     renderCohortSummary();
                     onWindowResize();
@@ -2870,7 +2870,7 @@ function getExportButtonSecurityComplete(result) {
     }
 }
 
-function activateTab(tab) {
+function activateTabResults(tab) {
     resultsTabPanel.tools.help.dom.style.display = "none";
 }
 
