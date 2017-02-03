@@ -92,6 +92,8 @@ function repopulateFilterWindow() {
     jQuery("#highdimension-filter-selector").val(omicsFilterRepopulateWindow.omicsselector.nodeValue);
     jQuery("#highdimension-filter-projection").val(omicsFilterRepopulateWindow.omicsprojection.nodeValue);
 
+    omicsAutoCompleteList = [omicsFilterRepopulateWindow.omicsselector.nodeValue];
+
     showConceptDistributionHistogramForOmicsFilterComplete(null);
     showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
 }
@@ -104,8 +106,8 @@ function repopulateOmicsFilterRange() {
         var maxbox = jQuery("#highdimension-amount-max");
         var values = omicsFilterRepopulateWindow.omicsvalue.nodeValue.split(":");
         minbox.val(values[0]);
-        minbox.blur();
         maxbox.val(values[1]);
+        minbox.blur();
         maxbox.blur();
     }
 }
