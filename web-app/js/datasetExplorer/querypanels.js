@@ -364,12 +364,16 @@ function getPanelItemFromConcept(concept) {
     // We try to infer the type when possible to match the icon
     jQuery.get(pageInfo.basePath + "/concepts/getResource", { concept_key: concept["conceptid"] }, function() {}, 'json')
         .success(function (data) {
-            jQuery("span:first", _item).addClass(getClassForNodeResource(data))
+            jQuery("span:first", _item).addClass(getClassForNodeResource(data));
+            jQuery.each(data.visualAttributes, function (index, value) {
+                if (value.toUpperCase() == "HIGH_DIMENSIONAL")
+                    _item.attr("oktousevalues", "H");
+            });
         })
 
     _item
         .append(jQuery("<span />").addClass("x-tree-node-icon"))
-        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname + _valueText))
+        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname + " " + _valueText))
 
     jQuery.each(concept, function(key, value) {
         _item.attr(key, value)
