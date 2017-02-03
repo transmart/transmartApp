@@ -506,13 +506,14 @@ function removeSearchTerm(ctrl)	{
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	if (!treeUpdated) {
-      showSearchTemplate();
-	  showSearchResults();
+	    showSearchTemplate();
+	    showSearchResults();
 	}
 	
-	//Remove selected status from filter browser for this item
-	unselectFilterItem(fields[2]);
-	
+        //Remove selected status from filter browser for this item
+        if(idx > -1) {
+	    unselectFilterItem(fields[2]);
+        }
 }
 
 //Clear the tree, results along with emptying the two arrays that store categories and search terms.
