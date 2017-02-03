@@ -95,6 +95,7 @@
             sampleExplorerEnabled: ${!!grailsApplication.config.ui.tabs.sampleExplorer.show},
             metacoreAnalyticsEnabled: ${!!grailsApplication.config.com.thomsonreuters.transmart.metacoreAnalyticsEnable},
             metacoreUrl: '${grailsApplication.config.com.thomsonreuters.transmart.metacoreURL}',
+            xnatViewerEnabled: ${!!grailsApplication.config.org.transmart.xnatViewerEnable},
             AnalysisHasBeenRun: false,
             ResultSetRegionParams: {},
             currentReportCodes: [],
