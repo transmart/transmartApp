@@ -166,7 +166,7 @@
 </div>
 
 <g:if test="${!!grailsApplication.getControllerClass('ImportXnatController')}">
-    <g:if test="${grailsApplication.config.org.transmart.xnatImporterEnabled}">
+    <g:if test="${grailsApplication.config.org.transmart.xnatImporterEnable}">
         <div class='navbarBox'>
             <div class="navcontainer1">
                 <h1 class="panelHeader">
