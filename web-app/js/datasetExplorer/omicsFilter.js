@@ -105,7 +105,7 @@ function repopulateFilterWindow() {
 }
 
 function repopulateOmicsFilterRange() {
-    if (omicsFilterRepopulateWindow.omicsvalue == null) return;
+    if (omicsFilterRepopulateWindow == null || omicsFilterRepopulateWindow.omicsvalue == null) return;
 
     if (omics_filter_info.filter_type == "SINGLE_NUMERIC" || omics_filter_info.filter_type == "ACGH") {
         var minbox = jQuery("#highdimension-amount-min");
