@@ -124,7 +124,7 @@ class SubsetController {
                     result += "( with constraints )"
                 }
                 if (i.constraintByOmicsValue) {
-                    result += " ( " + i.constraintByOmicsValue.selector + " " +
+                    result += " - " + i.constraintByOmicsValue.selector + " " +
                             Projection.prettyNames.get(i.constraintByOmicsValue.projectionType,
                                     i.constraintByOmicsValue.projectionType) + " " +
                             i.constraintByOmicsValue.operator.value + " "
@@ -141,7 +141,6 @@ class SubsetController {
                     else {
                         result += i.constraintByOmicsValue.constraint
                     }
-                    result += " )"
                 }
                 result += "<br/>"
             }
