@@ -1005,6 +1005,12 @@ Ext.onReady(function () {
                 items: [omicsfilterpanel],
                 buttons: [
                     {
+                        text: 'No filter',
+                        handler: function () {
+                            applyOmicsNoFilterDialog();
+                        }
+                    },
+                    {
                         text: 'OK',
                         handler: function () {
                             applyOmicsFilterDialog(true);
