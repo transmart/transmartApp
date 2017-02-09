@@ -506,7 +506,7 @@ function omicsValuesFailed(result) {
 }
 
 function applyOmicsNoFilterDialog() {
-        // no gene supplied, we assume a "no value" type filter
+    if (omics_filter_info.filter) {
         omicsFilterValues = [];
         omicsSliderLowHandleRatio = 0;
         omicsSliderHighHandleRatio = 1;
@@ -520,8 +520,38 @@ function applyOmicsNoFilterDialog() {
         concept.removeAttr("omicsvalue");
         concept.removeAttr("omicsprojection");
         concept.removeAttr("omicsvaluetype");
-        concept.attr("setvaluemode","");
+        concept.attr("setvaluemode", "");
         moveSelectedConceptFromHoldingToTarget();
+    }
+    else {
+        resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+        Ext.Ajax.request(
+            {
+                url : pageInfo.basePath+"/chart/analysis",
+                method : 'POST',
+                timeout: '600000',
+                params :  Ext.urlEncode(
+                    {
+                        charttype : "analysis",
+                        concept_key : omics_filter_info.concept_key,
+                        result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                        result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                    }
+                ), // or a URL encoded string
+                success: function (result, request) {
+                    buildAnalysisComplete(result);
+                    resultsTabPanel.body.unmask();
+                },
+                failure: function (result, request) {
+                    alert("A problem arose while trying to retrieve the results");
+                    resultsTabPanel.body.unmask();
+                }
+            }
+        );
+        getAnalysisGridData(omics_filter_info.concept_key);
+        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
+        omicsfilterwin.hide();
+    }
 }
 
 function applySingleNumericOmicsFilter(validation) {
