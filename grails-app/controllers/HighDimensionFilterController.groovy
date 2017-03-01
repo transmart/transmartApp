@@ -1,9 +1,7 @@
 import grails.converters.JSON
 import org.transmartproject.core.dataquery.highdim.projections.Projection
-import org.transmartproject.core.querytool.ConstraintByOmicsValue
 import org.transmartproject.db.dataquery.highdim.DeGplInfo
 import org.transmartproject.db.dataquery.highdim.DeSubjectSampleMapping
-
 /**
  * Author: Denny Verbeeck (dverbeec@its.jnj.com)
  */
@@ -43,14 +41,23 @@ class HighDimensionFilterController {
 
         def resource = highDimensionResourceService.getHighDimDataTypeResourceFromConcept(concept_key)
 
-        def model = [gpl_id: platform.id,
-                     marker_type: platform.markerType,
-                     filter_type: resource.getHighDimensionFilterType(),
-                     searchable_properties: resource.getSearchableAnnotationProperties().collectEntries {[it, searchableAnnotationPropertiesDictionary.get(it, it)]},
-                     filter: filter,
-                     projections: resource.getSearchableProjections().collectEntries {[it, Projection.prettyNames.get(it, it)]}]
+        if (resource.dataTypeName == 'vcf') {
+            render "Small Variant data is not supperted yet, stay tuned!"
+        }
+        else {
+            def model = [gpl_id               : platform.id,
+                         marker_type          : platform.markerType,
+                         filter_type          : resource.getHighDimensionFilterType(),
+                         searchable_properties: resource.getSearchableAnnotationProperties().collectEntries {
+                             [it, searchableAnnotationPropertiesDictionary.get(it, it)]
+                         },
+                         filter               : filter,
+                         projections          : resource.getSearchableProjections().collectEntries {
+                             [it, Projection.prettyNames.get(it, it)]
+                         }]
 
-        render(template: template, model: model)
+            render(template: template, model: model)
+        }
     }
 
     /**
