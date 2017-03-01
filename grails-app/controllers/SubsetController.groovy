@@ -100,9 +100,11 @@ class SubsetController {
 
         Subset subset = Subset.get(subsetId)
 
-        def queryID1 = queriesResourceService.getQueryDefinitionForResult(
-                queriesResourceService.getQueryResultFromId(subset.queryID1))
-        displayQuery1 = generateDisplayOutput(queryID1)
+        if (subset.queryID1 != -1) {
+            def queryID1 = queriesResourceService.getQueryDefinitionForResult(
+                    queriesResourceService.getQueryResultFromId(subset.queryID1))
+            displayQuery1 = generateDisplayOutput(queryID1)
+        }
 
         if (subset.queryID2 != -1) {
             def queryID2 = queriesResourceService.getQueryDefinitionForResult(
