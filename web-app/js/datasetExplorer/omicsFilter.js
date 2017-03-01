@@ -39,20 +39,29 @@ function highDimensionalConceptDropped(node, filter) {
 function omicsFilterInfoReceived(result, request) {
     omics_filter_info = JSON.parse(result.responseText);
     omics_filter_info.filter = (omics_filter_info.filter == "true");
-    Ext.Ajax.request({
-        url: pageInfo.basePath + "/highDimensionFilter/filterDialog",
-        method: 'GET',
-        timeout: '60000',
-        params: Ext.urlEncode({
-            gpl_id: omics_filter_info.platform.id,
-            filter: omics_filter_info.filter,
-            concept_key: omics_filter_info.concept_key
-        }),
-        success: omicsFilterWindowReceived,
-        failure: function (result, request) {
-            alert("Could not retrieve filter info for " + node.id + ": " + result.statusText);
+    if (omics_filter_info.filter_type != 'VCF') {
+        Ext.Ajax.request({
+            url: pageInfo.basePath + "/highDimensionFilter/filterDialog",
+            method: 'GET',
+            timeout: '60000',
+            params: Ext.urlEncode({
+                gpl_id: omics_filter_info.platform.id,
+                filter: omics_filter_info.filter,
+                concept_key: omics_filter_info.concept_key
+            }),
+            success: omicsFilterWindowReceived,
+            failure: function (result, request) {
+                alert("Could not retrieve filter info for " + node.id + ": " + result.statusText);
+            }
+        });
+    }
+    else {
+        if (omicsFilterRepopulateWindow != null) {
+            // We did a right click -> set filter on a vcf concept, let's inform the user it's not ready yet
+            Ext.Msg.alert('VCF','Filtering on VCF data is not supported yet, stay tuned!');
         }
-    });
+        applyOmicsNoFilterDialog();
+    }
 }
 
 function omicsFilterWindowReceived(result, request) {
@@ -506,11 +515,15 @@ function omicsValuesFailed(result) {
 }
 
 function applyOmicsNoFilterDialog() {
-        // no gene supplied, we assume a "no value" type filter
+    // Just add the high dimensional concept as a criterion, no constraints on the data itself
+    if (omics_filter_info.filter) {
         omicsFilterValues = [];
         omicsSliderLowHandleRatio = 0;
         omicsSliderHighHandleRatio = 1;
-        document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
+        var mainpanel = document.getElementById("highdimension-filter-main");
+        if (mainpanel != null && mainpanel.children.length > 0) {
+            mainpanel.removeChild(document.getElementById("highdimension-filter-content"));
+        }
         omicsfilterwin.hide();
         var concept = jQuery('#' + selectedConcept.id);
         jQuery('#' + selectedConcept.id + " .concept-text").html(selectedConcept.attributes["conceptname"].nodeValue);
@@ -520,8 +533,35 @@ function applyOmicsNoFilterDialog() {
         concept.removeAttr("omicsvalue");
         concept.removeAttr("omicsprojection");
         concept.removeAttr("omicsvaluetype");
-        concept.attr("setvaluemode","");
+        concept.attr("setvaluemode", "");
         moveSelectedConceptFromHoldingToTarget();
+        omicsFilterRepopulateWindow = null;
+    }
+    else {
+        resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+
+        Ext.Ajax.request({
+            url: pageInfo.basePath + "/chart/analysis",
+            method: 'POST',
+            timeout: '600000',
+            params: Ext.urlEncode({
+                charttype: "analysis",
+                concept_key: omics_filter_info.concept_key,
+                result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+                result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
+            }), // or a URL encoded string
+            success: function (result, request) {
+                buildAnalysisComplete(result);
+                resultsTabPanel.body.unmask();
+            },
+            failure: function (result, request) {
+                alert("A problem arose while trying to retrieve the results");
+                resultsTabPanel.body.unmask();
+            }
+        });
+        getAnalysisGridData(omics_filter_info.concept_key);
+        omicsfilterwin.hide();
+    }
 }
 
 function applySingleNumericOmicsFilter(validation) {

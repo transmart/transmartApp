@@ -603,6 +603,15 @@ class I2b2HelperService {
         return res;
     }
 
+    /**
+     * Check if a map contains all the keys an omics_params map should contain
+     * @param params the map to check
+     * @return True if the map contains all necessary keys, false otherwise
+     */
+    def Boolean isValidOmicsParams(Map params) {
+        ['omics_selector', 'omics_projection_type', 'omics_property', 'omics_selector'].every {params?.containsKey(it)}
+    }
+
     def Boolean nodeXmlRepresentsValueConcept(String xml) {
         Boolean res = false;
 
@@ -636,11 +645,12 @@ class I2b2HelperService {
 
         def xTrialsCaseFlag = isXTrialsConcept(concept_key)
         def leafNodeFlag = isLeafConceptKey(concept_key)
+        def highDimNodeFlag = isHighDimensionalConceptKey(concept_key)
 
         def HashMap<String, Integer> results = new LinkedHashMap<String, Integer>()
 
         log.trace "input concept_key = " + concept_key
-        if (leafNodeFlag) {
+        if (leafNodeFlag && !highDimNodeFlag) {
             concept_key = getParentConceptKey(concept_key)
         }
         log.trace "lookup concept_key = " + concept_key
@@ -656,7 +666,7 @@ class I2b2HelperService {
 
         } else {
             String fullname = concept_key.substring(concept_key.indexOf("\\", 2), concept_key.length());
-            int i = getLevelFromKey(concept_key) + 1;
+            int i = getLevelFromKey(concept_key) + (highDimNodeFlag ? 0 : 1);
             Sql sql = new Sql(dataSource);
             String sqlt = """
                 SELECT DISTINCT c_name, c_fullname

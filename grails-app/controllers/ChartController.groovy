@@ -272,8 +272,6 @@ class ChartController {
         PrintWriter pw = new PrintWriter(response.getOutputStream());
 
         if (concept_key && !concept_key.isEmpty()) {
-
-
             // We retrieve the highdimension parameters from the client, if they were passed
             def omics_params = [:]
             params.findAll { k, v ->
@@ -281,7 +279,7 @@ class ChartController {
             }.each { k, v ->
                 omics_params[k] = v
             }
-            if (omics_params) {  // empty maps are coerced to false by groovy
+            if (omics_params) {
                 omics_params.concept_key = concept_key
                 if (s1) highDimensionQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id1)
                 if (s2) highDimensionQueryService.addHighDimConceptDataToTable(table, omics_params, result_instance_id2)

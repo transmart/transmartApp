@@ -22,6 +22,7 @@ import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jfree.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
 import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.core.exceptions.EmptySetException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 import java.awt.*
@@ -217,7 +218,7 @@ class ChartService {
 
                 }
             }
-        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.omics_params) {
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && i2b2HelperService.isValidOmicsParams(result.commons.omics_params)) {
 
             result.commons.type = 'value'
             result.commons.conceptName = result.commons.omics_params.omics_selector + " in " + result.commons.conceptName
@@ -233,13 +234,19 @@ class ChartService {
             }.each { n, p ->
 
                 // Getting the concept data
-                p.conceptData =
-                        resource.getDistribution(
-                        new ConstraintByOmicsValue(projectionType: result.commons.omics_params.omics_projection_type,
-                                               property      : result.commons.omics_params.omics_property,
-                                               selector      : result.commons.omics_params.omics_selector),
-                        concept,
-                        (p.instance == "" ? null : p.instance as Long)).collect {k, v -> v}
+                try {
+                    p.conceptData =
+                            resource.getDistribution(
+                                    new ConstraintByOmicsValue(projectionType: result.commons.omics_params.omics_projection_type,
+                                            property: result.commons.omics_params.omics_property,
+                                            selector: result.commons.omics_params.omics_selector),
+                                    concept,
+                                    (p.instance == "" ? null : p.instance as Long)).collect { k, v -> v }
+                }
+                catch (EmptySetException ese) {
+                    log.warn("No assays satisfy the provided criteria in result_instance_id " + p.instance)
+                    p.conceptData = []
+                }
 
                 if (p.instance != "")
                     p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
@@ -258,7 +265,7 @@ class ChartService {
             result.commons.conceptPlot = getSVGChart(type: 'boxplot-and-points', data: conceptHistogramHandle, boxplotdata: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible
-            if (result[2].exists) {
+            if (result[1].exists && result[2].exists) {
 
                 if (result[1].conceptData.toArray() == result[2].conceptData.toArray())
                     result.commons.testmessage = 'No T-test calculated: these are the same subsets'
@@ -301,7 +308,7 @@ class ChartService {
             }
 
             // Let's calculate the χ² test if possible
-            if (result[2].exists) {
+            if (result[1].exists && result[2].exists) {
 
                 def junction = false
 
