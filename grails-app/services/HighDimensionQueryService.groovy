@@ -40,7 +40,7 @@ class HighDimensionQueryService {
         sql.eachRow(sqlt, [resultInstanceId], { row ->
             def xml
             try {
-                xml = new XmlSlurper().parse(new StringReader(row.request_xml))
+                xml = new XmlSlurper().parse(new StringReader(clobToString(row.request_xml)))
             } catch (exception) {
                 throw new InvalidRequestException('Malformed XML document: ' +
                         exception.message, exception)
@@ -121,4 +121,26 @@ class HighDimensionQueryService {
 
         return tablein;
     }
+
+    /**
+     * Converts a clob to a string for retuirned Oracle columns
+     */
+    def String clobToString(clob) {
+        if (clob == null) {
+            return ""
+        };
+        if (clob instanceof String) {
+            // postgres schema uses strings in some places oracle uses clobs
+            return clob
+        }
+        def buffer = new byte[1000];
+        def num = 0;
+        def inStream = clob.asciiStream;
+        def out = new ByteArrayOutputStream();
+        while ((num = inStream.read(buffer)) > 0) {
+            out.write(buffer, 0, num);
+        }
+        return new String(out.toByteArray());
+    }
+
 }
