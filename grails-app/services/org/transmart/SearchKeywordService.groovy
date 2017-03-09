@@ -440,33 +440,36 @@ public class SearchKeywordService {
     def updateGeneSignatureLink(GeneSignature gs, String domainKey, boolean bFlush) {
         // find keyword record
         SearchKeyword keyword = SearchKeyword.findByBioDataIdAndDataCategory(gs.id, domainKey)
-        println("INFO: retrieved " + keyword)
+        log.info("updateGeneSignatureLink: domainKey ${domainKey} concept ${gs.foldChgMetricConceptCode.bioConceptCode} retrieved ${keyword}")
 
         // delete search keywords
         if (gs.deletedFlag || (domainKey == GeneSignature.DOMAIN_KEY_GL && gs.foldChgMetricConceptCode.bioConceptCode != 'NOT_USED') || (domainKey == GeneSignature.DOMAIN_KEY && gs.foldChgMetricConceptCode.bioConceptCode == 'NOT_USED')) {
+            log.info("updateGeneSignatureLink delete keyword")
             if (keyword != null) keyword.delete(flush: bFlush)
         } else {
             // add if does not exist
             if (keyword == null) {
+                log.info("updateGeneSignatureLink create keyword")
                 keyword = createSearchKeywordFromGeneSig(gs, domainKey)
             } else {
                 // update keyword
+                log.info("updateGeneSignatureLink update keyword ${gs.name} ")
                 keyword.keyword = gs.name
                 keyword.ownerAuthUserId = gs.publicFlag ? null : gs.createdByAuthUser.id
                 keyword.terms.each {
-                    println("INFO: " + it)
+                    log.info("INFO: " + it)
                     it.keywordTerm = gs.name.toUpperCase()
                     it.ownerAuthUserId = gs.publicFlag ? null : gs.createdByAuthUser.id
-                    //println("INFO: setting owner to: "+it.ownerAuthUserId)
+                    //log.info("INFO: setting owner to: "+it.ownerAuthUserId)
                 }
             }
 
             keyword.validate()
             if (keyword.hasErrors()) {
-                println("WARN: SearchKeyword validation error!")
-                keyword.errors.each { println it }
+                log.info("WARN: SearchKeyword validation error!")
+                keyword.errors.each {log.info("keyword error: ${it}")}
             }
-            println("INFO: trying to save SearchKeyword")
+            log.info("INFO: trying to save SearchKeyword")
             keyword.save(flush: bFlush)
         }
     }
