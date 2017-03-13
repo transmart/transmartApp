@@ -88,7 +88,7 @@
         <g:if test="${flash.message}"><div class="message">${flash.message}</div><br></g:if>
 
         <p style="text-align: right;"><span class="button"><g:actionSubmit class="edit" action="createWizard" value="New Signature"/></span></p>
-        <h1>Gene Signature List &nbsp;&nbsp;<a HREF="JavaScript:D2H_ShowHelp('1259','${grailsApplication.config.com.recomdata.adminHelpURL}','wndExternal',CTXT_DISPLAY_FULLHELP )">
+        <h1>Gene Signature Lists &nbsp;&nbsp;<a HREF="JavaScript:D2H_ShowHelp('1259','${grailsApplication.config.com.recomdata.adminHelpURL}','wndExternal',CTXT_DISPLAY_FULLHELP )">
             <img src="${resource(dir:'images',file:'help/helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="vertical-align:middle;margin-left:5pt;"/>
         </a></h1>
 
@@ -147,12 +147,12 @@
         </table>
 
         <br>
-<!--
-        Currently this button links to action:createListWizard, which links to action:createList,
-            which links to view:wizard_list which is non-existent! removing the button until the view file is found
-        <p style="text-align: right;"><span class="button"><g:actionSubmit class="edit" action="createListWizard" value="New Gene/RSID List"/></span></p>
 
--->
+        <p style="text-align: right;"><span class="button"><g:actionSubmit class="edit" action="createListWizard" value="New Gene/RSID List"/></span></p>
+        <h1>Gene/RSID Signature Lists &nbsp;&nbsp;<a HREF="JavaScript:D2H_ShowHelp('1259','${grailsApplication.config.com.recomdata.adminHelpURL}','wndExternal',CTXT_DISPLAY_FULLHELP )">
+            <img src="${resource(dir:'images',file:'help/helpicon_white.jpg')}" alt="Help" border=0 width=18pt style="vertical-align:middle;margin-left:5pt;"/>
+        </a></h1>
+
         <!-- show my lists -->
         <table id="myLists"  class="detail" style="width: 100%">
             <g:tableHeaderToggle label="My Lists (${myListItems.size()})" divPrefix="my_lists" status="open" colSpan="${5}"/>
@@ -162,6 +162,7 @@
                     <th>Name</th>
                     <th>Author</th>
                     <th>Date Created</th>
+                    <th>Public</th>
                     <th># Genes</th>
                     <th>&nbsp;</th>
                 </tr>
@@ -180,6 +181,7 @@
                     <th>Name</th>
                     <th>Author</th>
                     <th>Date Created</th>
+                    <th>Public</th>
                     <th># Genes</th>
                     <th>&nbsp;</th>
                 </tr>

@@ -561,7 +561,7 @@ public class GeneSignatureService {
     }
 
     /**
-     * create new GeneSignature and all dependendant objects from wizard
+     * create new GeneSignature and all dependant objects from wizard
      */
     def saveWizard(GeneSignature gs, MultipartFile file) {
 
@@ -591,7 +591,9 @@ public class GeneSignatureService {
         def nsave = savedInst;
         if (savedInst.uniqueId == null || savedInst.uniqueId == "") {
             // need to refresh this object
-            savedInst.updateUniqueId();
+            if(gs.properties.uploadFile == 'Manual Item Entry') {savedInst.updateUniqueIdList()}
+            else{savedInst.updateUniqueId()}
+
             //nsave = savedInst.save(flush:true)
         }
 
@@ -599,8 +601,8 @@ public class GeneSignatureService {
         //if(nsave) updateGenSigItems(nsave)
 
         // link objects to search
-        searchKeywordService.updateGeneSignatureLink(nsave, GeneSignature.DOMAIN_KEY_GL, true)
         searchKeywordService.updateGeneSignatureLink(nsave, GeneSignature.DOMAIN_KEY, true)
+        searchKeywordService.updateGeneSignatureLink(nsave, GeneSignature.DOMAIN_KEY_GL, true)
 
         return nsave;
     }

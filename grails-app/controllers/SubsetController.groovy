@@ -1,6 +1,7 @@
 import com.recomdata.transmart.domain.searchapp.Subset
 import grails.converters.JSON
-import org.transmartproject.core.querytool.QueriesResource
+import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 class SubsetController {
 
@@ -99,9 +100,11 @@ class SubsetController {
 
         Subset subset = Subset.get(subsetId)
 
-        def queryID1 = queriesResourceService.getQueryDefinitionForResult(
-                queriesResourceService.getQueryResultFromId(subset.queryID1))
-        displayQuery1 = generateDisplayOutput(queryID1)
+        if (subset.queryID1 != -1) {
+            def queryID1 = queriesResourceService.getQueryDefinitionForResult(
+                    queriesResourceService.getQueryResultFromId(subset.queryID1))
+            displayQuery1 = generateDisplayOutput(queryID1)
+        }
 
         if (subset.queryID2 != -1) {
             def queryID2 = queriesResourceService.getQueryDefinitionForResult(
@@ -121,6 +124,25 @@ class SubsetController {
                 result += i.conceptKey
                 if (i.constraint) {
                     result += "( with constraints )"
+                }
+                if (i.constraintByOmicsValue) {
+                    result += " - " + i.constraintByOmicsValue.selector + " " +
+                            Projection.prettyNames.get(i.constraintByOmicsValue.projectionType,
+                                    i.constraintByOmicsValue.projectionType) + " " +
+                            i.constraintByOmicsValue.operator.value + " "
+                    if (i.constraintByOmicsValue.operator == ConstraintByOmicsValue.Operator.BETWEEN) {
+                        String[] bounds = i.constraintByOmicsValue.constraint.split(':')
+                        if (bounds.length != 2) {
+                            log.error "BETWEEN constraint type found with values not seperated by ':'"
+                            result += i.constraintByOmicsValue.constraint
+                        }
+                        else {
+                            result += bounds.join(" and ")
+                        }
+                    }
+                    else {
+                        result += i.constraintByOmicsValue.constraint
+                    }
                 }
                 result += "<br/>"
             }

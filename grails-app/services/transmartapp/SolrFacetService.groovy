@@ -9,6 +9,7 @@ import groovy.xml.StreamingMarkupBuilder
 import org.json.JSONObject
 import org.transmart.biomart.BioMarker
 import org.transmart.biomart.BioMarkerExpAnalysisMV
+import org.transmartproject.db.support.InQuery
 
 class SolrFacetService {
 
@@ -172,9 +173,7 @@ class SolrFacetService {
             for (uid in geneUids) {
                 bioMarkers.push(BioMarker.findByUniqueId(uid))
             }
-            def result = BioMarkerExpAnalysisMV.createCriteria().list {
-                'in'('marker', bioMarkers)
-            }
+            def result = InQuery.addIn(BioMarkerExpAnalysisMV.createCriteria(), 'marker', bioMarkers).list()
 
             searchLog += "Found " + result.size() + " analysis matches"
 
