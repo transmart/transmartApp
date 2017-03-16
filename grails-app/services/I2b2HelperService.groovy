@@ -1048,7 +1048,7 @@ class I2b2HelperService {
         log.trace("\tresult_instance_id = " + result_instance_id)
         Sql sql = new Sql(dataSource);
         String sqlt = """
-            select count(*) as subjectList from (
+            select count(*) as subjectCount from (
                 select distinct patient_num
                 FROM i2b2demodata.observation_fact
                 WHERE concept_cd IN (
@@ -1059,7 +1059,7 @@ class I2b2HelperService {
                         select distinct patient_num
                         from qt_patient_set_collection
                         where result_instance_id = ?)
-            )
+            ) subjectList
         """
         log.trace(sqlt);
         sql.eachRow(sqlt, [
