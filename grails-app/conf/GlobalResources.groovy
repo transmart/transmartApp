@@ -118,6 +118,18 @@ modules = {
         resource url: 'css/sanofi.css'
     }
 
+    uploadDataTab {
+        dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs', 'session_timeout'
+
+        resource url: 'js/utils/dynamicLoad.js', disposition: 'head'
+        resource url: 'js/help/D2H_ctxt.js', disposition: 'head'
+
+        resource url: 'js/browserDetect.js', disposition: 'head'
+
+        resource url: 'css/datasetExplorer.css'
+        resource url: 'css/sanofi.css'
+    }
+
     sampleTab {
         dependsOn 'jquery', 'jquery-ui', 'jquery-plugins', 'extjs', 'session_timeout'
 
@@ -137,9 +149,10 @@ modules = {
 
         resource url: 'js/maintabpanel.js', disposition: 'head'
         resource url: 'js/toggle.js', disposition: 'head'
+        resource url: 'js/help/D2H_ctxt.js', disposition: 'head'
 
         resource url: 'css/main.css'
-        resource url: 'css/sanofi.css'
         resource url: 'css/genesignature.css'
+        resource url: 'css/sanofi.css'
     }
 }

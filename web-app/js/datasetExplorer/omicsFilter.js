@@ -39,20 +39,29 @@ function highDimensionalConceptDropped(node, filter) {
 function omicsFilterInfoReceived(result, request) {
     omics_filter_info = JSON.parse(result.responseText);
     omics_filter_info.filter = (omics_filter_info.filter == "true");
-    Ext.Ajax.request({
-        url: pageInfo.basePath + "/highDimensionFilter/filterDialog",
-        method: 'GET',
-        timeout: '60000',
-        params: Ext.urlEncode({
-            gpl_id: omics_filter_info.platform.id,
-            filter: omics_filter_info.filter,
-            concept_key: omics_filter_info.concept_key
-        }),
-        success: omicsFilterWindowReceived,
-        failure: function (result, request) {
-            alert("Could not retrieve filter info for " + node.id + ": " + result.statusText);
+    if (omics_filter_info.filter_type != 'VCF') {
+        Ext.Ajax.request({
+            url: pageInfo.basePath + "/highDimensionFilter/filterDialog",
+            method: 'GET',
+            timeout: '60000',
+            params: Ext.urlEncode({
+                gpl_id: omics_filter_info.platform.id,
+                filter: omics_filter_info.filter,
+                concept_key: omics_filter_info.concept_key
+            }),
+            success: omicsFilterWindowReceived,
+            failure: function (result, request) {
+                alert("Could not retrieve filter info for " + node.id + ": " + result.statusText);
+            }
+        });
+    }
+    else {
+        if (omicsFilterRepopulateWindow != null) {
+            // We did a right click -> set filter on a vcf concept, let's inform the user it's not ready yet
+            Ext.Msg.alert('VCF','Filtering on VCF data is not supported yet, stay tuned!');
         }
-    });
+        applyOmicsNoFilterDialog();
+    }
 }
 
 function omicsFilterWindowReceived(result, request) {
@@ -88,24 +97,32 @@ function omicsFilterWindowReceived(result, request) {
 function repopulateFilterWindow() {
     if (omicsFilterRepopulateWindow == null) return;
 
-    jQuery("#highdimension-search-property").val(omicsFilterRepopulateWindow.omicsproperty.nodeValue);
-    jQuery("#highdimension-filter-selector").val(omicsFilterRepopulateWindow.omicsselector.nodeValue);
-    jQuery("#highdimension-filter-projection").val(omicsFilterRepopulateWindow.omicsprojection.nodeValue);
+    if (omicsFilterRepopulateWindow.omicsproperty != null) {
+        jQuery("#highdimension-search-property").val(omicsFilterRepopulateWindow.omicsproperty.nodeValue);
+    }
 
-    showConceptDistributionHistogramForOmicsFilterComplete(null);
-    showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
+    if (omicsFilterRepopulateWindow.omicsprojection != null) {
+        jQuery("#highdimension-filter-projection").val(omicsFilterRepopulateWindow.omicsprojection.nodeValue);
+    }
+
+    if (omicsFilterRepopulateWindow.omicsselector != null) {
+        jQuery("#highdimension-filter-selector").val(omicsFilterRepopulateWindow.omicsselector.nodeValue);
+        omicsAutoCompleteList = [omicsFilterRepopulateWindow.omicsselector.nodeValue];
+        showConceptDistributionHistogramForOmicsFilterComplete(null);
+        showConceptDistributionHistogramForOmicsFilter(getOmicsFilterParams());
+    }
 }
 
 function repopulateOmicsFilterRange() {
-    if (omicsFilterRepopulateWindow == null) return;
+    if (omicsFilterRepopulateWindow == null || omicsFilterRepopulateWindow.omicsvalue == null) return;
 
     if (omics_filter_info.filter_type == "SINGLE_NUMERIC" || omics_filter_info.filter_type == "ACGH") {
         var minbox = jQuery("#highdimension-amount-min");
         var maxbox = jQuery("#highdimension-amount-max");
         var values = omicsFilterRepopulateWindow.omicsvalue.nodeValue.split(":");
         minbox.val(values[0]);
-        minbox.blur();
         maxbox.val(values[1]);
+        minbox.blur();
         maxbox.blur();
     }
 }
@@ -129,7 +146,8 @@ function addOmicsFilterAutocomplete() {
                 url: omics_filter_info.auto_complete_source,
                 dataType: "json",
                 data: {
-                    term : request.term,
+
+                    term : request.term == '' ? '%' : request.term,
                     concept_key : omics_filter_info.concept_key,
                     search_property : jQuery("#highdimension-search-property").find("option:selected").val()
                 },
@@ -138,6 +156,7 @@ function addOmicsFilterAutocomplete() {
                 }
             });
         },
+        minLength: 0,
         delay: 500,
         select: function(event, ui) {
             jQuery("#highdimension-filter-selector").val(ui.item.label);
@@ -214,45 +233,57 @@ function addOmicsFilterMinMaxInputHandlers() {
     var minbox = jQuery("#highdimension-amount-min");
     var maxbox = jQuery("#highdimension-amount-max");
     minbox.blur(function(event) {
-        var value = minbox.val();
-        if (!jQuery.isNumeric(value)) {
-            minbox.val(omicsFilterValues[0]);
-        }
-        else if (value < omicsFilterValues[0]) {
-            minbox.val(omicsFilterValues[0]);
-        }
-        else if (value > maxbox.val()) {
-            minbox.val(maxbox.val());
-        }
         var slider = jQuery("#highdimension-range");
-        slider.slider('values',0,minbox.val());
-        jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
-            .filter(function(el, idx, array) {return el <= maxbox.val();})
+        var value = minbox.val();
+        var sliderMin = parseFloat(slider.slider('option','min'));
+        var sliderMax = parseFloat(slider.slider('option','max'));
+        if (!jQuery.isNumeric(value)) {
+            minbox.val(sliderMin);
+        }
+        if (!jQuery.isNumeric(maxbox.val())) {
+            maxbox.val(sliderMax);
+        }
+        value = parseFloat(minbox.val());
+        var maxboxVal = parseFloat(maxbox.val());
+        if (value < sliderMin) {
+            minbox.val(sliderMin);
+        }
+        else if (value > maxboxVal) {
+            minbox.val(maxboxVal);
+        }
+
+        slider.slider('values',0,value);
+        jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= value;})
+            .filter(function(el, idx, array) {return el <= maxboxVal;})
             .length);
-        var min = slider.slider('option', 'min');
-        var max = slider.slider('option', 'max');
-        omicsSliderLowHandleRatio = (minbox.val() - min) / (max - min);
+        omicsSliderLowHandleRatio = (value - sliderMin) / (sliderMax - sliderMin);
     });
 
     maxbox.blur(function(event) {
-        var value = maxbox.val();
-        if (!jQuery.isNumeric(value)) {
-            maxbox.val(omicsFilterValues[omicsFilterValues.length - 1]);
-        }
-        else if (value > omicsFilterValues[omicsFilterValues.length - 1]) {
-            maxbox.val(omicsFilterValues[omicsFilterValues.length - 1]);
-        }
-        else if (value < minbox.val()) {
-            maxbox.val(minbox.val());
-        }
         var slider = jQuery("#highdimension-range");
-        slider.slider('values',1,maxbox.val());
-        jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minbox.val();})
-            .filter(function(el, idx, array) {return el <= maxbox.val();})
+        var value = maxbox.val();
+        var sliderMin = parseFloat(slider.slider('option','min'));
+        var sliderMax = parseFloat(slider.slider('option','max'));
+        if (!jQuery.isNumeric(value)) {
+            maxbox.val(sliderMax);
+        }
+        if (!jQuery.isNumeric(minbox.val())) {
+            minbox.val(sliderMin);
+        }
+        value = parseFloat(maxbox.val());
+        var minboxVal = parseFloat(minbox.val())
+        if (value > sliderMax) {
+            maxbox.val(sliderMax);
+        }
+        else if (value < minboxVal) {
+            maxbox.val(minboxVal);
+        }
+
+        slider.slider('values',1,value);
+        jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= minboxVal;})
+            .filter(function(el, idx, array) {return el <= value;})
             .length);
-        var min = slider.slider('option', 'min');
-        var max = slider.slider('option', 'max');
-        omicsSliderHighHandleRatio = (maxbox.val() - min) / (max - min);
+        omicsSliderHighHandleRatio = (value - sliderMin) / (sliderMax - sliderMin);
     });
 
     // let the enter key blur the text fields, thus updating the slider and subject counts
@@ -287,6 +318,10 @@ function omicsSliderUpdated(ui) {
     var max = slider.slider('option', 'max');
     omicsSliderLowHandleRatio = (low - min) / (max - min);
     omicsSliderHighHandleRatio = (high - min) / (max - min);
+    // there seems to be an issue with the slider not being able to reach its slider_max value completely
+    if (omicsSliderHighHandleRatio > 0.995) {
+        omicsSliderHighHandleRatio = 1.0;
+    }
     jQuery("#highdimension-amount-min").val(low.toFixed(3));
     jQuery("#highdimension-amount-max").val(high.toFixed(3));
     jQuery("#highdimension-filter-subjectcount").html(omicsFilterValues.filter(function (el, idx, array) {return el >= parseFloat(low.toFixed(3));})
@@ -448,11 +483,15 @@ function omicsValuesObtained(values) {
     if (omicsFilterValues.length > 0) {
         omicsFilterValues.sort(function (a, b) {return a - b}); // sort numerically rather than string-based
         var slider = jQuery("#highdimension-range");
-        slider.slider('option',{'min': omicsFilterValues[0],
-                                'max': omicsFilterValues[omicsFilterValues.length - 1],
-                                'step': (omicsFilterValues[omicsFilterValues.length - 1] - omicsFilterValues[0]) / omicsSliderSteps});
-        slider.slider('values', 0, omicsFilterValues[0] + omicsSliderLowHandleRatio * (omicsFilterValues[omicsFilterValues.length - 1] - omicsFilterValues[0]));
-        slider.slider('values', 1, omicsFilterValues[0] + omicsSliderHighHandleRatio * (omicsFilterValues[omicsFilterValues.length - 1] - omicsFilterValues[0]));
+        // add one slider step of room to min and max so we are sure to include all patients
+        var room = 2 * (omicsFilterValues[omicsFilterValues.length -1] - omicsFilterValues[0]) / omicsSliderSteps;
+        var slider_min = omicsFilterValues[0] - room;
+        var slider_max = omicsFilterValues[omicsFilterValues.length -1] + room;
+        slider.slider('option',{'min': slider_min,
+                                'max': slider_max,
+                                'step': (slider_max - slider_min) / omicsSliderSteps});
+        slider.slider('values', 0, slider_min + omicsSliderLowHandleRatio * (slider_max - slider_min));
+        slider.slider('values', 1, slider_min + omicsSliderHighHandleRatio * (slider_max - slider_min));
         omicsSliderUpdated(null);
         repopulateOmicsFilterRange();
     }
@@ -473,6 +512,56 @@ function omicsValuesFailed(result) {
     jQuery( "#highdimension-amount-min" ).val(0);
     jQuery( "#highdimension-amount-max" ).val(0);
     document.getElementById("highdimension-filter-histogram").innerHTML = "An error occured while retrieving the histogram values: " + result.responseText;
+}
+
+function applyOmicsNoFilterDialog() {
+    // Just add the high dimensional concept as a criterion, no constraints on the data itself
+    if (omics_filter_info.filter) {
+        omicsFilterValues = [];
+        omicsSliderLowHandleRatio = 0;
+        omicsSliderHighHandleRatio = 1;
+        var mainpanel = document.getElementById("highdimension-filter-main");
+        if (mainpanel != null && mainpanel.children.length > 0) {
+            mainpanel.removeChild(document.getElementById("highdimension-filter-content"));
+        }
+        omicsfilterwin.hide();
+        var concept = jQuery('#' + selectedConcept.id);
+        jQuery('#' + selectedConcept.id + " .concept-text").html(selectedConcept.attributes["conceptname"].nodeValue);
+        concept.removeAttr("omicsproperty");
+        concept.removeAttr("omicsselector");
+        concept.removeAttr("omicsoperator");
+        concept.removeAttr("omicsvalue");
+        concept.removeAttr("omicsprojection");
+        concept.removeAttr("omicsvaluetype");
+        concept.attr("setvaluemode", "");
+        moveSelectedConceptFromHoldingToTarget();
+        omicsFilterRepopulateWindow = null;
+    }
+    else {
+        resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
+
+        Ext.Ajax.request({
+            url: pageInfo.basePath + "/chart/analysis",
+            method: 'POST',
+            timeout: '600000',
+            params: Ext.urlEncode({
+                charttype: "analysis",
+                concept_key: omics_filter_info.concept_key,
+                result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+                result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
+            }), // or a URL encoded string
+            success: function (result, request) {
+                buildAnalysisComplete(result);
+                resultsTabPanel.body.unmask();
+            },
+            failure: function (result, request) {
+                alert("A problem arose while trying to retrieve the results");
+                resultsTabPanel.body.unmask();
+            }
+        });
+        getAnalysisGridData(omics_filter_info.concept_key);
+        omicsfilterwin.hide();
+    }
 }
 
 function applySingleNumericOmicsFilter(validation) {

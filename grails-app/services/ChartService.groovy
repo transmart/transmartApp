@@ -10,35 +10,24 @@ import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator
 import org.jfree.chart.plot.CategoryPlot
 import org.jfree.chart.plot.PlotOrientation
 import org.jfree.chart.plot.XYPlot
-import org.jfree.chart.renderer.category.BarRenderer
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer
-import org.jfree.chart.renderer.category.CategoryItemRendererState
-import org.jfree.chart.renderer.category.ScatterRenderer
-import org.jfree.chart.renderer.category.StandardBarPainter
+import org.jfree.chart.renderer.category.*
 import org.jfree.chart.renderer.xy.StandardXYBarPainter
 import org.jfree.chart.renderer.xy.XYBarRenderer
 import org.jfree.data.category.CategoryDataset
 import org.jfree.data.category.DefaultCategoryDataset
 import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
-import org.jfree.data.statistics.BoxAndWhiskerCalculator
-import org.jfree.data.statistics.BoxAndWhiskerItem
-import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
-import org.jfree.data.statistics.DefaultMultiValueCategoryDataset
-import org.jfree.data.statistics.HistogramDataset
-import org.jfree.data.statistics.MultiValueCategoryDataset
+import org.jfree.data.statistics.*
 import org.jfree.graphics2d.svg.SVGGraphics2D
 import org.jfree.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
-import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
-import org.transmartproject.core.dataquery.highdim.dataconstraints.DataConstraint
 import org.transmartproject.core.dataquery.highdim.projections.Projection
+import org.transmartproject.core.exceptions.EmptySetException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
 import java.awt.*
 import java.awt.geom.Ellipse2D
 import java.awt.geom.Rectangle2D
-
 /**
  * Created by Florian Guitton <f.guitton@imperial.ac.uk> on 17/12/2014.
  */
@@ -190,7 +179,10 @@ class ChartService {
                 p.exists
             }.each { n, p ->
 
-                p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                if (p.instance != "")
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                else
+                    p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
                 // Getting the concept data
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForValueConceptFromCode(result.commons.conceptCode, p.instance).toList()
@@ -226,7 +218,7 @@ class ChartService {
 
                 }
             }
-        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && result.commons.omics_params) {
+        } else if (i2b2HelperService.isHighDimensionalConceptCode(result.commons.conceptCode) && i2b2HelperService.isValidOmicsParams(result.commons.omics_params)) {
 
             result.commons.type = 'value'
             result.commons.conceptName = result.commons.omics_params.omics_selector + " in " + result.commons.conceptName
@@ -242,13 +234,24 @@ class ChartService {
             }.each { n, p ->
 
                 // Getting the concept data
-                p.conceptData =
-                        resource.getDistribution(
-                        new ConstraintByOmicsValue(projectionType: result.commons.omics_params.omics_projection_type,
-                                               property      : result.commons.omics_params.omics_property,
-                                               selector      : result.commons.omics_params.omics_selector),
-                        concept,
-                        (p.instance == "" ? null : p.instance as Long)).collect {k, v -> v}
+                try {
+                    p.conceptData =
+                            resource.getDistribution(
+                                    new ConstraintByOmicsValue(projectionType: result.commons.omics_params.omics_projection_type,
+                                            property: result.commons.omics_params.omics_property,
+                                            selector: result.commons.omics_params.omics_selector),
+                                    concept,
+                                    (p.instance == "" ? null : p.instance as Long)).collect { k, v -> v }
+                }
+                catch (EmptySetException ese) {
+                    log.warn("No assays satisfy the provided criteria in result_instance_id " + p.instance)
+                    p.conceptData = []
+                }
+
+                if (p.instance != "")
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                else
+                    p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
                 p.conceptStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.conceptData)
                 conceptHistogramHandle["Subset $n"] = p.conceptData
@@ -262,7 +265,7 @@ class ChartService {
             result.commons.conceptPlot = getSVGChart(type: 'boxplot-and-points', data: conceptHistogramHandle, boxplotdata: conceptPlotHandle, size: chartSize)
 
             // Lets calculate the T test if possible
-            if (result[2].exists) {
+            if (result[1].exists && result[2].exists) {
 
                 if (result[1].conceptData.toArray() == result[2].conceptData.toArray())
                     result.commons.testmessage = 'No T-test calculated: these are the same subsets'
@@ -294,7 +297,10 @@ class ChartService {
                 p.exists
             }.each { n, p ->
 
-                p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                if (p.instance != "")
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                else
+                    p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
                 // Getting the concept data
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance)
@@ -302,7 +308,7 @@ class ChartService {
             }
 
             // Let's calculate the χ² test if possible
-            if (result[2].exists) {
+            if (result[1].exists && result[2].exists) {
 
                 def junction = false
 
@@ -439,7 +445,7 @@ class ChartService {
                         max = max != null ? (v.max() != null && max < v.max() ? v.max() : max) : v.max()
                     }
                 }.each { k, v ->
-                    if (k && v.size()) set.addSeries(k, (double [])v.toArray(), 10, min, max)
+                    if (k && v.size()) set.addSeries(k, (double [])v.toArray(), bins, min, max)
                 }
 
                 chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)

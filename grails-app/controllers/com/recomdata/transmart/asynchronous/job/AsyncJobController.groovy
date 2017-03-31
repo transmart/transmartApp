@@ -181,19 +181,19 @@ class AsyncJobController {
 
         // for concept paths we have to make sure they start with \\top node
         // note the string is escaped so we are adding a double backslash at the start
-        if (params.independentVariable != null) {
+        if (params.independentVariable != null && params.independentVariable != "") {
             concept_key = params.independentVariable.split("\\|")[0]
             concept_table = concept_key.split("\\\\")[1]
             studyIds += studyIdService.getStudyIdForConceptKey('\\\\' + concept_table + concept_key)
         }
 
-        if (params.dependentVariable != null) {
+        if (params.dependentVariable != null && params.dependentVariable != "") {
             concept_key = params.dependentVariable.split("\\|")[0]
             concept_table = concept_key.split("\\\\")[1]
             studyIds += studyIdService.getStudyIdForConceptKey('\\\\' + concept_table + concept_key)
         }
 
-        if (params.variablesConceptPaths != null) {
+        if (params.variablesConceptPaths != null && params.variablesConceptPaths != "") {
             concept_key = params.variablesConceptPaths.split("\\|")[0]
             concept_table = concept_key.split("\\\\")[1]
             studyIds += studyIdService.getStudyIdForConceptKey('\\\\' + concept_table + concept_key)

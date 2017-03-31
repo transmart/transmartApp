@@ -213,7 +213,11 @@ function refillQueryPanels(subsets) {
 
             if (_inversion)
                 _panelDOM.find("input[id^=panelExclude]").attr("checked", "checked")
-            _panelDOM.find(".panelRadio").buttonset("refresh")
+            var panelRadio = _panelDOM.find(".panelRadio");
+            if (panelRadio.data("buttonset") == null) {
+                panelRadio.buttonset();
+            }
+            panelRadio.buttonset("refresh")
 
             _panel.find("item").each(function () {
                 _panelDOM.find(".panelBoxList").append(getPanelItemFromConcept(getConceptFromQueryItem(this)))
@@ -267,6 +271,17 @@ function getConceptFromQueryItem(item) {
         _concept["conceptname"] = _item.find("modifier_name").text()
         _concept["applied_path"] = _item.find("applied_path").text()
         _concept["conceptid"] = _item.find("modifier_key").text()
+    })
+
+    _item.find("constrain_by_omics_value").each(function() {
+        _concept["setvaluemode"] = "omics_value";
+        _concept["oktousevalues"] = "H";
+        _concept["omicsproperty"] = _item.find("omics_property").text();
+        _concept["omicsselector"] = _item.find("omics_selector").text();
+        _concept["omicsoperator"] = _item.find("omics_value_operator").text();
+        _concept["omicsvalue"] = _item.find("omics_value_constraint").text();
+        _concept["omicsprojection"] = _item.find("omics_projection_type").text();
+        _concept["omicsvaluetype"] = _item.find("omics_value_type").text();
     })
 
     _item.find("constrain_by_value").each(function () {
@@ -325,24 +340,40 @@ function getConceptFromQueryItem(item) {
  */
 function getPanelItemFromConcept(concept) {
 
-    var _item = $j("<div />")
-    var _valueText = getSetValueText(
-        concept["setvaluemode"],
-        concept["setvalueoperator"],
-        concept["setvaluehighlowselect"],
-        concept["setvaluehighvalue"],
-        concept["setvaluelowvalue"],
-        concept["setvalueunits"]).trim()
+    var _item = jQuery("<div />")
+    var _valueText = "";
+    if (concept["setvaluemode"] == "omics_value") {
+        var valueparams = {};
+        valueparams["operator"] = concept["omicsoperator"];
+        valueparams["type"] = concept["omicsvaluetype"];
+        valueparams["value"] = concept["omicsvalue"];
+        valueparams["selector"] = concept["omicsselector"];
+        valueparams["projection_pretty_name"] = concept["omicsprojection"];
+        _valueText = getOmicsFilterValueText(valueparams);
+    }
+    else {
+        _valueText = getSetValueText(
+            concept["setvaluemode"],
+            concept["setvalueoperator"],
+            concept["setvaluehighlowselect"],
+            concept["setvaluehighvalue"],
+            concept["setvaluelowvalue"],
+            concept["setvalueunits"]).trim()
+    }
 
     // We try to infer the type when possible to match the icon
     $j.get(pageInfo.basePath + "/concepts/getResource", { concept_key: concept["conceptid"] }, function() {}, 'json')
         .success(function (data) {
-            $j("span:first", _item).addClass(getClassForNodeResource(data))
+            jQuery("span:first", _item).addClass(getClassForNodeResource(data));
+            jQuery.each(data.visualAttributes, function (index, value) {
+                if (value.toUpperCase() == "HIGH_DIMENSIONAL")
+                    _item.attr("oktousevalues", "H");
+            });
         })
 
     _item
-        .append($j("<span />").addClass("x-tree-node-icon"))
-        .append($j("<span />").addClass("concept-text").html(concept.conceptname + _valueText))
+        .append(jQuery("<span />").addClass("x-tree-node-icon"))
+        .append(jQuery("<span />").addClass("concept-text").html(concept.conceptname + " " + _valueText))
 
     $j.each(concept, function(key, value) {
         _item.attr(key, value)

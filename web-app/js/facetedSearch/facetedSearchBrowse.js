@@ -20,7 +20,7 @@ function generateBrowseWindow(nodeClicked)
 		  break;
 		case "Region of Interest":
 			URLtoUse = regionBrowseWindow;
-			filteringFunction = applyPopupFiltersRegions;
+			filteringFunction = gwasApplyPopupFiltersRegions;
 			dialogHeight = 340;
 			dialogWidth = 650;
 			break;
@@ -30,7 +30,7 @@ function generateBrowseWindow(nodeClicked)
 			break;
 		case "eQTL Transcript Gene":
 			URLtoUse = eqtlTranscriptGeneWindow;
-			filteringFunction =  applyPopupFiltersEqtlTranscriptGene;
+			filteringFunction =  gwasApplyPopupFiltersEqtlTranscriptGene;
 			break;
 		default:
 			alert("Failed to find applicable popup! Please contact an administrator.");

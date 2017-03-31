@@ -272,3 +272,4 @@ grails.plugin.springsecurity.oauthProvider.refreshTokenLookup.className = 'org.t
 grails.plugin.springsecurity.ldap.active = false
 org.transmart.security.ldap.mappedUsernameProperty = 'username'
 org.transmart.security.ldap.inheritPassword = true
+grails.plugin.springsecurity.kerberos.active = false
