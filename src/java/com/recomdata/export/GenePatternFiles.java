@@ -12,7 +12,7 @@ package com.recomdata.export;
 import java.io.*;
 import java.util.StringTokenizer;
 
-class GenePatternFiles {
+public class GenePatternFiles {
 
     protected File clsfile;
     protected File gctfile;

@@ -78,7 +78,7 @@ class BootStrap {
         }
 
         if (!tsAppRScriptsDir || !tsAppRScriptsDir.isDirectory()) {
-            throw new RuntimeException('Could not determine proper for ' +
+            throw new RuntimeException('Could not determine proper value for ' +
                     'com.recomdata.transmart.data.export.rScriptDirectory')
         }
         c.com.recomdata.transmart.data.export.rScriptDirectory = tsAppRScriptsDir.canonicalPath

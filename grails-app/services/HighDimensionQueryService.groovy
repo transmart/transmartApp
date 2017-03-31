@@ -40,15 +40,15 @@ class HighDimensionQueryService {
         sql.eachRow(sqlt, [resultInstanceId], { row ->
             def xml
             try {
-                xml = new XmlSlurper().parse(new StringReader(row.request_xml))
+                xml = new XmlSlurper().parse(new StringReader(clobToString(row.request_xml)))
             } catch (exception) {
                 throw new InvalidRequestException('Malformed XML document: ' +
                         exception.message, exception)
             }
             xml.panel.each { p ->
                 p.item.each { i ->
-                    if (i.constrain_by_omics_value.size()) {
-                        def constraint_params = [:]
+                    def constraint_params = [:]
+                    if (i.constrain_by_omics_value?.size()) {
                         constraint_params.concept_key = i.item_key.toString()
                         constraint_params.omics_selector = i.constrain_by_omics_value.omics_selector.toString()
                         constraint_params.omics_value_type = i.constrain_by_omics_value.omics_value_type.toString()
@@ -56,8 +56,12 @@ class HighDimensionQueryService {
                         constraint_params.omics_value_constraint = i.constrain_by_omics_value.omics_value_constraint.toString()
                         constraint_params.omics_projection_type = i.constrain_by_omics_value.omics_projection_type.toString()
                         constraint_params.omics_property = i.constrain_by_omics_value.omics_property.toString()
-                        concepts.add(constraint_params)
                     }
+                    else if (i.item_key) {
+                        // high dimensional concept but no value filter
+                        constraint_params.concept_key = i.item_key.toString()
+                    }
+                    concepts.add(constraint_params)
                 }
             }
         })
@@ -70,6 +74,10 @@ class HighDimensionQueryService {
      */
     def ExportTableNew addHighDimConceptDataToTable(ExportTableNew tablein, omics_constraint, String result_instance_id) {
         checkQueryResultAccess result_instance_id
+
+        if (!i2b2HelperService.isValidOmicsParams(omics_constraint)) {
+            return i2b2HelperService.addConceptDataToTable(tablein, omics_constraint.concept_key, result_instance_id)
+        }
 
         def concept_key = omics_constraint.concept_key
         def selector = omics_constraint.omics_selector
@@ -109,15 +117,30 @@ class HighDimensionQueryService {
                     tablein.putRow(subject, newrow);
                 }
             }
-
-            //pad all the empty values for this column
-            for (ExportRowNew row : tablein.getRows()) {
-                if (!row.containsColumn(columnid)) {
-                    row.put(columnid, "NULL");
-                }
-            }
         }
 
         return tablein;
     }
+
+    /**
+     * Converts a clob to a string for retuirned Oracle columns
+     */
+    def String clobToString(clob) {
+        if (clob == null) {
+            return ""
+        };
+        if (clob instanceof String) {
+            // postgres schema uses strings in some places oracle uses clobs
+            return clob
+        }
+        def buffer = new byte[1000];
+        def num = 0;
+        def inStream = clob.asciiStream;
+        def out = new ByteArrayOutputStream();
+        while ((num = inStream.read(buffer)) > 0) {
+            out.write(buffer, 0, num);
+        }
+        return new String(out.toByteArray());
+    }
+
 }

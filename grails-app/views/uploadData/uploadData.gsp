@@ -25,8 +25,9 @@
 	<![endif]-->
 		
 		<g:javascript library="prototype" />
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-1.8.3.min.js')}"></script>
-<script type="text/javascript" src="${resource(dir:'js/jQuery', file:'jquery-ui.min.js')}"></script>
+<g:javascript library="jquery" />
+<r:require module="uploadDataTab" />
+<r:layoutResources/>
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 <script type="text/javascript" charset="utf-8">
@@ -60,7 +61,6 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
     helpURL = '${grailsApplication.config.com.recomdata.adminHelpURL}';
 </script>
 <!-- ************************************** -->
-<r:layoutResources/>
 </head>
 <body>
 <div id="header-div">
@@ -80,7 +80,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                 </g:else>
             </div>
             <div style="position: relative; text-align:right;">
-                <a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
+                <a class="button" href="mailto:${grailsApplication.config.com.recomdata.adminEmail}">Email administrator</a>
                  <tmpl:/help/helpIcon id="1331"/>&nbsp;
                 <div class="uploadMessage">If you are unable to locate the relevant study, email the administrator by clicking the button above.</div>
             </div>
@@ -200,7 +200,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
 
             <div class="dataFormTitle" id="dataFormTitle2">Upload Data</div>
                 <div style="position: relative; text-align:right;">
-                    <a class="button" href="mailto:${grailsApplication.config.com.recomdata.dataUpload.adminEmail}">Email administrator</a>
+                    <a class="button" href="mailto:${grailsApplication.config.com.recomdata.adminEmail}">Email administrator</a>
                     <tmpl:/help/helpIcon id="1332"/>&nbsp;
                     <div class="uploadMessage">If you are unable to locate the relevant autocomplete fields, email the administrator by clicking the button above.</div>
                 </div>

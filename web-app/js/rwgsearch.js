@@ -15,74 +15,77 @@ var nodesBeforeSelect = new Array();
 // will still fire but is stopped immediately); and set this flag back to true at the end of the event so it can be triggered again.  
 var allowOnSelectEvent = true;
 var uploader;
+
+var $j = jQuery.noConflict();
+
 // Method to add the categories for the select box
 function addSelectCategories()	{
 	
 	if (sessionSearchCategory == "") { sessionSearchCategory = "ALL"; }
 	
-	jQuery("#search-categories").append(jQuery("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
+	$j("#search-categories").append($j("<option></option>").attr("value", "ALL").text("All").attr('id', 'allCategory'));
 	
-	jQuery("#search-categories").change(function() {
-		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
-		jQuery.ajax({
+	$j("#search-categories").change(function() {
+		$j('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + this.options[this.selectedIndex].value);
+		$j.ajax({
 			url:updateSearchCategoryURL,
-			data: {id: jQuery("#search-categories").val()}
+			data: {id: $j("#search-categories").val()}
 		});
 	});
 	
-	jQuery.getJSON(getCategoriesURL, function(json) {
+	$j.getJSON(getCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
 			var catText = convertCategory(category);
-			jQuery("#search-categories").append(jQuery("<option></option>").attr("value", category).text(catText));
+			$j("#search-categories").append($j("<option></option>").attr("value", category).text(catText));
 		}
 		
-		jQuery("#search-categories").html(jQuery("option", jQuery("#search-categories")).sort(function(a, b) { 
+		$j("#search-categories").html($j("option", $j("#search-categories")).sort(function(a, b) {
 	        return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
 	    }));
 		
-		jQuery("#allCategory").after(jQuery("<option></option>").attr("value", "text").text("Free Text"));
+		$j("#allCategory").after($j("<option></option>").attr("value", "text").text("Free Text"));
 		
-		jQuery("#search-categories").val(sessionSearchCategory);
-		jQuery('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + jQuery('#search-categories').val());
+		$j("#search-categories").val(sessionSearchCategory);
+		$j('#search-ac').autocomplete('option', 'source', sourceURL + "?category=" + $j('#search-categories').val());
 
     });
 	
 }
 
 function addFilterCategories() {
-	jQuery.getJSON(getFilterCategoriesURL, function(json) {
+	$j.getJSON(getFilterCategoriesURL, function(json) {
 		for (var i=0; i<json.length; i++)	{
 			var category = json[i].category;
 			var choices = json[i].choices;
-			var titleDiv = jQuery("<div></div>").addClass("filtertitle").attr("name", category.category).text(category.displayName);
-			var contentDiv = jQuery("<div></div>").addClass("filtercontent").attr("name", category.category).attr("style", "display: none");
+			var titleDiv = $j("<div></div>").addClass("filtertitle").attr("name", category.category).text(category.displayName);
+			var contentDiv = $j("<div></div>").addClass("filtercontent").attr("name", category.category).attr("style", "display: none");
 			for (var j=0; j < choices.length; j++) {
 				var choice = choices[j];
 				
-				var newItem = jQuery("<div></div>").addClass("filteritem").attr("name", category.category).attr("id", choice.uid).text(choice.name);
+				var newItem = $j("<div></div>").addClass("filteritem").attr("name", category.category).attr("id", choice.uid).text(choice.name);
 				
 				//If this has been selected, highlight it
 				var idString = '[id="' + category.displayName + "|" + category.category + ";" + choice.name + ";" + choice.uid + '"]';
 				idString = idString.replace(/,/g, "%44").replace(/&/g, "%26"); //Replace commas and ampersands
-				var element = jQuery(idString);
+				var element = $j(idString);
 				if (element.size() > 0) {
 					newItem.addClass("selected");
 				}
 
 				contentDiv.append(newItem);
 			}
-			jQuery("#filter-browser").append(titleDiv);
-			jQuery("#filter-browser").append(contentDiv);
+			$j("#filter-browser").append(titleDiv);
+			$j("#filter-browser").append(contentDiv);
 		}
 		
-		jQuery("#filter-browser").removeClass("ajaxloading");
+		$j("#filter-browser").removeClass("ajaxloading");
     });
 }
 
 //Method to add the autocomplete for the search keywords
 function addSearchAutoComplete()	{
-	jQuery("#search-ac").autocomplete({
+	$j("#search-ac").autocomplete({
 		position:{my:"left top",at:"left bottom",collision:"none"},
 		source: sourceURL,
 		minLength:1,
@@ -91,9 +94,9 @@ function addSearchAutoComplete()	{
 			searchParam={id:ui.item.id,display:ui.item.category,keyword:ui.item.label,category:ui.item.categoryId};
 			addSearchTerm(searchParam);
 		    }
-			
+
 			//If category is ALL, add this as free text as well
-			var category = jQuery("#search-categories").val();
+			var category = $j("#search-categories").val();
 		    return false;
 		}
 	}).data("ui-autocomplete")._renderItem = function( ul, item ) {
@@ -105,28 +108,28 @@ function addSearchAutoComplete()	{
 			resulta += '</a>';
 		}
 		
-		return jQuery('<li></li>')		
+		return $j('<li></li>')
 		  .data("item.autocomplete", item )
 		  .append(resulta)
 		  .appendTo(ul);
 	};	
 		
 	// Capture the enter key on the slider and fire off the search event on the autocomplete
-	jQuery("#search-categories").keypress(function(event)	{
+	$j("#search-categories").keypress(function(event)	{
 		if (event.which == 13)	{
-			jQuery("#search-ac").autocomplete('search');
+			$j("#search-ac").autocomplete('search');
 		}
 	});
 	
-	jQuery('#search-ac').keypress(function(event) {
-		var category = jQuery("#search-categories").val();
-		var categoryText = jQuery('#search-categories option:selected').text();
+	$j('#search-ac').keypress(function(event) {
+		var category = $j("#search-categories").val();
+		var categoryText = $j('#search-categories option:selected').text();
 		if (event.which == 13 && (category == 'DATANODE' || category == 'text' || category == 'ALL')) {
-			var val = jQuery('#search-ac').val();
+			var val = $j('#search-ac').val();
 			if (category == 'ALL') {category = 'text'; categoryText = 'Free Text';}
 			searchParam={id:val,display:categoryText,keyword:val,category:category};
 			addSearchTerm(searchParam);
-			jQuery('#search-ac').empty();
+			$j('#search-ac').empty();
 			return false;
 		}
 	});
@@ -165,13 +168,13 @@ function addSearchTerm(searchTerm, noUpdate, openInAnalyze,datasetExplorerPath)	
 	} 
 	
 	// clear the search text box
-	jQuery("#search-ac").val("");
+	$j("#search-ac").val("");
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	
 	if (!noUpdate) {
 		if(!openInAnalyze){
-			jQuery.ajax({
+			$j.ajax({
 				url:resetNodesRwgURL
 			});
 			showSearchTemplate();
@@ -191,7 +194,7 @@ function showSearchTemplate()	{
 	var geneTerms = 0;
 	
 	var globalLogicOperator = "AND";
-	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR"; }
+	if ($j('#globaloperator').hasClass("or")) { globalLogicOperator = "OR"; }
 
 	// iterate through categories array and move all the "gene" categories together at the top 
 	var newCategories = new Array();
@@ -304,9 +307,9 @@ function showSearchResults(openInAnalyze, datasetExplorerPath)	{
 	analysisProbeIds = new Array();  
 	
 	// clear stored analysis results
-	jQuery('body').removeData();
+	$j('body').removeData();
 	
-	jQuery('#results-div').empty();
+	$j('#results-div').empty();
 	
 	// call method which retrieves facet counts and search results
 	showFacetResults(openInAnalyze, datasetExplorerPath);
@@ -322,7 +325,7 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 		openInAnalyze = false;
 	}
 	var globalLogicOperator = "AND";
-	if (jQuery('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
+	if ($j('#globaloperator').hasClass("or")) { globalLogicOperator = "OR" }
 	
 	var savedSearchTermsArray;
 	var savedSearchTerms;
@@ -383,7 +386,7 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
     	facetSearch.push(queryType + "=" + categories[i] + ":" + encodeURIComponent(terms[i]) + "::" + operators[i]);
     }
     
-	jQuery("#results-div").addClass('ajaxloading').empty();
+	$j("#results-div").addClass('ajaxloading').empty();
     
     var queryString = facetSearch.join("&");
     
@@ -400,11 +403,11 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
     
     if(!openInAnalyze){
 	    if (searchPage == 'RWG') {
-			jQuery.ajax({
+			$j.ajax({
 				url:facetResultsURL,
 				data: queryString + "&page=RWG",
 				success: function(response) {
-						jQuery('#results-div').removeClass('ajaxloading').html(response);
+						$j('#results-div').removeClass('ajaxloading').html(response);
 						checkSearchLog();
 						updateAnalysisData(null, false);
 						 displayResultsNumber();
@@ -418,12 +421,12 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 	    	//If there are no search terms, pass responsibility on to getCategories - if not, do our custom search
 	    	if (savedSearchTermsArray.length == 0) {
 	    		//Need to silently clear the search map here as well
-				jQuery.ajax({url:clearSearchFilterURL});
+				$j.ajax({url:clearSearchFilterURL});
 				GLOBAL.PathToExpand = '';
 	    		getCategories();
 	    	}
 	    	else {
-	    		jQuery.ajax({
+	    		$j.ajax({
 	    			url:facetResultsURL,
 	    			data: queryString + "&page=datasetExplorer",
 	    			success: function(response) {
@@ -437,7 +440,7 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 	    	}
 	    }
 	}else{
-		jQuery.ajax({
+		$j.ajax({
 			url:saveSearchURL,
 			data: queryString + "&page=RWG",
 			success: function(response) {
@@ -477,7 +480,7 @@ function getSearchKeywordList()   {
 
 //Remove the search term that the user has clicked.
 function removeSearchTerm(ctrl)	{
-	jQuery.ajax({
+	$j.ajax({
 		url:resetNodesRwgURL
 	});
 	var currentSearchTermID = ctrl.id.replace(/\%20/g, " ").replace(/\%44/g, ",").replace(/\%26/g, "&");
@@ -493,7 +496,7 @@ function removeSearchTerm(ctrl)	{
 	}
 	
 	// Call back to the server to clear the search filter (session scope)
-	jQuery.ajax({
+	$j.ajax({
 		type:"POST",
 		url:newSearchURL
 	});
@@ -503,26 +506,27 @@ function removeSearchTerm(ctrl)	{
 
 	// only refresh results if the tree was not updated (the onSelect also fires these event, so don't want to do 2x)
 	if (!treeUpdated) {
-      showSearchTemplate();
-	  showSearchResults();
+	    showSearchTemplate();
+	    showSearchResults();
 	}
 	
-	//Remove selected status from filter browser for this item
-	unselectFilterItem(fields[2]);
-	
+        //Remove selected status from filter browser for this item
+        if(idx > -1) {
+	    unselectFilterItem(fields[2]);
+        }
 }
 
 //Clear the tree, results along with emptying the two arrays that store categories and search terms.
 function clearSearch()	{
 	goWelcome();
-	jQuery.ajax({
+	$j.ajax({
 		url:resetNodesRwgURL
 	});
 	
 	openAnalyses = []; //all analyses will be closed, so clear this array
 	
 	
-	jQuery("#search-ac").val("");
+	$j("#search-ac").val("");
 	
 	currentSearchTerms = new Array();
 	currentCategories = new Array();
@@ -530,7 +534,7 @@ function clearSearch()	{
 	
 	// Change the category picker back to ALL and set autocomplete to not have a category (ALL by default)
 	document.getElementById("search-categories").selectedIndex = 0;
-	jQuery('#search-ac').autocomplete('option', 'source', sourceURL);
+	$j('#search-ac').autocomplete('option', 'source', sourceURL);
 
 	showSearchTemplate();
 	showSearchResults(); //reload the full search results
@@ -579,17 +583,17 @@ function clearCategoryIfNoTerms(category)  {
 
 function unselectFilterItem(id) {
 	//Longhand as may contain : characters
-	jQuery("[id='" + id + "']").removeClass('selected');
+	$j("[id='" + id + "']").removeClass('selected');
 }
 
 // ---
 
 function toggleSidebar() {
-    element = jQuery('#sidebar')[0] || jQuery('#westPanel')[0];
+    element = $j('#sidebar')[0] || $j('#westPanel')[0];
     element = '#' + element.id;
 
-    var leftPointingArrow = (jQuery('#sidebartoggle').css('background-image').indexOf("-right") < 0);
-    var sidebarIsVisible = (jQuery(element + ':visible').size() > 0);
+    var leftPointingArrow = ($j('#sidebartoggle').css('background-image').indexOf("-right") < 0);
+    var sidebarIsVisible = ($j(element + ':visible').size() > 0);
     //console.log("toggleSidebar: leftPointingArrow = " + leftPointingArrow + ", sidebarIsVisible = " + sidebarIsVisible);
 
     // This fixes problems with ExtJS in case of rapid consecutive clicks, double-click. JIRA TRANSREL-18.
@@ -615,38 +619,38 @@ function toggleSidebar() {
         }
     };
     if (sidebarIsVisible) {
-        jQuery(element).fadeOut(500, func);
-        var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-left', '-right');
-        jQuery('#sidebartoggle').css('background-image', bgimg);
+        $j(element).fadeOut(500, func);
+        var bgimg = $j('#sidebartoggle').css('background-image').replace('-left', '-right');
+        $j('#sidebartoggle').css('background-image', bgimg);
     }
     else {
-        jQuery(element).fadeIn();
+        $j(element).fadeIn();
         if (func) func(); //Not a callback here - resize as soon as it starts appearing.
-        var bgimg = jQuery('#sidebartoggle').css('background-image').replace('-right', '-left');
-        jQuery('#sidebartoggle').css('background-image', bgimg);
+        var bgimg = $j('#sidebartoggle').css('background-image').replace('-right', '-left');
+        $j('#sidebartoggle').css('background-image', bgimg);
     }
 }
 
-jQuery(document).ready(function() {
-	jQuery('#sidebartoggle').click(function() {
+$j(document).ready(function() {
+	$j('#sidebartoggle').click(function() {
 		toggleSidebar();
     });
 	
 	
 	
-	jQuery('#filter-browser').on('click', '.filtertitle', function () {
-		jQuery('.filtercontent[name="' + jQuery(this).attr('name') + '"]').toggle('fast');
+	$j('#filter-browser').on('click', '.filtertitle', function () {
+		$j('.filtercontent[name="' + $j(this).attr('name') + '"]').toggle('fast');
 	});
 	
 	
-	jQuery('#filter-browser').on('click', '.filteritem', function () {
-		var selecting = !jQuery(this).hasClass('selected');
-		jQuery(this).toggleClass('selected');
+	$j('#filter-browser').on('click', '.filteritem', function () {
+		var selecting = !$j(this).hasClass('selected');
+		$j(this).toggleClass('selected');
 		
-		var name = jQuery(this).attr('name');
-		var id = jQuery(this).attr('id');
-		var category = jQuery('.filtertitle[name="' + name + '"]').text();
-		var value = jQuery(this).text();
+		var name = $j(this).attr('name');
+		var id = $j(this).attr('id');
+		var category = $j('.filtertitle[name="' + name + '"]').text();
+		var value = $j(this).text();
 		
 		//If selecting this filter, add it to the list of current filters
 		if (selecting) {
@@ -660,70 +664,70 @@ jQuery(document).ready(function() {
 		else {
 			var idString = '[id="' + category + "|" + name + ";" + value + ";" + id + '"]';
 			idString = idString.replace(/,/g, "%44").replace(/&/g, "%26"); //Replace special characters!
-			var element = jQuery(idString);
+			var element = $j(idString);
 			removeSearchTerm(element[0]);
 		}
 	});
 	
-    jQuery('body').on('mouseenter', '.folderheader', function() {
-		jQuery(this).find('.foldericonwrapper').fadeIn(150);
+    $j('body').on('mouseenter', '.folderheader', function() {
+		$j(this).find('.foldericonwrapper').fadeIn(150);
 	});
 
-    jQuery('body').on('mouseleave', '.folderheader', function() {
-		jQuery(this).find('.foldericonwrapper').fadeOut(150);
+    $j('body').on('mouseleave', '.folderheader', function() {
+		$j(this).find('.foldericonwrapper').fadeOut(150);
 	});
 
-    jQuery('body').on('click', '.foldericon.addcart', function() {
-		var id = jQuery(this).attr('name');
-		jQuery(this).removeClass("foldericon").removeClass("addcart").removeClass("link").text("Added to cart");
-		jQuery('#cartcount').hide();
+    $j('body').on('click', '.foldericon.addcart', function() {
+		var id = $j(this).attr('name');
+		$j(this).removeClass("foldericon").removeClass("addcart").removeClass("link").text("Added to cart");
+		$j('#cartcount').hide();
 		
-		jQuery.ajax({
+		$j.ajax({
 			url:exportAddURL,
 			data: {id: id},			
 			success: function(response) {
-				jQuery('#cartcount').show().text(response);
+				$j('#cartcount').show().text(response);
 			},
 			error: function(xhr) {
-				jQuery('#cartcount').show();
+				$j('#cartcount').show();
 			}
 		});
 	});
 
-    jQuery('body').on('click', '.foldericon.addall', function() {
-		var nameelements = jQuery(this).closest('table').find('.foldericon.addcart');
+    $j('body').on('click', '.foldericon.addall', function() {
+		var nameelements = $j(this).closest('table').find('.foldericon.addcart');
 		var ids = [];
 		for (i = 0; i < nameelements.size(); i++) {
-			ids.push(jQuery(nameelements[i]).attr('name'));
-			jQuery(nameelements[i]).removeClass("foldericon").removeClass("addcart").removeClass("link").text("Added to cart");
+			ids.push($j(nameelements[i]).attr('name'));
+			$j(nameelements[i]).removeClass("foldericon").removeClass("addcart").removeClass("link").text("Added to cart");
 		}
 		
-		jQuery('#cartcount').hide();
+		$j('#cartcount').hide();
 		
-		jQuery.ajax({
+		$j.ajax({
 			url:exportAddURL,
 			data: {id: ids.join(",")},			
 			success: function(response) {
-				jQuery('#cartcount').show().text(response);
+				$j('#cartcount').show().text(response);
 			},
 			error: function(xhr) {
-				jQuery('#cartcount').show();
+				$j('#cartcount').show();
 			}
 		});
 	});
     
-    jQuery('body').on('click', '.foldericon.deletefile', function() {
-		var id = jQuery(this).attr('name');
+    $j('body').on('click', '.foldericon.deletefile', function() {
+		var id = $j(this).attr('name');
 		
 		if (confirm("Are you sure you want to delete this file?")) {
-			jQuery.ajax({
+			$j.ajax({
 				url:deleteFileURL,
 				data: {id: id},
 				success: function(response) {
-					jQuery('#files-table').html(response);
+					$j('#files-table').html(response);
 					//Get document count and reduce by 1
-					var folderId = jQuery('#file-list-table').attr('name');
-					var documentCount = jQuery('#folder-header-' + folderId + ' .document-count');
+					var folderId = $j('#file-list-table').attr('name');
+					var documentCount = $j('#folder-header-' + folderId + ' .document-count');
 					if (documentCount.size() > 0) {
 						var currentValue = documentCount.text();
 						documentCount.text(currentValue - 1);
@@ -736,51 +740,51 @@ jQuery(document).ready(function() {
 		}
 	});
 
-    jQuery('body').on('click', '.foldericon.view', function() {
-	    var id = jQuery(this).closest(".folderheader").attr('name');
+    $j('body').on('click', '.foldericon.view', function() {
+	    var id = $j(this).closest(".folderheader").attr('name');
     	showDetailDialog(id);
 	});
 	
-	jQuery('#metadata-viewer').on('click', '.editmetadata', function() {
+	$j('#metadata-viewer').on('click', '.editmetadata', function() {
 
-    	var id = jQuery(this).attr('name');
+    	var id = $j(this).attr('name');
 
-		jQuery('#editMetadataOverlay').fadeIn();
-		jQuery('#editMetadata').empty().addClass('ajaxloading');
+		$j('#editMetadataOverlay').fadeIn();
+		$j('#editMetadata').empty().addClass('ajaxloading');
 
-		jQuery.ajax({
+		$j.ajax({
 			url:editMetaDataURL,
 			data: {folderId: id},			
 			success: function(response) {
-				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
+				$j('#editMetadata').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
 				alert(xhr.responseText);
-				jQuery('#editMetadata').html(response).removeClass('ajaxloading');
+				$j('#editMetadata').html(response).removeClass('ajaxloading');
 			}
 		});
 	});
 	
-    jQuery('#box-search').on('click', '.andor', function() {
+    $j('#box-search').on('click', '.andor', function() {
     	
-    	if (jQuery(this).attr('id') == 'globaloperator') {
+    	if ($j(this).attr('id') == 'globaloperator') {
     		//For global switch, just alter the class - this is picked up later
-    	    if (jQuery(this).hasClass("or")) {
-    	    	jQuery(this).removeClass("or").addClass("and");
+    	    if ($j(this).hasClass("or")) {
+    	    	$j(this).removeClass("or").addClass("and");
     	    }
     	    else {
-    	    	jQuery(this).removeClass("and").addClass("or");
+    	    	$j(this).removeClass("and").addClass("or");
     	    }
     	    showSearchTemplate();
     	    showSearchResults();
     	}
     	else {
     		//For individual categories, alter this index of the current search operators, then redisplay
-		    if (jQuery(this).hasClass("or")) {
-		    	currentSearchOperators[jQuery(this).attr('name')] = 'and';
+		    if ($j(this).hasClass("or")) {
+		    	currentSearchOperators[$j(this).attr('name')] = 'and';
 		    }
 		    else {
-		    	currentSearchOperators[jQuery(this).attr('name')] = 'or';
+		    	currentSearchOperators[$j(this).attr('name')] = 'or';
 		    }
 		    showSearchTemplate();
 		    showSearchResults();
@@ -788,83 +792,83 @@ jQuery(document).ready(function() {
 	});
 
 
-	jQuery('#metadata-viewer').on('click', '.addassay', function() {
+	$j('#metadata-viewer').on('click', '.addassay', function() {
 
-    	var id = jQuery(this).attr('name');
+    	var id = $j(this).attr('name');
 
-		jQuery('#createAssayOverlay').fadeIn();
-		jQuery('#createAssay').empty().addClass('ajaxloading');
-		jQuery('#editMetadata').empty();
+		$j('#createAssayOverlay').fadeIn();
+		$j('#createAssay').empty().addClass('ajaxloading');
+		$j('#editMetadata').empty();
 
-		jQuery.ajax({
+		$j.ajax({
 			url:createAssayURL,
 			data: {folderId: id},			
 			success: function(response) {
-				jQuery('#createAssay').html(response).removeClass('ajaxloading');
+				$j('#createAssay').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
 				alert(xhr);
-				jQuery('#createAssay').html(response).removeClass('ajaxloading');
+				$j('#createAssay').html(response).removeClass('ajaxloading');
 			}
 		});
 	});
 
-	jQuery('#metadata-viewer').on('click', '.addanalysis', function() {
+	$j('#metadata-viewer').on('click', '.addanalysis', function() {
 
-    	var id = jQuery(this).attr('name');
+    	var id = $j(this).attr('name');
 
-		jQuery('#createAnalysisOverlay').fadeIn();
-		jQuery('#createAnalysis').empty().addClass('ajaxloading');
-		jQuery('#editMetadata').empty();
+		$j('#createAnalysisOverlay').fadeIn();
+		$j('#createAnalysis').empty().addClass('ajaxloading');
+		$j('#editMetadata').empty();
 
-		jQuery.ajax({
+		$j.ajax({
 			url:createAnalysisURL,
 			data: {folderId: id},			
 			success: function(response) {
-				jQuery('#createAnalysis').html(response).removeClass('ajaxloading');
+				$j('#createAnalysis').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
 				alert(xhr);
-				jQuery('#createAnalysis').html(response).removeClass('ajaxloading');
+				$j('#createAnalysis').html(response).removeClass('ajaxloading');
 			}
 		});
 	});
 
-	jQuery('#metadata-viewer').on('click', '.addfolder', function() {
+	$j('#metadata-viewer').on('click', '.addfolder', function() {
 
-    	var id = jQuery(this).attr('name');
+    	var id = $j(this).attr('name');
 
-		jQuery('#createFolderOverlay').fadeIn();
-		jQuery('#createFolder').empty().addClass('ajaxloading');
-		jQuery('#editMetadata').empty();
+		$j('#createFolderOverlay').fadeIn();
+		$j('#createFolder').empty().addClass('ajaxloading');
+		$j('#editMetadata').empty();
 
-		jQuery.ajax({
+		$j.ajax({
 			url:createFolderURL + "?",
 			data: {folderId: id},			
 			success: function(response) {
-				jQuery('#createFolder').html(response).removeClass('ajaxloading');
+				$j('#createFolder').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
 				alert(xhr);
-				jQuery('#createFolder').html(response).removeClass('ajaxloading');
+				$j('#createFolder').html(response).removeClass('ajaxloading');
 			}
 		});
 	});
 	
-	jQuery('#metadata-viewer').on('click', '.deletefolder', function() {
+	$j('#metadata-viewer').on('click', '.deletefolder', function() {
 
-    	var id = jQuery(this).attr('name');
-    	var parent = jQuery(this).data('parent');
+    	var id = $j(this).attr('name');
+    	var parent = $j(this).data('parent');
     	
-    	if (confirm("Are you sure you want to delete this folder and the files and folders beneath it?")) {
-			jQuery.ajax({
+    	if (confirm("Are you sure you want to delete this folder and the files and folders below it?")) {
+			$j.ajax({
 				url:deleteFolderURL,
 				data: {id: id},
 				success: function(response) {
 					updateFolder(parent);
 					showDetailDialog(parent);
-					jQuery('.result-folder-name').removeClass('selected');
-					jQuery('#result-folder-name-' + parent).addClass('selected');
+					$j('.result-folder-name').removeClass('selected');
+					$j('#result-folder-name-' + parent).addClass('selected');
 				},
 				error: function(xhr) {
 					alert(xhr.message);
@@ -872,17 +876,17 @@ jQuery(document).ready(function() {
 			});
     	}
 	});
-	jQuery('#metadata-viewer').on('click', '.uploadfiles', function() {
-	    var id = jQuery(this).attr('name'); 
-	    jQuery('#uploadtitle').html("<p>Upload files into folder "+jQuery('#parentFolderName').val()+"</p>");
-	    jQuery('#parentFolderId').val(id);
-	    jQuery('#uploadFilesOverlay').fadeIn();
-	    if (jQuery('#existingfiles').val()!="yes"){
-	      jQuery.ajax({
+	$j('#metadata-viewer').on('click', '.uploadfiles', function() {
+	    var id = $j(this).attr('name');
+	    $j('#uploadtitle').html("<p>Upload files into folder "+$j('#parentFolderName').val()+"</p>");
+	    $j('#parentFolderId').val(id);
+	    $j('#uploadFilesOverlay').fadeIn();
+	    if ($j('#existingfiles').val()!="yes"){
+	      $j.ajax({
 	        url:uploadFilesURL + "?",
             data: {folderId: id},
 	        success: function(response) {
-	          jQuery('#uploadFiles').html(response).removeClass('ajaxloading');
+	          $j('#uploadFiles').html(response).removeClass('ajaxloading');
 	          createUploader();
 	        },
 	        error: function(xhr) {
@@ -894,185 +898,241 @@ jQuery(document).ready(function() {
 	    }
 	});
 	  
-	jQuery('body').on('click', '#closeupload', function() {
+	$j('body').on('click', '#closeupload', function() {
 	      jQuery('#uploadFilesOverlay').fadeOut();  
-	}); 
-	jQuery('#metadata-viewer').on('click', '.addstudy', function() {
+	});
 
-    	var id = jQuery(this).attr('name');
+	$j('#metadata-viewer').on('click', '.deletestudy', function () {
 
-		jQuery('#createStudyOverlay').fadeIn();
-		jQuery('#createStudy').empty().addClass('ajaxloading');
-		jQuery('#editMetadata').empty();
+		var id = $j(this).attr('name');
+		var parent = $j('#parentId').val();
+		if (confirm("Are you sure you want to delete this study?")) {
+			findChildByParent(id, function (hasChildren) {
+				if (hasChildren) {
+					if (!confirm("This study contains some elements below it. Are you sure?")) {
+						return;
+					}
+				}
+				$j.ajax({
+					url: deleteStudyURL,
+					data: {id: id},
+					success: function (response) {
+						updateFolder(parent);
+						showDetailDialog(parent);
+						$j('.result-folder-name').removeClass('selected');
+						$j('#result-folder-name-' + parent).addClass('selected');
+					},
+					error: function (xhr) {
+						alert(xhr.message);
+					}
+				});
+			})
 
-		jQuery.ajax({
+		}
+	});
+
+	$j('#metadata-viewer').on('click', '.deleteprogram', function () {
+
+		var id = $j(this).attr('name');
+		if (confirm("Are you sure you want to delete this program?")) {
+			findChildByParent(id, function (hasChildren) {
+				if (hasChildren) {
+					if (!confirm("This program contains some elements below it. Are you sure?")) {
+						return;
+					}
+				}
+				$j.ajax({
+					url: deleteProgramURL,
+					data: {id: id},
+					success: function (response) {
+						showSearchResults();
+						goWelcome();
+					},
+					error: function (xhr) {
+						alert(xhr.message);
+					}
+				});
+			})
+
+		}
+	});
+
+	$j('#metadata-viewer').on('click', '.addstudy', function() {
+
+    	var id = $j(this).attr('name');
+
+		$j('#createStudyOverlay').fadeIn();
+		$j('#createStudy').empty().addClass('ajaxloading');
+		$j('#editMetadata').empty();
+
+		$j.ajax({
 			url:createStudyURL,
 			data: {folderId: id},			
 			success: function(response) {
-				jQuery('#createStudy').html(response).removeClass('ajaxloading');
+				$j('#createStudy').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
 				alert(xhr);
-				jQuery('#createStudy').html(response).removeClass('ajaxloading');
+				$j('#createStudy').html(response).removeClass('ajaxloading');
 			}
 		});
 	});
 
-	jQuery('#welcome-viewer').on('click', '.addprogram', function() {
+	$j('#welcome-viewer').on('click', '.addprogram', function() {
 		
-	   	var id = jQuery(this).attr('name');
+	   	var id = $j(this).attr('name');
 
-		jQuery('#createProgramOverlay').fadeIn();
-		jQuery('#createProgram').empty().addClass('ajaxloading');
-		jQuery('#editMetadata').empty();
+		$j('#createProgramOverlay').fadeIn();
+		$j('#createProgram').empty().addClass('ajaxloading');
+		$j('#editMetadata').empty();
 
-		jQuery.ajax({
+		$j.ajax({
 			url:createProgramURL,
 			data: {folderId: id},			
 			success: function(response) {
-				jQuery('#createProgram').html(response).removeClass('ajaxloading');
+				$j('#createProgram').html(response).removeClass('ajaxloading');
 			},
 			error: function(xhr) {
 				alert(xhr);
-				jQuery('#createProgram').html(response).removeClass('ajaxloading');
+				$j('#createProgram').html(response).removeClass('ajaxloading');
 			}
 		});
 	});
 
-    jQuery('#exportOverlay').on('click', '.greybutton.remove', function() {
+    $j('#exportOverlay').on('click', '.greybutton.remove', function() {
 
-    	var row = jQuery(this).closest("tr");
+    	var row = $j(this).closest("tr");
 	    var id = row.attr('name');
 	   
-	    jQuery('#cartcount').hide();
+	    $j('#cartcount').hide();
 	    
-		jQuery.ajax({
+		$j.ajax({
 			url:exportRemoveURL,
 			data: {id: id},			
 			success: function(response) {
 				row.remove();
-				jQuery('#cartcount').show().text(response);
+				$j('#cartcount').show().text(response);
 				updateExportCount();
-				jQuery('#metadata-viewer').find(".exportaddspan[name='" + id + "']").addClass("foldericon").addClass("addcart").addClass("link").text('Add to export');
+				$j('#metadata-viewer').find(".exportaddspan[name='" + id + "']").addClass("foldericon").addClass("addcart").addClass("link").text('Add to export');
 			},
 			error: function(xhr) {
-				jQuery('#cartcount').show();
+				$j('#cartcount').show();
 			}
 		});
 	});
 
-    jQuery('#exportOverlay').on('click', '.greybutton.export', function() {
+    $j('#exportOverlay').on('click', '.greybutton.export', function() {
 
-    	var checkboxes = jQuery('#exporttable input:checked');
+    	var checkboxes = $j('#exporttable input:checked');
 		var ids = [];
 		for (i = 0; i < checkboxes.size(); i++) {
-			ids.push(jQuery(checkboxes[i]).attr('name'));
+			ids.push($j(checkboxes[i]).attr('name'));
 		}
 
 		if (ids.length == 0) {return false;}
 
 		window.location = exportURL + "?id=" + ids.join(',');
 		   
-	    jQuery('#cartcount').hide();
+	    $j('#cartcount').hide();
 	    
-		jQuery.ajax({
+		$j.ajax({
 			url:exportRemoveURL,
 			data: {id: ids.join(',')},			
 			success: function(response) {
 				for(j=0; j<ids.length; j++){
-					jQuery(checkboxes[j]).closest("tr").remove();
-					jQuery('#cartcount').show().text(response);
+                    $j(checkboxes[j]).closest("tr").remove();
+                    $j('#cartcount').show().text(response);
 					updateExportCount();
-					jQuery('#metadata-viewer').find(".exportaddspan[name='" + ids[j] + "']").addClass("foldericon").addClass("addcart").addClass("link").text('Add to export');
+					$j('#metadata-viewer').find(".exportaddspan[name='" + ids[j] + "']").addClass("foldericon").addClass("addcart").addClass("link").text('Add to export');
 				}
 			},
 			error: function(xhr) {
-				jQuery('#cartcount').show();
+				$j('#cartcount').show();
 			}
 		});
 	});
 
-	jQuery('body').on('click', '#closeexport', function() {
-		jQuery('#exportOverlay').fadeOut();	
+	$j('body').on('click', '#closeexport', function() {
+		$j('#exportOverlay').fadeOut();
     });
     
-   jQuery('body').on('click', '#closefilter', function() {
-		jQuery('#filter-browser').fadeOut();	
+   $j('body').on('click', '#closefilter', function() {
+		$j('#filter-browser').fadeOut();
     });
     
-   jQuery('body').on('click', '#closeedit', function() {
-		jQuery('#editMetadataOverlay').fadeOut();	
+   $j('body').on('click', '#closeedit', function() {
+		$j('#editMetadataOverlay').fadeOut();
     });
 
-   jQuery('body').on('click', '#closeassay', function() {
-		jQuery('#createAssayOverlay').fadeOut();	
+   $j('body').on('click', '#closeassay', function() {
+		$j('#createAssayOverlay').fadeOut();
    });
 
-   jQuery('body').on('click', '#closeanalysis', function() {
-		jQuery('#createAnalysisOverlay').fadeOut();	
+   $j('body').on('click', '#closeanalysis', function() {
+		$j('#createAnalysisOverlay').fadeOut();
   });
 
-   jQuery('body').on('click', '#closefolder', function() {
-		jQuery('#createFolderOverlay').fadeOut();	
+   $j('body').on('click', '#closefolder', function() {
+		$j('#createFolderOverlay').fadeOut();
    });
 
-   jQuery('body').on('click', '#closestudy', function() {
-		jQuery('#createStudyOverlay').fadeOut();	
+   $j('body').on('click', '#closestudy', function() {
+		$j('#createStudyOverlay').fadeOut();
    });
-   jQuery('body').on('click', '#closeprogram', function() {
-		jQuery('#createProgramOverlay').fadeOut();	
+   $j('body').on('click', '#closeprogram', function() {
+		$j('#createProgramOverlay').fadeOut();
   });
 
     //Close export and filter overlays on click outside
-    jQuery('body').on('click', function(e) {
+    $j('body').on('click', function(e) {
 
-    	if (!jQuery(e.target).closest('#exportOverlay').length
-    	    	&& !jQuery(e.target).closest('#cartbutton').length
-    	    	&& jQuery(e.target).attr('id') != 'cartbutton') {
+    	if (!$j(e.target).closest('#exportOverlay').length
+    	    	&& !$j(e.target).closest('#cartbutton').length
+    	    	&& $j(e.target).attr('id') != 'cartbutton') {
     	
-	    	if (jQuery('#exportOverlay').is(':visible')) {
-    	    	jQuery('#exportOverlay').fadeOut();
+	    	if ($j('#exportOverlay').is(':visible')) {
+    	    	$j('#exportOverlay').fadeOut();
 	    	}
     	}
     	
-    	if (!jQuery(e.target).closest('#filter-browser').length
-    			&& !jQuery(e.target).closest('#filterbutton').length
-    	    	&& jQuery(e.target).attr('id') != 'filter-browser') {
+    	if (!$j(e.target).closest('#filter-browser').length
+    			&& !$j(e.target).closest('#filterbutton').length
+    	    	&& $j(e.target).attr('id') != 'filter-browser') {
     	
-	    	if (jQuery('#filter-browser').is(':visible')) {
-    	    	jQuery('#filter-browser').fadeOut();
+	    	if ($j('#filter-browser').is(':visible')) {
+    	    	$j('#filter-browser').fadeOut();
 	    	}
     	}
 	});
 
-	jQuery('#results-div').on('click', '.result-folder-name', function() {
-    	jQuery('.result-folder-name').removeClass('selected');
-		jQuery(this).addClass('selected');
+	$j('#results-div').on('click', '.result-folder-name', function() {
+    	$j('.result-folder-name').removeClass('selected');
+		$j(this).addClass('selected');
     });
 
-    jQuery('#logocutout').on('click', function() {
-    	jQuery('#metadata-viewer').empty();
+    $j('#logocutout').on('click', function() {
+    	$j('#metadata-viewer').empty();
 
-    	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
-    	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
-    		jQuery('#welcome-viewer').removeClass('ajaxloading');
+    	$j('#welcome-viewer').empty().addClass('ajaxloading');
+    	$j('#welcome-viewer').load(welcomeURL, {}, function() {
+    		$j('#welcome-viewer').removeClass('ajaxloading');
     	});
 	});
 
-    jQuery('#cartbutton').click(function() {
-		jQuery.ajax({
+    $j('#cartbutton').click(function() {
+		$j.ajax({
 			url:exportViewURL,		
 			success: function(response) {
-				jQuery('#exportOverlay').html(response);
+				$j('#exportOverlay').html(response);
 			},
 			error: function(xhr) {
 			}
 		});
-		jQuery('#exportOverlay').fadeToggle();
+		$j('#exportOverlay').fadeToggle();
 	});
 	
-	jQuery('#filterbutton').click(function() {
-		jQuery('#filter-browser').fadeToggle();
+	$j('#filterbutton').click(function() {
+		$j('#filter-browser').fadeToggle();
 	});
 	
     addSelectCategories();
@@ -1086,12 +1146,12 @@ jQuery(document).ready(function() {
 	}
 });
 function incrementeDocumentCount(folderId) {
-    var documentCount = jQuery('#folder-header-' + folderId + ' .document-count');
+    var documentCount = $j('#folder-header-' + folderId + ' .document-count');
     if (documentCount.size() > 0) {
       var currentValue = documentCount.text();
       documentCount.text(parseInt(currentValue) + 1);
     }else{
-      jQuery('#folder-header-'+folderId).html(jQuery('#folder-header-'+folderId).html()+
+      $j('#folder-header-'+folderId).html($j('#folder-header-'+folderId).html()+
           '<tr><td class="foldertitle">'+
       '<span class="result-document-count"><i>Documents (<span class="document-count">1</span>)</i></span></td></tr>');
     }
@@ -1131,20 +1191,20 @@ function loadSearchFromSession() {
 function updateFolder(id) {
 	
 	var imgExpand = "#imgExpand_"  + id;
-	var src = jQuery(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif').replace('folderminus.png', 'ajax-loader-flat.gif');
-	jQuery(imgExpand).attr('src',src);
+	var src = $j(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif').replace('folderminus.png', 'ajax-loader-flat.gif');
+	$j(imgExpand).attr('src',src);
 	
-	jQuery.ajax({
+	$j.ajax({
 		url:folderContentsURL,
 		data: {id: id, auto: false},
 		success: function(response) {
-			jQuery('#' + id + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
+			$j('#' + id + '_detail').html(response).addClass('gtb1').addClass('analysesopen').attr('data', true);
 			
 			//check if the object has children
-			if(jQuery('#' + id + '_detail .search-results-table .folderheader').size() > 0){
-				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
+			if($j('#' + id + '_detail .search-results-table .folderheader').size() > 0){
+				$j(imgExpand).attr('src', $j(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderminus.png'));
 			}else{
-				jQuery(imgExpand).attr('src', jQuery(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderleaf.png'));
+				$j(imgExpand).attr('src', $j(imgExpand).attr('src').replace('ajax-loader-flat.gif', 'folderleaf.png'));
 			}
 		},
 		error: function(xhr) {
@@ -1155,11 +1215,11 @@ function updateFolder(id) {
 
 function checkSearchLog() {
 	
-	if (jQuery('#searchlog').size() > 0) {
-		jQuery.ajax({
+	if ($j('#searchlog').size() > 0) {
+		$j.ajax({
 			url:searchLogURL,
 			success: function(response) {
-				var searchLog = jQuery('#searchlog').empty();
+				var searchLog = $j('#searchlog').empty();
 				searchLog.append("<br/>" + "------");
 				var log = response.log
 				for (var i = 0; i < log.length; i++) {
@@ -1175,10 +1235,10 @@ function checkSearchLog() {
 
 //go back to the welcome message
 function goWelcome() {
-	jQuery('#metadata-viewer').empty();
-	jQuery('#welcome-viewer').empty().addClass('ajaxloading');
-	jQuery('#welcome-viewer').load(welcomeURL, {}, function() {
-		jQuery('#welcome-viewer').removeClass('ajaxloading');
+	$j('#metadata-viewer').empty();
+	$j('#welcome-viewer').empty().addClass('ajaxloading');
+	$j('#welcome-viewer').load(welcomeURL, {}, function() {
+		$j('#welcome-viewer').removeClass('ajaxloading');
 	});
 }
 
@@ -1187,8 +1247,8 @@ function displayResultsNumber(){
 	if(resultNumber!=""){
 		var jsonNumbers = JSON.parse(resultNumber);
 		
-		jQuery('#welcome-viewer').empty();
-		jQuery('#metadata-viewer').empty();
+		$j('#welcome-viewer').empty();
+		$j('#metadata-viewer').empty();
 		var htmlResults="<div style='margin: 10px;padding: 10px;'><h3 class='rdc-h3'>Search results by type</h3>";
 		htmlResults+="<table class='details-table'>";
 		htmlResults+="<thead><tr><th class='columnheader'>Object</th><th class='columnheader'>Number of results</th></tr></thead>";
@@ -1198,64 +1258,64 @@ function displayResultsNumber(){
 		htmlResults+="<tr class='details-row odd'><td class='columnname'>Analyses</td><td class='columnvalue'>"+jsonNumbers.ANALYSIS+"</td></tr>";
 		htmlResults+="<tr class='details-row odd'><td class='columnname'>Folders</td><td class='columnvalue'>"+jsonNumbers.FOLDER+"</td></tr>";
 		htmlResults+="</table></div>";
-		jQuery('#metadata-viewer').html(htmlResults);
+		$j('#metadata-viewer').html(htmlResults);
 	}
 }
 
 //Globally prevent AJAX from being cached (mostly by IE)
-jQuery.ajaxSetup({
+$j.ajaxSetup({
 	cache: false
 });
 function createUploader() {
-    $fub = jQuery('#fine-uploader-basic');
+    $fub = $j('#fine-uploader-basic');
     uploader = new qq.FineUploaderBasic({
       button: $fub[0],
       multiple: true,
       request: {
-        endpoint: uploadActionURL+'?parentId='+jQuery('#parentFolderId').val()
+        endpoint: uploadActionURL+'?parentId='+$j('#parentFolderId').val()
       },
       callbacks: {
         onSubmit: function(id, fileName) {
-            var folderName = jQuery('#folderName').val();
+            var folderName = $j('#folderName').val();
               
-            jQuery('#uploadtable').append('<tr id="file-' + id + '" class="alert" style="margin: 20px 0 0">'+
+            $j('#uploadtable').append('<tr id="file-' + id + '" class="alert" style="margin: 20px 0 0">'+
                 '<td id="parent">'+folderName+'</td>'+
                 '<td id="name">'+fileName+'</td>'+
                 '<td id="status">Submitting</td>'+
                 '<td id="progress"></td></tr>');
         },
         onUpload: function(id, fileName) {
-            jQuery('#file-' + id + " #name").html(fileName);
-            jQuery('#file-' + id + " #status").html('Initializing ');
+            $j('#file-' + id + " #name").html(fileName);
+            $j('#file-' + id + " #status").html('Initializing ');
         },
         onProgress: function(id, fileName, loaded, total) {
           if (loaded < total) {
             progress = Math.round(loaded / total * 100) + '% of ' + Math.round(total / 1024) + ' kB';
 
-            jQuery('#file-' + id + " #status").html('Uploading ');
-            jQuery('#file-' + id + " #progress").html(progress);
+            $j('#file-' + id + " #status").html('Uploading ');
+            $j('#file-' + id + " #progress").html(progress);
           } else {
-              jQuery('#file-' + id + " #status").html('Saving');
-              jQuery('#file-' + id + " #progress").html('100%');
+              $j('#file-' + id + " #status").html('Saving');
+              $j('#file-' + id + " #progress").html('100%');
           }
         },
         onComplete: function(id, fileName, responseJSON) {
           if (responseJSON.success) {
-            jQuery('#file-' + id + " #status").html('File successfully uploaded ');
-              jQuery('#file-' + id + " #progress").html('');
+            $j('#file-' + id + " #status").html('File successfully uploaded ');
+              $j('#file-' + id + " #progress").html('');
 
               var folderId=responseJSON.folderId;
               incrementeDocumentCount(folderId);
               
-              if(folderId == jQuery('#parentFolderId').val()){
-                jQuery('#metadata-viewer').empty().addClass('ajaxloading');
-                jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
-                    jQuery('#metadata-viewer').removeClass('ajaxloading');
+              if(folderId == $j('#parentFolderId').val()){
+                $j('#metadata-viewer').empty().addClass('ajaxloading');
+                $j('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
+                    $j('#metadata-viewer').removeClass('ajaxloading');
                 });
               }
           } else {
-              jQuery('#file-' + id + " #status").html('Error: '+responseJSON.error);
-                jQuery('#file-' + id + " #progress").html('');
+              $j('#file-' + id + " #status").html('Error: '+responseJSON.error);
+                $j('#file-' + id + " #progress").html('');
           }
           
         }
@@ -1263,55 +1323,55 @@ function createUploader() {
     });
 }
 function createUploader() {
-    $fub = jQuery('#fine-uploader-basic');
+    $fub = $j('#fine-uploader-basic');
     uploader = new qq.FineUploaderBasic({
       button: $fub[0],
       multiple: true,
       request: {
-        endpoint: uploadActionURL+'?parentId='+jQuery('#parentFolderId').val()
+        endpoint: uploadActionURL+'?parentId='+$j('#parentFolderId').val()
       },
       callbacks: {
         onSubmit: function(id, fileName) {
-            var folderName = jQuery('#parentFolderName').val();
+            var folderName = $j('#parentFolderName').val();
 
-            jQuery('#uploadtable').append('<tr id="file-' + id + '" class="alert" style="margin: 20px 0 0">'+
+            $j('#uploadtable').append('<tr id="file-' + id + '" class="alert" style="margin: 20px 0 0">'+
                 '<td id="parent">'+folderName+'</td>'+
                 '<td id="name">'+fileName+'</td>'+
                 '<td id="status">Submitting</td>'+
                 '<td id="progress"></td></tr>');
         },
         onUpload: function(id, fileName) {
-            jQuery('#file-' + id + " #name").html(fileName);
-            jQuery('#file-' + id + " #status").html('Initializing ');
+            $j('#file-' + id + " #name").html(fileName);
+            $j('#file-' + id + " #status").html('Initializing ');
         },
         onProgress: function(id, fileName, loaded, total) {
           if (loaded < total) {
             progress = Math.round(loaded / total * 100) + '% of ' + Math.round(total / 1024) + ' kB';
 
-            jQuery('#file-' + id + " #status").html('Uploading ');
-            jQuery('#file-' + id + " #progress").html(progress);
+            $j('#file-' + id + " #status").html('Uploading ');
+            $j('#file-' + id + " #progress").html(progress);
           } else {
-              jQuery('#file-' + id + " #status").html('Saving');
-              jQuery('#file-' + id + " #progress").html('100%');
+              $j('#file-' + id + " #status").html('Saving');
+              $j('#file-' + id + " #progress").html('100%');
           }
         },
         onComplete: function(id, fileName, responseJSON) {
           if (responseJSON.success) {
-            jQuery('#file-' + id + " #status").html('File successfully uploaded ');
-              jQuery('#file-' + id + " #progress").html('');
+            $j('#file-' + id + " #status").html('File successfully uploaded ');
+              $j('#file-' + id + " #progress").html('');
 
               var folderId=responseJSON.folderId;
               incrementeDocumentCount(folderId);
 
-              if(folderId == jQuery('#parentFolderId').val()){
-                jQuery('#metadata-viewer').empty().addClass('ajaxloading');
-                jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
-                    jQuery('#metadata-viewer').removeClass('ajaxloading');
+              if(folderId == $j('#parentFolderId').val()){
+                $j('#metadata-viewer').empty().addClass('ajaxloading');
+                $j('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
+                    $j('#metadata-viewer').removeClass('ajaxloading');
                 });
               }
           } else {
-              jQuery('#file-' + id + " #status").html('Error: '+responseJSON.error);
-                jQuery('#file-' + id + " #progress").html('');
+              $j('#file-' + id + " #status").html('Error: '+responseJSON.error);
+                $j('#file-' + id + " #progress").html('');
           }
         }
       }
@@ -1320,4 +1380,16 @@ function createUploader() {
 
 function setUploderEndPoint(id) {
 	uploader.setEndpoint(uploadActionURL+'?parentId='+id);
+}
+
+function findChildByParent(parent, callFunc){
+	var hasChildren = true
+	$j.ajax({
+		url: hasChildrenURL,
+		data: {id: parent},
+		success: function(response) {
+			hasChildren = response.result
+			callFunc(hasChildren);
+		}
+	});
 }
