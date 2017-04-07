@@ -5700,7 +5700,7 @@ class I2b2HelperService {
         def tokens = [:]
         try {
             sql.eachRow("""
-                SELECT sourcesystem_cd, secure_obj_token FROM i2b2metadata.i2b2_SECURE WHERE sourcesystem_cd IN  (""" + listToIN(studyIds.asList()) + """) AND c_hlevel = 1
+                SELECT sourcesystem_cd, secure_obj_token FROM i2b2metadata.i2b2_SECURE WHERE sourcesystem_cd IN  (""" + listToIN(studyIds.asList()) + """) AND c_visualattributes = 'FAS'
             """, { row ->
                 tokens += [(row.sourcesystem_cd): row.secure_obj_token]
             })
