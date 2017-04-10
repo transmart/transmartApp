@@ -345,7 +345,7 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 	// Generate list of categories/terms to send to facet search
 	// create a string to send into the facet search, in form Cat1:Term1,Term2&Cat2:Term3,Term4,Term5&...
 
-	var facetSearch = new Array();   // will be an array of strings "Cat1:Term1|Term2", "Cat2:Term3", ...   
+	var requestParameters = {};
 	var categories = new Array();    // will be an array of categories "Cat1","Cat2"
 	var terms = new Array();         // will be an array of strings "Term1|Term2", "Term3"
 	var operators = new Array();
@@ -380,16 +380,11 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 
     // now construct the facetSearch array by concatenating the values from the cats and terms array
     for (var i=0; i<categories.length; i++)	{
-    	var queryType = "";
-
-    	queryType = "q";
-    	facetSearch.push(queryType + "=" + categories[i] + ":" + encodeURIComponent(terms[i]) + "::" + operators[i]);
+        requestParameters['q'] = categories[i] + ":" + terms[i] + "::" + operators[i];
     }
     
 	$j("#results-div").addClass('ajaxloading').empty();
-    
-    var queryString = facetSearch.join("&");
-    
+
     //Construct a list of the current categories and operators to save
     var operators = [];
     for (var i=0; i < currentCategories.length; i++) {
@@ -398,14 +393,18 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
     	operators.push(category + "," + operator);
     }
     var operatorString = operators.join(";");
-    
-    queryString += "&searchTerms=" + encodeURIComponent(savedSearchTerms) + "&searchOperators=" + operatorString + "&globaloperator=" + globalLogicOperator;
-    
+
+    requestParameters['searchTerms'] = savedSearchTerms;
+    requestParameters['searchOperators'] = operatorString;
+    requestParameters['globaloperator'] = globalLogicOperator;
+    requestParameters['page'] = 'RWG';
+
     if(!openInAnalyze){
 	    if (searchPage == 'RWG') {
+
 			$j.ajax({
 				url:facetResultsURL,
-				data: queryString + "&page=RWG",
+				data: requestParameters,
 				success: function(response) {
 						$j('#results-div').removeClass('ajaxloading').html(response);
 						checkSearchLog();
@@ -426,9 +425,10 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 	    		getCategories();
 	    	}
 	    	else {
+                requestParameters['page'] = 'datasetExplorer';
 	    		$j.ajax({
 	    			url:facetResultsURL,
-	    			data: queryString + "&page=datasetExplorer",
+	    			data: requestParameters,
 	    			success: function(response) {
 	    			searchByTagComplete(response);
 	    			checkSearchLog();
@@ -442,7 +442,7 @@ function showFacetResults(openInAnalyze, datasetExplorerPath)	{
 	}else{
 		$j.ajax({
 			url:saveSearchURL,
-			data: queryString + "&page=RWG",
+			data: requestParameters,
 			success: function(response) {
 				window.location.href = datasetExplorerPath;
 			},
