@@ -868,7 +868,9 @@ $j(document).ready(function() {
 					updateFolder(parent);
 					showDetailDialog(parent);
 					$j('.result-folder-name').removeClass('selected');
-					$j('#result-folder-name-' + parent).addClass('selected');
+				        if (parent > 0) {
+					    $j('#result-folder-name-' + parent).addClass('selected');
+				        }
 				},
 				error: function(xhr) {
 					alert(xhr.message);
@@ -894,7 +896,7 @@ $j(document).ready(function() {
 	        }
 	      });
 	    }else{
-            setUploderEndPoint(id);
+            setUploaderEndPoint(id);
 	    }
 	});
 	  
@@ -1145,7 +1147,7 @@ $j(document).ready(function() {
 		showSearchResults();
 	}
 });
-function incrementeDocumentCount(folderId) {
+function incrementDocumentCount(folderId) {
     var documentCount = $j('#folder-header-' + folderId + ' .document-count');
     if (documentCount.size() > 0) {
       var currentValue = documentCount.text();
@@ -1189,7 +1191,9 @@ function loadSearchFromSession() {
 }
 
 function updateFolder(id) {
-	
+    console.log('updateFolder '+id);
+    // id=0 means no parent to update (deleting PROGRAM at top level)
+    if(id > 0) {
 	var imgExpand = "#imgExpand_"  + id;
 	var src = $j(imgExpand).attr('src').replace('folderplus.png', 'ajax-loader-flat.gif').replace('folderminus.png', 'ajax-loader-flat.gif');
 	$j(imgExpand).attr('src',src);
@@ -1211,6 +1215,7 @@ function updateFolder(id) {
 			console.log('Error!  Status = ' + xhr.status + xhr.statusText);
 		}
 	});
+    }
 }
 
 function checkSearchLog() {
@@ -1305,7 +1310,7 @@ function createUploader() {
               $j('#file-' + id + " #progress").html('');
 
               var folderId=responseJSON.folderId;
-              incrementeDocumentCount(folderId);
+              incrementDocumentCount(folderId);
               
               if(folderId == $j('#parentFolderId').val()){
                 $j('#metadata-viewer').empty().addClass('ajaxloading');
@@ -1361,7 +1366,7 @@ function createUploader() {
               $j('#file-' + id + " #progress").html('');
 
               var folderId=responseJSON.folderId;
-              incrementeDocumentCount(folderId);
+              incrementDocumentCount(folderId);
 
               if(folderId == $j('#parentFolderId').val()){
                 $j('#metadata-viewer').empty().addClass('ajaxloading');
@@ -1378,7 +1383,7 @@ function createUploader() {
     });
 }
 
-function setUploderEndPoint(id) {
+function setUploaderEndPoint(id) {
 	uploader.setEndpoint(uploadActionURL+'?parentId='+id);
 }
 
