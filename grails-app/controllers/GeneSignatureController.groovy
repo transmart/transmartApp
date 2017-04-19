@@ -12,6 +12,7 @@ import org.transmart.searchapp.GeneSignatureFileSchema
 import org.transmart.searchapp.SearchKeyword
 import org.transmart.searchapp.SearchKeywordTerm
 import org.transmartproject.core.users.User
+import com.recomdata.db.DBHelper
 
 import javax.servlet.ServletOutputStream
 
@@ -990,7 +991,7 @@ class GeneSignatureController {
             case 2:
                 // sources
                 wizard.sources = ConceptCode.findAllByCodeTypeName(SOURCE_CATEGORY, [sort: "bioConceptCode"])
-                wizard.sources.add(genericOtherConceptCode) // Pfizer code depends on this having ID=1
+                wizard.sources.add(genericOtherConceptCode)
                 //WizardModelDetails.addOtherItem(wizard.sources, "other")
 
                 // owners
@@ -1009,7 +1010,8 @@ class GeneSignatureController {
                 wizard.expTypes = ConceptCode.findAllByCodeTypeName(EXP_TYPE_CATEGORY, [sort: "bioConceptCode"])
 
                 // technology platforms
-                def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null order by p.vendor, p.array");
+                def mrnaPlatforms = de.DeMrnaAnnotation.executeQuery("select DISTINCT gplId from de.DeMrnaAnnotation")
+                def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null and p.accession in ("+DBHelper.listToInString(mrnaPlatforms)+") order by p.vendor, p.array");
                 BioAssayPlatform other = new BioAssayPlatform();
                 other.accession = "other"
                 //platforms.add(other);
