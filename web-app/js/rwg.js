@@ -71,13 +71,20 @@ var cohortBGColors = new Array(
 ////////////////////////////////////////////////////////////////////
 function showDetailDialog(folderId)	{
 
-	jQuery('#welcome-viewer').empty();
+    jQuery('#welcome-viewer').empty();
 
-	jQuery('#metadata-viewer').empty().addClass('ajaxloading');
+    jQuery('#metadata-viewer').empty().addClass('ajaxloading');
+    if(folderId > 0) {
 	jQuery('#metadata-viewer').load(folderDetailsURL + '?id=' + folderId, {}, function() {
-		jQuery('#metadata-viewer').removeClass('ajaxloading');
+	    jQuery('#metadata-viewer').removeClass('ajaxloading');
 	});
-	return false;
+    }
+    else {           // when removing a program, no parent so can only display welcome screen
+	jQuery('#metadata-viewer').load(welcomeURL, {}, function() {
+	    jQuery('#metadata-viewer').removeClass('ajaxloading');
+	});
+    }
+    return false;
 }
 
 //when a new object is created, show its details, highlight it and check for its parent to add expand/collapse image
