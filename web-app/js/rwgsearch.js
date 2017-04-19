@@ -1191,7 +1191,7 @@ function loadSearchFromSession() {
 }
 
 function updateFolder(id) {
-    console.log('updateFolder '+id);
+    //console.log('updateFolder '+id);
     // id=0 means no parent to update (deleting PROGRAM at top level)
     if(id > 0) {
 	var imgExpand = "#imgExpand_"  + id;
