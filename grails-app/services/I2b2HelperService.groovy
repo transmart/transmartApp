@@ -51,7 +51,7 @@ class I2b2HelperService {
     def sampleInfoService
 
     /**
-     * Gets a distribution of information from the patient dimention table for value columns
+     * Gets a distribution of information from the patient dimension table for value columns
      */
     def double[] getPatientDemographicValueDataForSubset(String col, String result_instance_id) {
         checkQueryResultAccess result_instance_id
@@ -80,7 +80,7 @@ class I2b2HelperService {
 //            log.trace ("id = " + id)
             if (!idSet.contains(id)) {
                 idSet.add(id)
-            values.add(row[0])
+                values.add(row[0])
             }
         });
         int count = 0;
@@ -386,7 +386,7 @@ class I2b2HelperService {
 
         if (xTrialsCaseFlag) {
 
-            def data = fetchAcrossTiralsData(concept_key,result_instance_id)
+            def data = fetchAcrossTrialsData(concept_key,result_instance_id)
             data.each {
                 def subject = it.subject
                 def value = it.value
@@ -1228,7 +1228,7 @@ class I2b2HelperService {
         /* As the column headers only show the (in many cases ambiguous) leaf part of the concept path,
          * showing the full concept path in the tooltip is much more informative.
          * As no tooltip text is passed on to the GridView code, the value of the string columnid is used
-         * and shown as the tooltip text when hoovering over the column header in GridView.
+         * and shown as the tooltip text when hovering over the column header in GridView.
          * Explicitly passing a tooltip text to the GridView code removes the necessity to use this columnid value.
          * Removal of some undesired non-alpha-numeric characters from tooltip string
          * prevents display errors in GridView (drop down menu, columns not showing or cells not being filled).
@@ -1248,7 +1248,7 @@ class I2b2HelperService {
                 columnType = "number"
             }
 
-            // add the subject and columnid column to the table if its not there
+            // add the subject and columnid column to the table if it's not there
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
@@ -1421,9 +1421,11 @@ class I2b2HelperService {
         return dataList
     }
 
-    def insertConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein) {
+    def insertConceptDataIntoTable(String columnid, String concept_key, String result_instance_id,
+                                   Boolean valueLeafNodeFlag, ExportTableNew tablein) {
         log.debug "----------------- insertConceptDataIntoTable"
-        log.debug "for columnid = " + columnid
+        log.debug "for columnid " + columnid
+        log.debug "and concept_key " + concept_key
         def data = fetchConceptData(concept_key,result_instance_id)
         data.each{
             def subject = it.subject
@@ -1439,8 +1441,8 @@ class I2b2HelperService {
             }
         }
 
-    def fetchAcrossTiralsData(concept_key,result_instance_id){
-        log.debug "----------------- fetchAcrossTiralsData"
+    def fetchAcrossTrialsData(concept_key,result_instance_id){
+        log.debug "----------------- fetchAcrossTrialsData"
 
         def valueLeafNodeFlag = isValueConceptKey(concept_key)
         def dataList = []
@@ -1501,7 +1503,7 @@ class I2b2HelperService {
     def insertAcrossTrialsConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein) {
         log.debug "----------------- insertAcrossTrialsConceptDataIntoTable <<<< ---- <<<<<"
 
-        def data = fetchAcrossTiralsData(concept_key,result_instance_id)
+        def data = fetchAcrossTrialsData(concept_key,result_instance_id)
         data.each{
             def subject = it.subject
             def value = it.value
@@ -1649,7 +1651,7 @@ class I2b2HelperService {
         // In the current ETL, deapp.de_xtrial_child_map, is not populated!
 
         /*get all distinct  concepts for analysis from both subsets into hashmap*/
-        log.debug("lookupParentConcept" + conceptPath);
+        log.debug("lookupParentConcept " + conceptPath);
         try {
             Sql sql = new Sql(dataSource);
             String sqlQuery = """select parent_cd from deapp.de_xtrial_child_map xcm

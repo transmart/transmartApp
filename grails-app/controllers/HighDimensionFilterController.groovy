@@ -111,6 +111,7 @@ class HighDimensionFilterController {
      */
     static Map<String, String> searchableAnnotationPropertiesDictionary =
             ['geneSymbol': 'Gene Symbol',
+             'probeId': 'Probe ID',
              'cytoband': 'Cytoband',
              'name': ' Region Name',
              'hmdbId': 'HMDB ID',
@@ -125,5 +126,6 @@ class HighDimensionFilterController {
              'position': 'Position',
              'rsId': 'RSID',
              'referenceAllele': 'Reference Allele',
-             'detector': 'miRNA Symbol']
+             'detector': 'miRNA Symbol',
+             'transcriptId': 'Transcript ID']
 }
