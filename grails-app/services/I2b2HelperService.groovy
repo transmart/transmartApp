@@ -1340,7 +1340,7 @@ class I2b2HelperService {
 
             // After that, retrieve all data entries for the children
                 def results = ObservationFact.executeQuery(
-                    "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (select distinct q.patient_id from QtPatientSetCollection q where q.resultInstance.id = :patientids)",
+                    "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (select distinct q.patient.id from QtPatientSetCollection q where q.resultInstance.id = :patientids)",
                     [conceptCodes: concepts*.conceptCode, patientids: result_instance_id.toLong()])
 //              def results = ObservationFact.executeQuery(
 //                  "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)",
