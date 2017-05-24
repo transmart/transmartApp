@@ -324,8 +324,8 @@ class ChartController {
 
         accessLogService.report(currentUserBean, 'Grid View Data Export',
                 eventMessage: "User (IP: ${request.getHeader('X-FORWARDED-FOR') ?: request.remoteAddr}) just exported" +
-                        " data for tieal(s) (${trialsCsv}): variables (${exportedVariablesCsv}) measurements for the" +
-                        " folowing patients set(s): " +
+                        " data for trial(s) (${trialsCsv}): variables (${exportedVariablesCsv}) measurements for the" +
+                        " following patient set(s): " +
                         [params.result_instance_id1, params.result_instance_id2].findAll().join(', '),
                 requestURL: request.forwardURI)
 

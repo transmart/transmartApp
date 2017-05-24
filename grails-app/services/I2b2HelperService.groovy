@@ -1227,24 +1227,24 @@ class I2b2HelperService {
 
         /* As the column headers only show the (in many cases ambiguous) leaf part of the concept path,
          * showing the full concept path in the tooltip is much more informative.
-         * As no tooltip text is passed on to the GridView code, the value of the string columnid is used
+         * As no tooltip text is passed on to the GridView code, the value of the string concept_key is used
          * and shown as the tooltip text when hovering over the column header in GridView.
-         * Explicitly passing a tooltip text to the GridView code removes the necessity to use this columnid value.
+         * Explicitly passing a tooltip text to the GridView code removes the necessity to use this concept_key value.
          * Removal of some undesired non-alpha-numeric characters from tooltip string
          * prevents display errors in GridView (drop down menu, columns not showing or cells not being filled).
          */
         String columnid = concept_key.encodeAsSHA1()
         String columnname = getColumnNameFromKey(concept_key).replace(" ", "_")
-        String columntooltip = keyToPath(concept_key).replaceAll('[^a-zA-Z0-9_\\-\\\\]+','_')
+        String columntooltip = keyToPath(concept_key).replaceAll('[^a-zA-Z0-9_/\\-\\\\()\\[\\]]+','_')
 
 
         if (leafConceptFlag) {
             log.debug "----------------- this is a Leaf Node"
 
-
+            def ExportColumn hascol;
             def valueLeafNodeFlag = isValueConceptKey(concept_key)
             def columnType = "string"
-            if (valueLeafNodeFlag){
+            if (valueLeafNodeFlag) {
                 columnType = "number"
             }
 
@@ -1252,9 +1252,14 @@ class I2b2HelperService {
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
-                if (tablein.getColumn(columnid) == null) {
+
+            hascol = tablein.getColumnByBasename(columnname); // check existing column with basename
+
+            if (tablein.getColumn(columnid) == null) {
                 tablein.putColumn(columnid, new ExportColumn(columnid, columnname, "", columnType,columntooltip));
-                }
+                if(hascol)
+                    tablein.setColumnUnique(columnid); // make labels unique
+            }
 
             if (xTrialsCaseFlag) {
                 insertAcrossTrialsConceptDataIntoTable(columnid,concept_key,result_instance_id,valueLeafNodeFlag,tablein)
@@ -1294,7 +1299,7 @@ class I2b2HelperService {
 
             def columnType = "string"
 
-            // add the subject and columnid column to the table if its not there
+            // add the subject and columnid column to the table if it's not there
             if (tablein.getColumn("subject") == null) {
                 tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "string"));
             }
@@ -1340,8 +1345,8 @@ class I2b2HelperService {
 
             // After that, retrieve all data entries for the children
                 def results = ObservationFact.executeQuery(
-                    "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (select distinct q.patient_id from QtPatientSetCollection q where q.resultInstance.id = :patientids)",
-                    [conceptCodes: concepts*.conceptCode, patientids: result_instance_id.toLong()])
+                    "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (select distinct q.patient.id from QtPatientSetCollection q where q.resultInstance.id = :resultInstanceId)",
+                    [conceptCodes: concepts*.conceptCode, resultInstanceId: result_instance_id.toLong()])
 //              def results = ObservationFact.executeQuery(
 //                  "SELECT o.patient.id, o.textValue FROM ObservationFact o WHERE conceptCode IN (:conceptCodes) AND o.patient.id in (:patientNums)",
 //                  [conceptCodes: concepts*.conceptCode, patientNums: patientIds.collect {

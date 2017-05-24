@@ -14,6 +14,7 @@ import org.json.JSONObject;
  */
 public class ExportColumn {
     private String id;
+    private String basename;
     private String label;
     private String pattern;
     private String type;
@@ -22,6 +23,7 @@ public class ExportColumn {
     public ExportColumn(String id, String label, String pattern, String type) {
         this.id = id;
         this.label = label;
+        this.basename = label;
         this.pattern = pattern;
         this.type = type;
         this.tooltip = label;
@@ -30,6 +32,7 @@ public class ExportColumn {
     public ExportColumn(String id, String label, String pattern, String type, String tooltip) {
         this.id = id;
         this.label = label;
+        this.basename = label;
         this.pattern = pattern;
         this.type = type;
         this.tooltip = tooltip;
@@ -71,6 +74,14 @@ public class ExportColumn {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getBasename() {
+        return basename;
+    }
+
+    public void setBasename(String basename) {
+        this.basename = basename;
     }
 
     public String getLabel() {
