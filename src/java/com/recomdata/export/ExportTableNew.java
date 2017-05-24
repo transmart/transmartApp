@@ -12,15 +12,85 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import org.apache.log4j.Logger;
+
 import java.util.*;
 
 public class ExportTableNew {
+
+    private static org.apache.log4j.Logger log =
+            Logger.getLogger(ExportTableNew.class);
 
     private LinkedHashMap<String, ExportColumn> columns = new LinkedHashMap<String, ExportColumn>();
     private LinkedHashMap<String, ExportRowNew> rows = new LinkedHashMap<String, ExportRowNew>();
 
     public ExportColumn getColumn(String columnname) {
         return columns.get(columnname);
+    }
+
+    public ExportColumn getColumnByBasename(String basename) {
+        for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+            ExportColumn col = i.next();
+            if(basename.equals(col.getBasename())) {
+                return col;
+            }
+        }
+        return null;
+    }
+
+    public String setColumnUnique(String columnname) {
+        ExportColumn newcol = columns.get(columnname);
+        if (newcol == null) return null;
+        String basename = newcol.getBasename();
+        String tooltip = newcol.getTooltip();
+        List<ExportColumn> list = new ArrayList<ExportColumn>();
+
+        for (Iterator<ExportColumn> i = columns.values().iterator(); i.hasNext(); ) {
+            ExportColumn col = i.next();
+            if(basename.equals(col.getBasename()) && !columnname.equals(col.getId())) {
+                list.add(col);
+            }
+        }
+        if(list.size() < 1) {
+            return newcol.getLabel();
+        }
+
+        // Check tooltip for backslash with optional underscore(s) from rejected characters
+
+        String[] newNodes = tooltip.split("_?\\\\_?");
+        int newSize = newNodes.length;
+        for (int k = 0; k < list.size(); k++) {
+            ExportColumn listcol = list.get(k);
+            if(tooltip.equals(listcol.getTooltip())) {
+                newcol.setLabel(listcol.getLabel());
+            }
+            else {
+                String[] colNodes = listcol.getTooltip().split("_?\\\\_?");
+                int colSize = colNodes.length;
+                int knew = newSize - 1;
+                int kcol = colSize - 1;
+                String newLabel = newNodes[knew];
+                String colLabel = colNodes[kcol];
+                while (newLabel.equals(colLabel) && knew > 0 && kcol > 0) {
+                    newLabel = newNodes[--knew] + " " + newLabel;
+                    colLabel = colNodes[--kcol] + " " + colLabel;
+                }
+
+                if(newLabel.equals(colLabel)) {
+                    newcol.setLabel(listcol.getLabel());
+                }
+                else {
+                    if(colLabel.length() > listcol.getLabel().length()) {
+                        listcol.setLabel(colLabel);
+                    }
+                    if(newLabel.length() > newcol.getLabel().length()) {
+                        newcol.setLabel(newLabel);
+                    }
+                }
+            }
+        }
+
+        return newcol.getLabel();
     }
 
     public void putColumn(String columnname, ExportColumn column) {
