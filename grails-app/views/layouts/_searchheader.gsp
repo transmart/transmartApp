@@ -80,8 +80,7 @@
 
                 </td>
                 <td>
-                    <% topicID = "1005" %>
-                    <a HREF='JavaScript:D2H_ShowHelp(<%=topicID%>,helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP )'>
+                    <a target="_blank" HREF="${grailsApplication.config.org.transmartproject.helpUrls.search ?: "JavaScript:D2H_ShowHelp('1005',helpURL,'wndExternal',CTXT_DISPLAY_FULLHELP )"}">
                         <img src="${resource(dir: 'images', file: 'help/helpicon_white.jpg')}" alt="Help" border=0
                              width=18pt style="margin-top:10pt;margin-bottom:10pt;margin-right:18pt;"/>
                     </a>
