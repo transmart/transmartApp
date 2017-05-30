@@ -295,4 +295,5 @@ org.transmartproject.helpUrls.pca='http://www.example.com/'
 org.transmartproject.helpUrls.scatterPlot='http://www.example.com/'
 org.transmartproject.helpUrls.survivalAnalysis='http://www.example.com/'
 org.transmartproject.helpUrls.tableWithFisher='http://www.example.com/'
+org.transmartproject.helpUrls.summaryStatistics='http://www.example.com/'
 */
