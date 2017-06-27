@@ -300,4 +300,6 @@ org.transmartproject.helpUrls.summaryStatistics='http://www.example.com/'
 org.transmartproject.helpUrls.hierarchicalClusteringMaxRows='http://www.example.com/'
 org.transmartproject.helpUrls.heatMapMaxRows='http://www.example.com/'
 org.transmartproject.helpUrls.kMeansClusteringMaxRows='http://www.example.com/'
+
+org.transmartproject.helpUrls.hiDomePopUp='http://www.example.com/'
 */
