@@ -81,8 +81,9 @@ class HighDimensionQueryService {
 
         def concept_key = omics_constraint.concept_key
         def selector = omics_constraint.omics_selector
-        String columnid = (concept_key + selector + omics_constraint.omics_projection_type).encodeAsSHA1()
-        String columnname = selector + " in " + concept_key
+        def projection_type = omics_constraint.omics_projection_type
+        String columnname =  "${projection_type}: ${selector} in ${concept_key}"
+        String columnid = columnname.encodeAsSHA1()
 
         /*add the column to the table if its not there*/
         if (tablein.getColumn("subject") == null) {
