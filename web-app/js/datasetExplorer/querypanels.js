@@ -648,25 +648,27 @@ function getSubsetQuerySummary(subset) {
         if (_summary.trim() != '')
             _summary += " AND"
 
-        if (_e.find("invert").html() == '0')
+        var include = _e.find("invert").html() == '0'
+        if (include)
             _summary += " INCLUDE"
         else
             _summary += " DO NOT INCLUDE"
 
         _e.find("item").each(function() {
+            var _i = $j(this)
 
-            if (_item.trim() != '' && _e.find("invert").html() == '0')
-                _item += " OR"
-            else if (_item.trim() != '')
-                _item += " NOR"
+            var firstItem = _item.trim() == ''
+            if (!firstItem) {
+                _item += include ? " OR" : " NOR"
+            }
 
-            _item += " " + _e.find("tooltip").html()
+            _item += " " + _i.find("tooltip").html()
 
-            if (_e.find("constrain_by_value").size()) {
+            if (_i.find("constrain_by_value").size()) {
                 _item += " CONSTRAINED"
             }
 
-            if (_e.find("constrain_by_modifier").size()) {
+            if (_i.find("constrain_by_modifier").size()) {
                 _item += " MODIFIED"
             }
         })
