@@ -30,18 +30,18 @@
         </table>
 
         <g:if test="${filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.SINGLE_NUMERIC || filter_type==org.transmartproject.core.querytool.HighDimensionFilterType.ACGH}">
-            <table>
+            <table width="100%">
                 <tbody>
                 <tr id="highdimension-slider-row1"><td colspan="3">Number of subjects selected: <span id="highdimension-filter-subjectcount">0</span></td></tr>
                 <tr id="highdimension-slider-row2"><td colspan="3">Select the range for expression values:</td></tr>
                 <tr id="highdimension-slider-row3" style="display: none;">
-                    <td><input type="text" size="2" id="highdimension-amount-min" style="color:#548cff; font-weight:bold;"></td>
-                    <td><div id="highdimension-range"></div></td>
-                    <td><input type="text" size="2" id="highdimension-amount-max" style="color:#548cff; font-weight:bold;"></td>
+                    <td><input type="text" size="6" id="highdimension-amount-min" style="color:#548cff; font-weight:bold;"></td>
+                    <td align="center"><div id="highdimension-range"></div></td>
+                    <td><input type="text" size="6" id="highdimension-amount-max" style="color:#548cff; font-weight:bold;"></td>
                 </tr>
                 <tr id="highdimension-slider-row4"><td colspan="3">Histogram:</td></tr>
-                <tr><td colspan="3"><div id="highdimension-filter-histogram"></div></td></tr>
-                <tr id="highdimension-slider-row6"><td>Bins:</td><td><div id="highdimension-bins"></div></td><td><input type="text" size="2" id="highdimension-amount-bins" readonly style="color:#548cff; font-weight:bold;"/></td></tr>
+                <tr><td colspan="3"><div id="highdimension-filter-histogram" style="text-align: center;"></div></td></tr>
+                <tr id="highdimension-slider-row6"><td>Bins:</td><td align="center"><div id="highdimension-bins"></div></td><td><input type="text" size="2" id="highdimension-amount-bins" readonly style="color:#548cff; font-weight:bold;"/></td></tr>
                 </tbody>
             </table>
         </g:if>
