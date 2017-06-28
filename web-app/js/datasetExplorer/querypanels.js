@@ -384,7 +384,7 @@ function getPanelItemFromConcept(concept) {
 
     // Some legacy hooks here
     Ext.get(_item[0]).addListener('click',conceptClick);
-    Ext.get(_item[0]).addListener('contextmenu',conceptRightClick);
+    Ext.get(_item[0]).addListener('contextmenu',conceptRightClickBuilder(false));
 
     return _item
 }
