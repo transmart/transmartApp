@@ -504,7 +504,7 @@ function showSetValueDialog()
 	setvaluewin.lowvalue = lowvalue;
 	setvaluewin.units = units;
 
-	setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
+	setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units)
 }
 
 
