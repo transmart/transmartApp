@@ -898,6 +898,24 @@ Ext.onReady(function () {
 
     // preload the setvalue dialog
     if (!this.setvaluewin) {
+        var applyChanges =  function() {
+            var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
+            var highvalue = document.getElementById("setValueHighValue").value;
+            var lowvalue = document.getElementById("setValueLowValue").value;
+            var units = document.getElementById("setValueUnits").value;
+            var operator = document.getElementById("setValueOperator").value;
+            var highlowselect = document.getElementById("setValueHighLowSelect").value;
+
+            // make sure that there is a value set
+            if (mode === "numeric" && operator === "BETWEEN" && (highvalue === "" || lowvalue === "")) {
+                alert('You must specify a low and a high value.');
+            } else if (mode === "numeric" && lowvalue === "") {
+                alert('You must specify a value.');
+            } else {
+                setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
+            }
+        };
+
         setvaluewin = new Ext.Window({
             id: 'setValueWindow',
             title: 'Set Value',
@@ -919,6 +937,7 @@ Ext.onReady(function () {
                 {
                     text: 'Show Histogram for subset',
                     handler: function () {
+                        applyChanges();
                         var subset;
                         if (selectedConcept.parentNode.id === "hiddenDragDiv") {
                             subset = getSubsetFromPanel(STATE.Target);
@@ -936,26 +955,12 @@ Ext.onReady(function () {
                 {
                     text: 'OK',
                     handler: function () {
-                       var mode = getSelected(document.getElementsByName("setValueMethod"))[0].value;
-                       var highvalue = document.getElementById("setValueHighValue").value;
-                       var lowvalue = document.getElementById("setValueLowValue").value;
-                       var units = document.getElementById("setValueUnits").value;
-                       var operator = document.getElementById("setValueOperator").value;
-                       var highlowselect = document.getElementById("setValueHighLowSelect").value;
-
-                       // make sure that there is a value set
-                       if (mode === "numeric" && operator === "BETWEEN" && (highvalue === "" || lowvalue === "")) {
-                           alert('You must specify a low and a high value.');
-                       } else if (mode === "numeric" && lowvalue === "") {
-                           alert('You must specify a value.');
-                       } else {
-                           setvaluewin.hide();
-                           setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units);
-                       }
+                       applyChanges();
+                       setvaluewin.hide();
                     }
                 },
                 {
-                    text: 'Cancel',
+                    text: 'Close',
                     handler: function () {
                         setvaluewin.hide();
                     }
