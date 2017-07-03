@@ -1078,9 +1078,6 @@ class I2b2HelperService {
     def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         checkQueryResultAccess result_instance_id
 
-        log.trace("Getting sampleCD's for patient number")
-        def mapOfSampleCdsByPatientNum = buildMapOfSampleCdsByPatientNum(result_instance_id)
-
         log.trace("Adding patient demographic data to grid with result instance id:" + result_instance_id + " and subset: " + subset)
         Sql sql = new Sql(dataSource)
         String sqlt = '''
@@ -1111,7 +1108,6 @@ class I2b2HelperService {
         if (tablein.getColumns().size() == 0) {
             tablein.putColumn("subject", new ExportColumn("subject", "Subject", "", "String"));
             tablein.putColumn("patient", new ExportColumn("patient", "Patient", "", "String"));
-            tablein.putColumn("SAMPLE_CDS", new ExportColumn("SAMPLE_CDS", "Samples", "", "String"));
             tablein.putColumn("subset", new ExportColumn("subset", "Subset", "", "String"));
             //tablein.putColumn("BIRTH_DATE", new ExportColumn("BIRTH_DATE", "Birth Date", "", "Date"));
             //tablein.putColumn("DEATH_DATE", new ExportColumn("DEATH_DATE", "Death Date", "", "Date"));
@@ -1139,8 +1135,6 @@ class I2b2HelperService {
                 newrow.put("subject", subject);
                 def arr = row.SOURCESYSTEM_CD?.split(":")
                 newrow.put("patient", arr?.length == 2 ? arr[1] : "");
-                def cds = mapOfSampleCdsByPatientNum[row.PATIENT_NUM as Long]
-                newrow.put("SAMPLE_CDS", cds ? cds : "")
                 newrow.put("subset", subset);
                 newrow.put("TRIAL", row.TRIAL)
                 if (row.SEX_CD) {
