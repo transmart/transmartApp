@@ -22,6 +22,11 @@
     <button class="flatbutton clearbutton" onclick="clearQuery();">
         Clear All Panels and Analysis
     </button>
+    <g:if test="${grailsApplication.config.org.transmartproject.helpUrls.cohortSelection}">
+        <button class="flatbutton backgroundHelpBtn" onclick="window.open('${grailsApplication.config.org.transmartproject.helpUrls.cohortSelection}', '_blank');">
+            Help
+        </button>
+    </g:if>
     <br/>
     <br/>
 </div>

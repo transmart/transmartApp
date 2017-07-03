@@ -302,4 +302,5 @@ org.transmartproject.helpUrls.heatMapMaxRows='http://www.example.com/'
 org.transmartproject.helpUrls.kMeansClusteringMaxRows='http://www.example.com/'
 
 org.transmartproject.helpUrls.hiDomePopUp='http://www.example.com/'
+org.transmartproject.helpUrls.cohortSelection='http://www.example.com/'
 */

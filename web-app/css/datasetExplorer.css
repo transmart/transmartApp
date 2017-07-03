@@ -255,7 +255,13 @@ div.smalltitle {
 	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
 }
-	
+
+.backgroundHelpBtn {
+	padding-left: 20px !important;
+	background-image:url(../images/help/helpicon_gray.jpg ) !important;
+	background-position: 2px 50%;
+}
+
 .x-tool-sampleExplorerHelpButton {
 	background-image:url(../images/help/helpicon_gray.jpg ) !important;
 	color:#ff0000;	
