@@ -1017,11 +1017,11 @@ Ext.onReady(function () {
                 }
             }
         ];
-        if (GLOBAL.hiDomePopUpHelpURL) {
+        if (GLOBAL.helpUrls && GLOBAL.helpUrls.hiDomePopUp) {
             omicsFilterWinButtons.push({
                 text: 'Help',
                 handler: function () {
-                    window.open(GLOBAL.hiDomePopUpHelpURL, '_blank').focus();
+                    window.open(GLOBAL.helpUrls.hiDomePopUp, '_blank').focus();
                 },
                 iconCls : 'contextHelpBtn'
             });
