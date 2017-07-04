@@ -1017,13 +1017,15 @@ Ext.onReady(function () {
                 }
             }
         ];
+
+        var tools = [];
         if (GLOBAL.helpUrls && GLOBAL.helpUrls.hiDomePopUp) {
-            omicsFilterWinButtons.push({
-                text: 'Help',
-                handler: function () {
+            tools.push({
+                id: 'help',
+                qtip: 'Click for context sensitive help',
+                handler: function (event, toolEl, panel) {
                     window.open(GLOBAL.helpUrls.hiDomePopUp, '_blank').focus();
-                },
-                iconCls : 'contextHelpBtn'
+                }
             });
         }
         omicsfilterwin = new Ext.Window(
@@ -1038,7 +1040,7 @@ Ext.onReady(function () {
                 border: false,
                 items: [omicsfilterpanel],
                 buttons: omicsFilterWinButtons,
-                tools: []
+                tools: tools
             });
         omicsfilterwin.show();
         omicsfilterwin.hide();
