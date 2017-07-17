@@ -2,6 +2,7 @@ import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import groovy.sql.Sql
+import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
@@ -82,7 +83,8 @@ class HighDimensionQueryService {
         def concept_key = omics_constraint.concept_key
         def selector = omics_constraint.omics_selector
         def projection_type = omics_constraint.omics_projection_type
-        String columnname =  "${projection_type}: ${selector} in ${concept_key}"
+        def projectionTypeLabel = Projection.prettyNames.get(projection_type, projection_type)
+        String columnname =  "${projectionTypeLabel}: ${selector} in ${concept_key}"
         String columnid = columnname.encodeAsSHA1()
 
         /*add the column to the table if its not there*/
