@@ -112,7 +112,7 @@ function convertNodeToConcept(node)
 {
 	var value = new Value();
 	var level = node.attributes.level;
-	var name = jQuery('<span>' + node.text + '</span>').find("em").remove().end().html().trim();
+	var name = jQuery('<span>' + node.text + '</span>').find("em").remove().end().text().trim();
 	var key = node.id;
 	var tooltip = node.attributes.qtip;
 	var tablename = node.attributes.tablename;
