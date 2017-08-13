@@ -2914,6 +2914,9 @@ function getSummaryGridData() {
     });
 
     gridstore.on('load', storeLoaded);
+    gridstore.on('loadexception', function(jsonStore, rows, paramsObject) {
+        alert(paramsObject.responseText);
+    });
 
     var myparams = Ext.urlEncode({
         concept_key: "",
@@ -3002,6 +3005,9 @@ function getAnalysisGridData(concept_key, omics_params) {
         }
     );
     gridstore.on('load', storeLoaded);
+    gridstore.on('loadexception', function(jsonStore, rows, paramsObject) {
+        alert(paramsObject.responseText);
+    });
 
     var myparams;
 

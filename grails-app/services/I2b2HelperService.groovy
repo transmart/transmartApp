@@ -1075,7 +1075,7 @@ class I2b2HelperService {
     /**
      * Fills the main demographic data in an export table for the grid
      */
-    def ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
+    ExportTableNew addAllPatientDemographicDataForSubsetToTable(ExportTableNew tablein, String result_instance_id, String subset) {
         checkQueryResultAccess result_instance_id
 
         log.trace("Adding patient demographic data to grid with result instance id:" + result_instance_id + " and subset: " + subset)

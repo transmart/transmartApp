@@ -5,6 +5,7 @@ import org.jfree.chart.servlet.ServletUtilities
 import org.transmart.searchapp.AccessLog
 import org.transmart.searchapp.AuthUser
 import org.transmartproject.core.users.User
+import org.transmartproject.db.querytool.QtPatientSetCollection
 
 import javax.servlet.ServletException
 import javax.servlet.ServletOutputStream
@@ -229,6 +230,8 @@ class ChartController {
 
     def analysisGrid = {
 
+        response.contentType = 'text/json'
+
         String concept_key = params.concept_key;
         def result_instance_id1 = params.result_instance_id1;
         def result_instance_id2 = params.result_instance_id2;
@@ -244,9 +247,41 @@ class ChartController {
         ExportTableNew table = (ExportTableNew) request.getSession().getAttribute("gridtable");
         if (table == null) {
 
-            table = new ExportTableNew();
-            if (s1) i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id1, "subset1");
-            if (s2) i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id2, "subset2");
+            table = new ExportTableNew()
+            Number maxRows = grailsApplication.config.org.transmartproject.gridView.maxRows ?
+                    grailsApplication.config.org.transmartproject.gridView.maxRows as Number : null
+            if (s1) {
+                if (maxRows) {
+                    Number resultSet1Size = QtPatientSetCollection.where {
+                        resultInstance.id == result_instance_id1 as Long
+                    }.count()
+                    if (resultSet1Size > maxRows) {
+                        response.status = 500
+                        response.outputStream << "The subset 1 contains ${resultSet1Size} subjects. " +
+                                         "That's more than maximum ${maxRows} allowed for the grid view. " +
+                                         "Please define smaller set to see data in the table."
+                        return
+                    }
+                }
+
+                i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id1, "subset1")
+            }
+            if (s2) {
+                if (maxRows) {
+                    Number resultSet2Size = QtPatientSetCollection.where {
+                        resultInstance.id == result_instance_id2 as Long
+                    }.count()
+                    if (resultSet2Size > maxRows) {
+                        response.status = 500
+                        response.outputStream << "The subset 2 contains ${resultSet2Size} subjects. " +
+                                        "That's more than maximum ${maxRows} allowed for the grid view. " +
+                                        "Please define smaller set to see data in the table."
+                        return
+                    }
+                }
+
+                i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id2, "subset2")
+            }
 
             List<String> keys = i2b2HelperService.getConceptKeysInSubsets(result_instance_id1, result_instance_id2);
             Set<String> uniqueConcepts = i2b2HelperService.getDistinctConceptSet(result_instance_id1, result_instance_id2);
@@ -269,8 +304,6 @@ class ChartController {
                 if (s2) highDimensionQueryService.addHighDimConceptDataToTable(table, it, result_instance_id2)
             }
         }
-        PrintWriter pw = new PrintWriter(response.getOutputStream());
-
         if (concept_key && !concept_key.isEmpty()) {
             // We retrieve the highdimension parameters from the client, if they were passed
             def omics_params = [:]
@@ -306,10 +339,9 @@ class ChartController {
             }
 
         }
-        pw.write(table.toJSONObject().toString(5));
-        pw.flush();
+        response.outputStream << table.toJSONObject().toString(0)
 
-        request.getSession().setAttribute("gridtable", table);
+        request.getSession().setAttribute("gridtable", table)
     }
 
     def reportGridTableExport() {

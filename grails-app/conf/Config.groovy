@@ -309,4 +309,6 @@ org.transmartproject.helpUrls.aCGHGSurvivalAnalysis='http://www.example.com/'
 
 org.transmartproject.helpUrls.hiDomePopUp='http://www.example.com/'
 org.transmartproject.helpUrls.cohortSelection='http://www.example.com/'
+
+org.transmartproject.gridView.maxRows = 1000
 */
