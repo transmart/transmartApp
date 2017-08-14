@@ -311,4 +311,24 @@ org.transmartproject.helpUrls.hiDomePopUp='http://www.example.com/'
 org.transmartproject.helpUrls.cohortSelection='http://www.example.com/'
 
 org.transmartproject.gridView.maxRows = 1000
+
+org.transmartproject.helpUrls.lineGraphFiles='http://www.example.com/'
+org.transmartproject.helpUrls.tableWithFisherFiles='http://www.example.com/'
+org.transmartproject.helpUrls.boxPlotFiles='http://www.example.com/'
+org.transmartproject.helpUrls.waterfallFiles='http://www.example.com/'
+org.transmartproject.helpUrls.survivalAnalysisFiles='http://www.example.com/'
+org.transmartproject.helpUrls.kMeansClusteringFiles='http://www.example.com/'
+org.transmartproject.helpUrls.hierarchicalClusteringFiles='http://www.example.com/'
+org.transmartproject.helpUrls.markerSelectionFiles='http://www.example.com/'
+org.transmartproject.helpUrls.logisticRegressionFiles='http://www.example.com/'
+org.transmartproject.helpUrls.aCGHGSurvivalAnalysisFiles='http://www.example.com/'
+org.transmartproject.helpUrls.aCGHGroupTestFiles='http://www.example.com/'
+org.transmartproject.helpUrls.aCGHGFrequencyPlotFiles='http://www.example.com/'
+org.transmartproject.helpUrls.rnaSeqGroupTestFiles='http://www.example.com/'
+
+org.transmartproject.helpUrls.correlationAnalysisFiles='http://www.example.com/'
+org.transmartproject.helpUrls.heatMapFiles='http://www.example.com/'
+org.transmartproject.helpUrls.scatterPlotFiles='http://www.example.com/'
+org.transmartproject.helpUrls.ic50Files='http://www.example.com/'
+org.transmartproject.helpUrls.pcaFiles='http://www.example.com/'
 */
