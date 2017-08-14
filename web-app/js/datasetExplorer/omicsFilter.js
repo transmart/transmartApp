@@ -561,7 +561,6 @@ function applyOmicsNoFilterDialog() {
                 resultsTabPanel.body.unmask();
             }
         });
-        getAnalysisGridData(omics_filter_info.concept_key);
         omicsfilterwin.hide();
     }
 }
@@ -652,7 +651,6 @@ function applySingleNumericOmicsFilter(validation) {
                 }
             );
 
-            getAnalysisGridData(omics_filter_info.concept_key, omics_params);
         }
 
         document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
