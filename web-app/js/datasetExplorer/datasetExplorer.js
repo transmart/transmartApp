@@ -1602,7 +1602,7 @@ function setupDragAndDrop() {
     });
 
     dtg.notifyDrop = function (source, e, data) {
-        buildAnalysis(data.node);
+        getAnalysisGridData(data.node.attributes.id);
         return true;
     };
 }
@@ -1997,7 +1997,6 @@ function buildAnalysis(nodein) {
             resultsTabPanel.body.unmask();
         }
     });
-    getAnalysisGridData(node.attributes.id);
 }
 
 function buildAnalysisComplete(result) {
