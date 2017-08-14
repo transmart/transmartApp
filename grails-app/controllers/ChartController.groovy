@@ -221,11 +221,9 @@ class ChartController {
 
         // We retrieve all our charts from our ChartService
         def subsets = chartService.computeChartsForSubsets(chartService.getSubsetsFromRequest(params))
-        def concepts = chartService.getConceptsForSubsets(subsets)
-        concepts.putAll(chartService.getHighDimensionalConceptsForSubsets(subsets))
 
         // Time to delivery !
-        render(template: "summaryStatistics", model: [subsets: subsets, concepts: concepts])
+        render(template: "summaryStatistics", model: [subsets: subsets])
     }
 
     def analysisGrid = {
