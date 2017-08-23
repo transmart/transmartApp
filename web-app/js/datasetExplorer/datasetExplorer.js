@@ -1602,7 +1602,11 @@ function setupDragAndDrop() {
     });
 
     dtg.notifyDrop = function (source, e, data) {
-        getAnalysisGridData(data.node.attributes.id);
+        if (data.node.attributes.oktousevalues == "H") {
+            highDimensionalConceptDropped(data.node, false, true);
+        } else {
+            getAnalysisGridData(data.node.attributes.id);
+        }
         return true;
     };
 }

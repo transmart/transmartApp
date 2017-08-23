@@ -12,6 +12,7 @@ var omicsFilterRepopulateWindow;        // If this is set before omicsFilterWind
                                         // will be repopulated with the values here. This is a map that should contain
                                         // the following keys: [conceptid, omicsproperty, omicsselector, omicsoperator,
                                         // omicsvalue, omicsprojection, omicsvaluetype]
+var omicsFilterRenderResultToGridView = false;
 
 /**
  * Function to be called when a high dimensional concept is dropped. This will look up the high dimensional
@@ -20,7 +21,8 @@ var omicsFilterRepopulateWindow;        // If this is set before omicsFilterWind
  * @param filter  If true, a filter dialog will be shown (for cohort selection); if false, a selection dialog
  *                will be shown (when dropped in summary statistics or grid view)
  */
-function highDimensionalConceptDropped(node, filter) {
+function highDimensionalConceptDropped(node, filter, renderResultToGridView) {
+    omicsFilterRenderResultToGridView = !!renderResultToGridView;
     Ext.Ajax.request({
         url: pageInfo.basePath + "/highDimensionFilter/filterInfo",
         method: 'GET',
@@ -542,25 +544,31 @@ function applyOmicsNoFilterDialog() {
     else {
         resultsTabPanel.body.mask("Running analysis...", 'x-mask-loading');
 
-        Ext.Ajax.request({
-            url: pageInfo.basePath + "/chart/analysis",
-            method: 'POST',
-            timeout: '600000',
-            params: Ext.urlEncode({
-                charttype: "analysis",
-                concept_key: omics_filter_info.concept_key,
-                result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
-                result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
-            }), // or a URL encoded string
-            success: function (result, request) {
-                buildAnalysisComplete(result);
-                resultsTabPanel.body.unmask();
-            },
-            failure: function (result, request) {
-                alert("A problem arose while trying to retrieve the results");
-                resultsTabPanel.body.unmask();
-            }
-        });
+        if (omicsFilterRenderResultToGridView) {
+            getAnalysisGridData(omics_filter_info.concept_key);
+            resultsTabPanel.body.unmask();
+        } else {
+            Ext.Ajax.request({
+                url: pageInfo.basePath + "/chart/analysis",
+                method: 'POST',
+                timeout: '600000',
+                params: Ext.urlEncode({
+                    charttype: "analysis",
+                    concept_key: omics_filter_info.concept_key,
+                    result_instance_id1: GLOBAL.CurrentSubsetIDs[1],
+                    result_instance_id2: GLOBAL.CurrentSubsetIDs[2]
+                }), // or a URL encoded string
+                success: function (result, request) {
+                    buildAnalysisComplete(result);
+                    resultsTabPanel.body.unmask();
+                },
+                failure: function (result, request) {
+                    alert("A problem arose while trying to retrieve the results");
+                    resultsTabPanel.body.unmask();
+                }
+            });
+        }
+
         omicsfilterwin.hide();
     }
 }
@@ -622,35 +630,39 @@ function applySingleNumericOmicsFilter(validation) {
                 omics_selector: params.selector,
                 omics_value_type: omics_filter_info.platform.markerType,
                 omics_projection_type: jQuery("#highdimension-filter-projection").find("option:selected").val()};
-            Ext.Ajax.request(
-                {
-                    url : pageInfo.basePath+"/chart/analysis",
-                    method : 'POST',
-                    timeout: '600000',
-                    params :  Ext.urlEncode(
-                        {
-                            charttype : "analysis",
-                            concept_key : omics_filter_info.concept_key,
-                            omics_property: omics_params.omics_property,
-                            omics_selector : omics_params.omics_selector,
-                            omics_value_type: omics_params.omics_value_type,
-                            omics_projection_type: omics_params.omics_projection_type,
-                            omics_platform: omics_filter_info.platform.id,
-                            result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
-                            result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+            if (omicsFilterRenderResultToGridView) {
+                getAnalysisGridData(omics_filter_info.concept_key, omics_params);
+                resultsTabPanel.body.unmask();
+            } else {
+                Ext.Ajax.request(
+                    {
+                        url : pageInfo.basePath+"/chart/analysis",
+                        method : 'POST',
+                        timeout: '600000',
+                        params :  Ext.urlEncode(
+                            {
+                                charttype : "analysis",
+                                concept_key : omics_filter_info.concept_key,
+                                omics_property: omics_params.omics_property,
+                                omics_selector : omics_params.omics_selector,
+                                omics_value_type: omics_params.omics_value_type,
+                                omics_projection_type: omics_params.omics_projection_type,
+                                omics_platform: omics_filter_info.platform.id,
+                                result_instance_id1 : GLOBAL.CurrentSubsetIDs[1],
+                                result_instance_id2 : GLOBAL.CurrentSubsetIDs[2]
+                            }
+                        ), // or a URL encoded string
+                        success: function (result, request) {
+                            buildAnalysisComplete(result);
+                            resultsTabPanel.body.unmask();
+                        },
+                        failure: function (result, request) {
+                            alert("A problem arose while trying to retrieve the results");
+                            resultsTabPanel.body.unmask();
                         }
-                    ), // or a URL encoded string
-                    success: function (result, request) {
-                        buildAnalysisComplete(result);
-                        resultsTabPanel.body.unmask();
-                    },
-                    failure: function (result, request) {
-                        alert("A problem arose while trying to retrieve the results");
-                        resultsTabPanel.body.unmask();
                     }
-                }
-            );
-
+                );
+            }
         }
 
         document.getElementById("highdimension-filter-main").removeChild(document.getElementById("highdimension-filter-content"));
