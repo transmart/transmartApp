@@ -331,4 +331,7 @@ org.transmartproject.helpUrls.heatMapFiles='http://www.example.com/'
 org.transmartproject.helpUrls.scatterPlotFiles='http://www.example.com/'
 org.transmartproject.helpUrls.ic50Files='http://www.example.com/'
 org.transmartproject.helpUrls.pcaFiles='http://www.example.com/'
+
+org.transmartproject.helpUrls.dataExport='http://www.example.com/'
+org.transmartproject.helpUrls.hddPopup='http://www.example.com/'
 */

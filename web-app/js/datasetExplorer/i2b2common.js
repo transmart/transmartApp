@@ -1473,7 +1473,11 @@ function showCompareStepPathwaySelection()
 				id:'help',
 				qtip:'Click for context sensitive help',
 				handler: function(event, toolEl, panel){
-					D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    if (GLOBAL.helpUrls && GLOBAL.helpUrls.hddPopup) {
+                        window.open(GLOBAL.helpUrls.hddPopup, '_blank');
+                    } else {
+                        D2H_ShowHelp('1126', helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                    }
 				}
 			}]
 		});

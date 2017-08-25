@@ -198,7 +198,11 @@ DataExport.prototype.displayResult = function (records, options, success) {
                             tooltip:'Click for Data Export help',
                             iconCls: "contextHelpBtn",
                             handler: function(event, toolEl, panel){
-                                D2H_ShowHelp("1312",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                                if (GLOBAL.helpUrls && GLOBAL.helpUrls.dataExport) {
+                                    window.open(GLOBAL.helpUrls.dataExport, '_blank');
+                                } else {
+                                    D2H_ShowHelp("1312",helpURL,"wndExternal",CTXT_DISPLAY_FULLHELP );
+                                }
                             }
                         }
                     )]
