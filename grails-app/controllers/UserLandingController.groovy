@@ -1,5 +1,6 @@
 import org.springframework.web.servlet.support.RequestContextUtils
 import org.transmart.searchapp.AccessLog
+import org.transmart.searchapp.AuthUser
 
 class UserLandingController {
     /**
@@ -15,19 +16,26 @@ class UserLandingController {
     }
 
     def index = {
+        def user = AuthUser.findByUsername(springSecurityService?.principal?.username)
         new AccessLog(username: springSecurityService?.principal?.username, event: "Login",
                 eventmessage: request.getHeader("user-agent"),
                 accesstime: new Date()).save()
-        def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer ?: false;
-        if (skip_disclaimer) {
-            if (springSecurityService?.currentUser?.changePassword) {
-                flash.message = messageSource.getMessage('changePassword', new Objects[0], RequestContextUtils.getLocale(request))
-                redirect(controller: 'changeMyPassword')
+        def skip_data_attestation =  grailsApplication.config.com.recomdata?.skipdataattestation?:false;
+        if ((!skip_data_attestation) && DataAttestation.needsDataAttestation(user)) {
+            redirect(uri: '/dataAttestation/index')
+        }
+        else {
+            def skip_disclaimer = grailsApplication.config.com.recomdata?.skipdisclaimer ?: false;
+            if (skip_disclaimer) {
+                if (springSecurityService?.currentUser?.changePassword) {
+                    flash.message = messageSource.getMessage('changePassword', new Objects[0], RequestContextUtils.getLocale(request))
+                    redirect(controller: 'changeMyPassword')
+                } else {
+                    redirect(uri: userLandingPath)
+                }
             } else {
-                redirect(uri: userLandingPath)
+                redirect(uri: '/userLanding/disclaimer.gsp')
             }
-        } else {
-            redirect(uri: '/userLanding/disclaimer.gsp')
         }
     }
     def agree = {
