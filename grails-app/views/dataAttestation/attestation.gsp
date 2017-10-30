@@ -28,7 +28,7 @@
         <img style="display: block; margin: 12px auto;" src="${resource(dir: 'images', file: grailsApplication.config.com.recomdata.largeLogo)}" alt="Transmart" />
         <center><h1>ATTENTION: Users of ${grailsApplication.config?.com?.recomdata?.appTitle}</h1></center>
         <div style="text-align: justify; margin: 18px;">
-            ${grailsApplication.config?.neptune?.dataAttestationText}
+            ${grailsApplication.config?.dataAttestationText}
         </div>
         <center>
             <g:form name="dataAttestation" method="post" id="dataAttestation">
