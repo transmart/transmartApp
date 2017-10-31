@@ -157,10 +157,10 @@ com.recomdata.dataUpload.adminEmail = 'No data upload adminEmail value set - con
 
 /* {{{ Personalization */
 // application logo to be used in the login page
-com.recomdata.largeLogo = "transmartlogo.jpg"
+com.recomdata.largeLogo = "Neptune_Logo_Big.png"
 
 // application logo to be used in the search page
-com.recomdata.smallLogo="transmartlogosmall.jpg"
+com.recomdata.smallLogo="Neptune_Logo_Small.png"
 
 // contact email address
 com.recomdata.contactUs = "transmart-discuss@googlegroups.com"
