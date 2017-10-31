@@ -174,7 +174,7 @@ com.recomdata.contactUs = "RPC2TMSupport@umich.edu"
 com.recomdata.adminEmail = "RPC2TMSupport@umich.edu"
 
 // application title
-com.recomdata.appTitle = "tranSMART v" + org.transmart.originalConfigBinding.appVersion
+com.recomdata.appTitle = "RPC2 tranSMART"
 
 //Quick Start Guide URL
 quickStartURL = "../../files/NEPTUNE_tranSMART_Quick_Start_Guide.pdf"

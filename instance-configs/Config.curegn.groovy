@@ -178,7 +178,7 @@ com.recomdata.contactUs = "CureGNtmSupport@umich.edu"
 com.recomdata.adminEmail = "CureGNtmSupport@umich.edu"
 
 // application title
-com.recomdata.appTitle = "tranSMART v" + org.transmart.originalConfigBinding.appVersion
+com.recomdata.appTitle = "CureGN tranSMART"
 
 //Quick Start Guide URL
 quickStartURL = "../../files/NEPTUNE_tranSMART_Quick_Start_Guide.pdf"
