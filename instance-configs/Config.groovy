@@ -163,10 +163,10 @@ com.recomdata.largeLogo = "Neptune_Logo_Big.png"
 com.recomdata.smallLogo="Neptune_Logo_Small.png"
 
 // contact email address
-com.recomdata.contactUs = "transmart-discuss@googlegroups.com"
+com.recomdata.contactUs = "NeptuneTMSupport@umich.edu"
 
 // site administrator contact email address
-com.recomdata.adminEmail = "transmart-discuss@googlegroups.com"
+com.recomdata.adminEmail = "NeptuneTMSupport@umich.edu"
 
 // application title
 com.recomdata.appTitle = "tranSMART v" + org.transmart.originalConfigBinding.appVersion

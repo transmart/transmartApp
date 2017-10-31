@@ -172,10 +172,10 @@ com.recomdata.largeLogo = "CureGNLogo.jpg"
 com.recomdata.smallLogo="no_graphic.png"
 
 // contact email address
-com.recomdata.contactUs = "transmart-discuss@googlegroups.com"
+com.recomdata.contactUs = "CureGNtmSupport@umich.edu"
 
 // site administrator contact email address
-com.recomdata.adminEmail = "transmart-discuss@googlegroups.com"
+com.recomdata.adminEmail = "CureGNtmSupport@umich.edu"
 
 // application title
 com.recomdata.appTitle = "tranSMART v" + org.transmart.originalConfigBinding.appVersion

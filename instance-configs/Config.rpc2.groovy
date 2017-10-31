@@ -168,10 +168,10 @@ com.recomdata.largeLogo = "umlogo.png"
 com.recomdata.smallLogo="no_graphic.png"
 
 // contact email address
-com.recomdata.contactUs = "transmart-discuss@googlegroups.com"
+com.recomdata.contactUs = "RPC2TMSupport@umich.edu"
 
 // site administrator contact email address
-com.recomdata.adminEmail = "transmart-discuss@googlegroups.com"
+com.recomdata.adminEmail = "RPC2TMSupport@umich.edu"
 
 // application title
 com.recomdata.appTitle = "tranSMART v" + org.transmart.originalConfigBinding.appVersion
