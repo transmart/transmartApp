@@ -9,7 +9,25 @@
  * NOT been tested.
  */
 quickStartURL = "../../files/NEPTUNE_tranSMART_Quick_Start_Guide.pdf"
-dataAttestationText = ""
+dataAttestationText = """
+        <p>
+                It is the responsibility of all users to protect the privacy of individuals who are subjects in the data;
+                        to not use or disclose the data other than as permitted; and to appropriately secure the data.</p>
+                                <p>
+                                        By clicking “I agree” below, users agree to the following:
+                                                <ul style="list-style-type: square; list-style-position: outside; padding-left: 18px;">
+                                                        <li>No attempt shall be made to link subject data to a NEPTUNE participant.</li>
+                                                                <li>Any disclosure of data, analysis, or results  from tranSMART must be in accordance
+                                                                        with appropriate NEPTUNE policies and procedures.</li>
+                                                                                <li>Further data analysis on hypotheses generated via tranSMART will be done via
+                                                                                        existing NEPTUNE policies and procedures.</li>
+                                                                                                <li>Data may not be disclosed, downloaded, or shared unless appropriate
+                                                                                                        Material Transfer Agreements are in place.</li>
+                                                                                                                <li>As NEPTUNE data are still being collected and cleaned, there will be periodic,
+                                                                                                                        announced updates to the data in tranSMART, with resulting possible changes in analysis results.</li>
+                                                                                                                                </ul>
+                                                                                                                                        </p>
+                                                                                                                                        """
 
 // if running as a WAR, we need these
 def catalinaBase      = System.getProperty('catalina.base') ?: '.'
@@ -45,7 +63,7 @@ and to learn more about the change with tranSMART 1.6.
 """
 }
 
-org.transmartproject.enableAcrossTrials = true
+org.transmartproject.enableAcrossTrials = false
 
 //Disabling/Enabling UI tabs
 ui {
@@ -66,7 +84,7 @@ ui {
             // Currently, it is only used in special cases
             analysisJobs.show = false
             workspace.hide = false
-	    rawDataExport.enabled = true
+    	    rawDataExport.enabled = true
         }
     }
 }

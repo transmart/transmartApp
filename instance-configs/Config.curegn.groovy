@@ -8,8 +8,22 @@
  * production environment when running grails run-app are scenarios that have
  * NOT been tested.
  */
-quickStartURL = "../../files/NEPTUNE_tranSMART_Quick_Start_Guide.pdf"
-dataAttestationText = ""
+
+quickStartURL = "../../files/CureGN_tranSMART_Quick_Start_Guide.pdf"
+dataAttestationText = """
+<p>
+It is the responsibility of all users to protect the privacy of individuals who are subjects in the data; to not use or disclose the data other than as permitted; and to appropriately secure the data.</p>
+<p>
+By clicking “I agree” below, users agree to the following:
+<ul style="list-style-type: square; list-style-position: outside; padding-left: 18px;">
+<li>No attempt shall be made to link subject data to a CureGN participant.</li>
+<li>Any disclosure of data, analysis, or results from tranSMART must be in accordance with appropriate CureGN policies and procedures.</li>
+<li>Further data analysis on hypotheses generated via tranSMART will be done via existing CureGN policies and procedures.</li>
+<li>Data may not be disclosed, downloaded, or shared unless appropriate Material Transfer Agreements are in place.</li>
+<li>As CureGN data are still being collected and cleaned, there will be periodic, announced updates to the data in tranSMART, with resulting possible changes in analysis results.</li>
+</ul>
+</p>
+"""
 
 // if running as a WAR, we need these
 def catalinaBase      = System.getProperty('catalina.base') ?: '.'
@@ -28,24 +42,19 @@ motd {
     motd_title = "<center>Welcome<center>"
     motd_text = """\
 <center>
-You are about to enter the data sharing center of the NEPTUNE project.<br />
+Welcome to the CureGN instance of tranSMART.<br />
  <br />
-This version 1.6 release of NEPTUNE tranSMART is being made 12MAY2016 <br />
-and includes data and ontology updates.
-<br />
+
 Upon login, new users will be asked to agree to the data usage and <br />
-attribution policy of the site.  Renewal of that agreement will be <br />
-requested every 90 days.  <br />
-<br />
-<a href="https://www.rarediseasesnetwork.org/rdnwebapp/Members/ConsortiaPage.aspx?DirectoryOwnerId=6855&Root=0&Owner=3587" target="_blank" style="text-decoration:underline;color:#0000FF">Click here</a> for Neptune-specific help on using tranSMART,
-<br />
-and to learn more about the change with tranSMART 1.6.
-<br />
+attribution policy of the site. Renewal of that agreement will be <br/>
+requested every 90 days.<br>
+<br>
+<a href="${quickStartURL}" target="_blank">Click here for CureGN-specific help on using tranSMART.</a>
 </center>
 """
 }
 
-org.transmartproject.enableAcrossTrials = true
+org.transmartproject.enableAcrossTrials = false
 
 //Disabling/Enabling UI tabs
 ui {
