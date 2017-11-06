@@ -1010,9 +1010,8 @@ class GeneSignatureController {
                 wizard.expTypes = ConceptCode.findAllByCodeTypeName(EXP_TYPE_CATEGORY, [sort: "bioConceptCode"])
 
                 // technology platforms
-                def mrnaPlatforms = de.DeMrnaAnnotation.executeQuery("select DISTINCT gplId from de.DeMrnaAnnotation")
-                def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null and p.accession in ("+DBHelper.listToInString(mrnaPlatforms)+") order by p.vendor, p.array");
-                BioAssayPlatform other = new BioAssayPlatform();
+                // removed the check of loaded platforms - BR
+                def platforms = BioAssayPlatform.findAll("from BioAssayPlatform as p where p.vendor is not null order by p.vendor, p.array");                BioAssayPlatform other = new BioAssayPlatform();
                 other.accession = "other"
                 //platforms.add(other);
                 wizard.platforms = platforms;
