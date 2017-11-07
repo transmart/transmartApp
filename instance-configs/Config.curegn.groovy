@@ -75,7 +75,7 @@ ui {
             // Currently, it is only used in special cases
             analysisJobs.show = false
             workspace.hide = false
-	    rawDataExport.enabled = true
+	    rawDataExport.enabled = false
         }
     }
 }
