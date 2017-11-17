@@ -183,8 +183,10 @@ dm?.with {
     configureInternalPlugin 'compile', 'search-domain'
     configureInternalPlugin 'compile', 'folder-management'
     configureInternalPlugin 'compile', 'transmart-legacy-db'
-    configureInternalPlugin 'runtime', 'dalliance-plugin'
-    configureInternalPlugin 'runtime', 'transmart-mydas'
+    // -- Genome Browser plugin --
+    //   to include the plugin, uncomment the following two lines
+    //configureInternalPlugin 'runtime', 'dalliance-plugin'
+    //configureInternalPlugin 'runtime', 'transmart-mydas'
     configureInternalPlugin 'runtime', 'transmart-rest-api'
     configureInternalPlugin 'runtime', 'blend4j-plugin'
     configureInternalPlugin 'runtime', 'transmart-metacore-plugin'

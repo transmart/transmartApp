@@ -14,6 +14,7 @@ class HighDimensionQueryService {
     def dataSource
     def i2b2HelperService
     def highDimensionResourceService
+    def springSecurityService
 
     def getHighDimensionalConceptSet(String result_instance_id1, String result_instance_id2) {
         def result = []
@@ -74,9 +75,10 @@ class HighDimensionQueryService {
      */
     def ExportTableNew addHighDimConceptDataToTable(ExportTableNew tablein, omics_constraint, String result_instance_id) {
         checkQueryResultAccess result_instance_id
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 
         if (!i2b2HelperService.isValidOmicsParams(omics_constraint)) {
-            return i2b2HelperService.addConceptDataToTable(tablein, omics_constraint.concept_key, result_instance_id)
+            return i2b2HelperService.addConceptDataToTable(tablein, omics_constraint.concept_key, result_instance_id, user)
         }
 
         def concept_key = omics_constraint.concept_key
