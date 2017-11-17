@@ -152,8 +152,10 @@ grails.project.dependency.resolution = {
             //compile ':biomart-domain:16.2'
             //// already included in biomart-domain
             //compile ':transmart-java:16.2'
-            runtime ':dalliance-plugin:16.2'
-            runtime ':transmart-mydas:16.2'
+            // -- Genome Browser plugin --
+            //   to include the plugin, uncomment the following two lines
+            //runtime ':dalliance-plugin:16.2'
+            //runtime ':transmart-mydas:16.2'
             runtime ':transmart-rest-api:16.2'
             runtime ':blend4j-plugin:16.2'
             runtime ':transmart-metacore-plugin:16.2'
@@ -181,8 +183,10 @@ dm?.with {
     configureInternalPlugin 'compile', 'search-domain'
     configureInternalPlugin 'compile', 'folder-management'
     configureInternalPlugin 'compile', 'transmart-legacy-db'
-    configureInternalPlugin 'runtime', 'dalliance-plugin'
-    configureInternalPlugin 'runtime', 'transmart-mydas'
+    // -- Genome Browser plugin --
+    //   to include the plugin, uncomment the following two lines
+    //configureInternalPlugin 'runtime', 'dalliance-plugin'
+    //configureInternalPlugin 'runtime', 'transmart-mydas'
     configureInternalPlugin 'runtime', 'transmart-rest-api'
     configureInternalPlugin 'runtime', 'blend4j-plugin'
     configureInternalPlugin 'runtime', 'transmart-metacore-plugin'
