@@ -426,6 +426,32 @@ function applySetValueDialog(validation) {
 	}
 }
 
+function setValueMethodChanged(value)
+{
+	if(value=="highlow")
+	{document.getElementById("divhighlow").style.display="inline";
+		document.getElementById("divnumeric").style.display="none";
+	}
+	if(value=="numeric")
+	{
+		document.getElementById("divhighlow").style.display="none";
+		document.getElementById("divnumeric").style.display="inline";
+	}
+	if(value=="novalue")
+	{
+		document.getElementById("divhighlow").style.display="none";
+		document.getElementById("divnumeric").style.display="none";
+	}
+}
+
+function setValueOperatorChanged(value)
+{
+	if(value=="BETWEEN")
+		document.getElementById("divhighvalue").style.display="inline";
+	else
+		document.getElementById("divhighvalue").style.display="none";
+}
+
 function showSetValueDialog()
 {
 	var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
@@ -499,7 +525,6 @@ function showSetValueDialog()
 
 	setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
 }
-
 
 function setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units)
 {
