@@ -559,7 +559,9 @@ function clearAnalysisPanel()
 	var cleartxt2="<div style='text-align:center;font:12pt arial;width:100%;height:100%;'><table style='width:100%;height:100%;'><tr><td align='center' valign='center'>Select Advanced->Haploview from the menu</td></tr></table></div>";
 	updateAnalysisPanel(cleartxt, false);
 	var ag=Ext.getCmp("analysisGridPanel");
-	ag.body.update("<div></div>");
+	if (typeof(ag.body) !== "undefined") {
+		ag.body.update("<div></div>");
+	}
 	var aog=Ext.getCmp("analysisOtherPanel");
 	if(aog) aog.body.update(cleartxt2);
 	clearGrid();
