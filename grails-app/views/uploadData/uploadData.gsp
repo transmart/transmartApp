@@ -31,11 +31,11 @@
 <script type="text/javascript">$j = jQuery.noConflict();</script>
 <script type="text/javascript" src="${resource(dir:'js', file:'uploadData.js')}"></script>
 <script type="text/javascript" charset="utf-8">
-var studyBrowseWindowUrl = '${createLink([controller: 'experiment', action: 'browseExperimentsSingleSelect'])}';
-var studyDetailUrl = '${createLink([controller:'experimentAnalysis', action:'expDetail'])}';
-var studyHasFolderUrl = '${createLink([controller:'uploadData', action:'studyHasFolder'])}';
-var platformTypesUrl = '${createLink([action:'platformsForVendor',controller:'bioAssayPlatform'])}';
-var templateDownloadUrl = '${createLink([action:'template',controller:'uploadData'])}';
+var studyBrowseWindowUrl = '${createLink(controller: 'experiment', action: 'browseExperimentsSingleSelect')}';
+var studyDetailUrl = '${createLink(controller: 'experimentAnalysis', action:'expDetail')}';
+var studyHasFolderUrl = '${createLink(controller: 'uploadData', action: 'studyHasFolder')}';
+var platformTypesUrl = '${createLink(controller: 'bioAssayPlatform', action: 'platformsForVendor')}';
+var templateDownloadUrl = '${createLink(controller:'uploadData', action:'template')}';
 
 var IS_EDIT = ${uploadDataInstance?.id ? true : false};
 var ANALYSIS_TYPE = null;
@@ -63,7 +63,7 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
 <!-- ************************************** -->
 </head>
 <body>
-<div id="header-div">
+<div id="header-div" class="header-div">
     <g:render template="/layouts/commonheader" model="['app':'uploaddata', 'utilitiesMenu':'true']" />
 </div>
 
@@ -102,9 +102,10 @@ var buildVer = 'Build Version: <g:meta name="environment.BUILD_NUMBER"/> - <g:me
                                 <div class="fieldError"><g:message error="${it}"/></div>
                             </g:eachError>
                         </div>
+			<g:logMsg>uploadData.gsp study '${study}'</g:logMsg>
                         <tmpl:extSearchField width="600" fieldName="study" searchAction="extSearch" searchController="experiment" value="${study?.accession}" label="${study?.title}" paramString="'studyType':UPLOAD_STUDY_TYPE"/>
                         <a id="studyChangeButton" class="upload" onclick="$j('#studyDiv').empty().slideUp('slow'); changeField('study-combobox', 'study')">Change</a>
-                        <a style="margin-left: 32px;" id="studyBrowseButton" class="upload" onclick="generateBrowseWindow();">Browse</a>
+                        <a style="margin-left: 32px;" id="studyBrowseButton" class="upload" onclick="generateBrowseWindowStudies();">Browse</a>
                         <br/><br/>
                         <div id="studyNoFolderMessage" class="fieldError" style="display: none;"></div>
                         <div id="studyDiv" style="height: 200px; width: 540px; overflow: auto; display: none;">&nbsp;</div>

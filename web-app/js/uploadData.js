@@ -238,7 +238,7 @@ function updateStudyTable(param) {
 }
 
 
-function generateBrowseWindow()
+function generateBrowseWindowStudies()
 {
       //Grab the URL from a JS object.
       var URLtoUse = studyBrowseWindowUrl;
@@ -274,18 +274,32 @@ function downloadTemplate() {
 function applyStudyBrowse() {
       //Loop through all the selected items.
       jQuery(".studyBrowseRow.selected").each(function(i, selected){
-    	  var studyId = $j(this).attr('name');
+	  console.log('studyBrowseRow i '+i);
+	  console.log('studyBrowseRow selected "'+selected+'"');
+	  console.log('studyBrowseRow j(this) "'+$j(this)+'"');
+	  console.log('studyBrowseRow j(selected) "'+$j(selected)+'"');
+//	  (function($){
+//	      $.each(selected, function(key,value){
+//		  console.log('selected attr "'+key+'" value "'+value+'"');
+//	      });
+//	      $.each(this, function(key,value){
+//		  console.log('this attr "'+key+'" value "'+value+'"');
+//	      });
+//	  })(jQuery);
+    	  var studyId = $j(selected).attr('id');
     	  var studyName = $j('#studyBrowseName' + studyId).text();
+	  console.log('applyStudyBrowse studyId '+studyId);
+	  console.log('applyStudyBrowse studyName '+studyName);
     	  $j('#study-input').val(studyName).attr('disabled', 'disabled');
     	  $j('#study').val(studyId);
           updateStudyTable(studyId);
       
-      //This destroys our popup window.
-      jQuery(this).dialog("destroy");
-});
+	  //This destroys our popup window.
+	  jQuery(selected).dialog("destroy");
+      });
 
-//For all tags - when clicked, call the remove tag function (remove them from the DOM and underlying select list)
-$j('.tag').live('click', function(e) { removeTag($j(this).parent().attr('name'), $j(this).attr('name')); });
+    //For all tags - when clicked, call the remove tag function (remove them from the DOM and underlying select list)
+    $j('.tag').live('click', function(e) { removeTag($j(this).parent().attr('name'), $j(this).attr('name')); });
 }
 
 //on check
