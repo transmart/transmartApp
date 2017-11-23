@@ -7,7 +7,9 @@
 </head>
 
 <body>
+<div id="header-div" class="header-div">
 <g:render template="/layouts/commonheader" model="['app': 'feedback']"/>
+</div>
 
 <div class="nav">
     <span class="menuButton"><g:link class="list" action="list">Feedback List</g:link></span>

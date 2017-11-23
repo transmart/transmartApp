@@ -1,6 +1,8 @@
 </head>
 <body>
+<div id="header-div" class="header-div">
 <g:render template="/layouts/commonheader" model="['app': 'customfilters']"/>
+</div>
 <div class="nav">
     <span class="menuButton"><g:link class="list" action="list">Saved Filters</g:link></span>
     <% topicID = "1021" %>

@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<div id="header-div">
+<div id="header-div" class="header-div">
     <g:render template="/layouts/commonheader" model="['app': 'changeMyPassword']"/>
 </div>
 

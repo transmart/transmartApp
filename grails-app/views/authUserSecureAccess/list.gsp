@@ -6,7 +6,9 @@
 </head>
 
 <body>
+<div id="header-div" class="header-div">
 <g:render template="/layouts/commonheader" model="['app': 'authUserSecureAccess']"/>
+</div>
 <div class="body">
     <h1>AuthUserSecureAccess List</h1>
     <g:if test="${flash.message}">

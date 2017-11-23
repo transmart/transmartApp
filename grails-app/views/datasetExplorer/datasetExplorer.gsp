@@ -124,7 +124,7 @@
 
 <body>
 
-<div id="header-div"><g:render template="/layouts/commonheader" model="['app': 'datasetExplorer']"/></div>
+<div id="header-div" class="header-div"><g:render template="/layouts/commonheader" model="['app': 'datasetExplorer']"/></div>
 <div id="main"></div>
 
 <h3 id="test">Loading ...</h3>

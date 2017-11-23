@@ -1,6 +1,6 @@
 </head>
 <body>
-<div id="header-div" style="overflow:hidden; margin-bottom: 2px;">
+<div id="header-div" class="header-div" style="overflow:hidden; margin-bottom: 2px;">
     <g:render template="/layouts/commonheader" model="['app': 'search']"/>
     <g:render template="/layouts/searchheader" model="['app': 'search']"/>
     <div id="summarycount-div"

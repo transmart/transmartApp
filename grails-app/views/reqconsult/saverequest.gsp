@@ -5,7 +5,9 @@
 </head>
 
 <body>
+<div id="header-div" class="header-div">
 <g:render template="/layouts/commonheader" model="['app': 'consult']"/>
+</div>
 <div class="body" style="float:left;">
     <br>
 
