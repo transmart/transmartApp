@@ -119,7 +119,7 @@ class AuthUserController {
         // It could mess up with the security at archive retrieval.
         // This is bad, but we have no choice at this point.
         if (!(person.username ==~ /^[0-9A-Za-z-]+$/)) {
-            flash.message = 'Username can only contain alphanumerical charaters and hyphens (Sorry)'
+            flash.message = 'Username can only contain alphanumerical characters and hyphens (Sorry)'
             return render(view: create ? 'create' : 'edit', model: buildPersonModel(person))
         }
 
