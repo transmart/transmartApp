@@ -4,7 +4,7 @@ STATE = {
 	QueryRequestCounter: 0
 };
 
-// list of supported platform
+// list of supported platforms
 // TODO : future refactoring should retrieve these values from gpl definitions in the database
 var HIGH_DIMENSIONAL_DATA = {
 	"mrna"          : {"platform" : "MRNA_AFFYMETRIX",  "type" : "Gene Expression"},
@@ -297,6 +297,7 @@ function getSetValueText(mode, operator, highlowselect, highvalue, lowvalue, uni
 		text="";
 	}
 	return text.trim().length > 0 ? '<em> ' + text + '</em>' : '';
+//	return text.trim().length > 0 ? '.a.' + text + '.a.' : '';
 }
 
 function resetSelected()
@@ -1861,7 +1862,8 @@ function getTreeNodeFromJsonNode(concept)
 
 	if(oktousevalues != "N" && !leaf)
 	{
-		iconCls="foldernumericicon";
+//		iconCls="foldernumericicon";
+		iconCls="programicon";
 	}
 
 	//set whether expanded or not.
