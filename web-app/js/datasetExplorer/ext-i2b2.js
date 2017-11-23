@@ -176,7 +176,8 @@ function getChildConceptPatientCountsComplete(result, node) {
         var access = childaccess != null ? childaccess[fullname] : undefined;
         var child = children[i];
         if (count != undefined) {
-            child.setText(child.text + "<em> (" + count + ")</em>");
+//            child.setText(child.text + "<em> (" + count + ")</em>");
+            child.setText(child.text + " (" + count + ")");
         }
 
         if ((access != undefined && access != 'Locked') ||
