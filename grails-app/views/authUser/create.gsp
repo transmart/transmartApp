@@ -52,7 +52,7 @@
                 <tr class="prop">
                     <td valign="top" class="name"><label for="enabled">Enabled:</label></td>
                     <td valign="top" class="value ${hasErrors(bean: person, field: 'enabled', 'errors')}">
-                        <g:checkBox name="enabled" value="${person.enabled}"></g:checkBox>
+                        <g:checkBox name="enabled" value="${person.enabled}" checked="false"/>
                     </td>
                 </tr>
 
@@ -68,7 +68,7 @@
                 <tr class="prop">
                     <td valign="top" class="name"><label for="emailShow">Show Email:</label></td>
                     <td valign="top" class="value ${hasErrors(bean: person, field: 'emailShow', 'errors')}">
-                        <g:checkBox name="emailShow" value="${person.emailShow}"/>
+                        <g:checkBox name="emailShow" value="${person.emailShow}" checked="false"/>
                     </td>
                 </tr>
 
@@ -79,13 +79,13 @@
                 <g:each in="${authorityList}">
                     <tr>
                         <td valign="top" class="name" align="left">${it.authority.encodeAsHTML()}</td>
-                        <td align="left"><g:checkBox name="${it.authority}"/></td>
+                        <td align="left"><g:checkBox name="${it.authority}" value="false" checked="false"/></td>
                     </tr>
                 </g:each>
                 <tr class="prop">
-                    <td valign="top" class="name">Force user to change the password:</td>
+                    <td valign="top" class="name"><label for="changePassword">Force user to change the password:</label></td>
                     <td valign="top" class="value">
-                        <g:checkBox name="changePassword" value="${person.changePassword}"/>
+                        <g:checkBox name="changePassword" value="${person.changePassword}" checked="false"/>
                     </td>
                 </tr>
                 </tbody>
