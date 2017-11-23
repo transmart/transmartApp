@@ -5,11 +5,12 @@
  * @param divId
  */
 function gatherHighDimensionalData(divId){
-	if(!variableDivEmpty(divId)
-			&& ((GLOBAL.CurrentSubsetIDs[1]	== null) ||	(multipleSubsets() && GLOBAL.CurrentSubsetIDs[2]== null))){
+	if(!variableDivEmpty(divId) &&
+	    ((GLOBAL.CurrentSubsetIDs[1] == null) || (multipleSubsets() && GLOBAL.CurrentSubsetIDs[2]== null))){
 		runAllQueriesForSubsetId(function(){gatherHighDimensionalData(divId);}, divId);
 		return;
 	}
+
 	if(variableDivEmpty(divId)){
 		Ext.Msg.alert("No cohort selected!", "Please select a cohort first.");
 		return;
@@ -35,7 +36,7 @@ function gatherHighDimensionalData(divId){
 				},
 				failure : function(result, request)
 				{
-                    Ext.Msg.alert("Error", "Ajax call is failed.");
+				    Ext.Msg.alert("Error", "Ajax call failed.");
 				}
 			}
 	);
@@ -71,7 +72,7 @@ function gatherHighDimensionalDataSingleSubset(divId, currentSubsetId){
 				},
 				failure : function(result, request)
 				{
-                    Ext.Msg.alert("Error", "Ajax call is failed.");
+				    Ext.Msg.alert("Error", "Ajax call failed.");
 				}
 			}
 	);
@@ -121,7 +122,7 @@ function readCohortData(result, divId)
 }
 
 /**
- * Check to see if a a selection has been made for the variable
+ * Check to see if a selection has been made for the variable
  * @param divId
  * @returns {Boolean}
  */
@@ -224,7 +225,7 @@ function runQueryForSubsetidSingleSubset(callback, divId){
             ,
             failure : function(result, request)
             {
-                Ext.Msg.alert("Error", "Ajax call is failed.")
+                Ext.Msg.alert("Error", "Ajax call failed.")
             }
             ,
             timeout : '600000'
