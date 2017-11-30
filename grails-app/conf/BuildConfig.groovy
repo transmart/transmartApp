@@ -18,6 +18,8 @@ grails.project.fork = [
         console: forkSettingsOther]
 
 grails.project.war.file = "target/${appName}.war"
+grails.plugin.location.'rdc-rmodules' = '../Rmodules-kretzlerLab'
+grails.plugin.location.'transmart-core' = '../transmart-core-db-kretzlerLab'
 
 /* we need at least servlet-api 2.4 because of HttpServletResponse::setCharacterEncoding */
 grails.servlet.version = "2.5"
@@ -150,15 +152,17 @@ grails.project.dependency.resolution = {
             //compile ':biomart-domain:16.2'
             //// already included in biomart-domain
             //compile ':transmart-java:16.2'
-            runtime ':dalliance-plugin:16.2'
-            runtime ':transmart-mydas:16.2'
+            // -- Genome Browser plugin --
+            //   to include the plugin, uncomment the following two lines
+            //runtime ':dalliance-plugin:16.2'
+            //runtime ':transmart-mydas:16.2'
             runtime ':transmart-rest-api:16.2'
             runtime ':blend4j-plugin:16.2'
             runtime ':transmart-metacore-plugin:16.2'
             runtime ':transmart-xnat-importer:16.2'
             runtime ':xnat-viewer:16.2'
 
-            test ':transmart-core-db-tests:16.2'
+            //test ':transmart-core-db-tests:16.2'
         } else {
             dm.internalDependencies delegate
         }
@@ -171,7 +175,7 @@ grails.project.dependency.resolution = {
 dm?.with {
     configureInternalPlugin 'compile', 'rdc-rmodules'
     configureInternalPlugin 'runtime', 'transmart-core'
-    configureInternalPlugin 'test', 'transmart-core-db-tests'
+    //configureInternalPlugin 'test', 'transmart-core-db-tests'
     configureInternalPlugin 'compile', 'transmart-gwas'
     configureInternalPlugin 'compile', 'transmart-gwas-plink'
     configureInternalPlugin 'compile', 'transmart-java'
@@ -179,8 +183,10 @@ dm?.with {
     configureInternalPlugin 'compile', 'search-domain'
     configureInternalPlugin 'compile', 'folder-management'
     configureInternalPlugin 'compile', 'transmart-legacy-db'
-    configureInternalPlugin 'runtime', 'dalliance-plugin'
-    configureInternalPlugin 'runtime', 'transmart-mydas'
+    // -- Genome Browser plugin --
+    //   to include the plugin, uncomment the following two lines
+    //configureInternalPlugin 'runtime', 'dalliance-plugin'
+    //configureInternalPlugin 'runtime', 'transmart-mydas'
     configureInternalPlugin 'runtime', 'transmart-rest-api'
     configureInternalPlugin 'runtime', 'blend4j-plugin'
     configureInternalPlugin 'runtime', 'transmart-metacore-plugin'

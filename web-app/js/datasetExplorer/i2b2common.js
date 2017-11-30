@@ -426,6 +426,32 @@ function applySetValueDialog(validation) {
 	}
 }
 
+function setValueMethodChanged(value)
+{
+	if(value=="highlow")
+	{document.getElementById("divhighlow").style.display="inline";
+		document.getElementById("divnumeric").style.display="none";
+	}
+	if(value=="numeric")
+	{
+		document.getElementById("divhighlow").style.display="none";
+		document.getElementById("divnumeric").style.display="inline";
+	}
+	if(value=="novalue")
+	{
+		document.getElementById("divhighlow").style.display="none";
+		document.getElementById("divnumeric").style.display="none";
+	}
+}
+
+function setValueOperatorChanged(value)
+{
+	if(value=="BETWEEN")
+		document.getElementById("divhighvalue").style.display="inline";
+	else
+		document.getElementById("divhighvalue").style.display="none";
+}
+
 function showSetValueDialog()
 {
 	var conceptnode=selectedConcept; //not dragging so selected concept is what im updating
@@ -500,7 +526,6 @@ function showSetValueDialog()
 	setValueDialogComplete('novalue', operator, highlowselect, highvalue, lowvalue, units)
 }
 
-
 function setValueDialogComplete(mode, operator, highlowselect, highvalue, lowvalue, units)
 {
 //alert(selectedConcept.id+" "+mode+" "+operator+" "+highlowselect+" "+highvalue+" "+lowvalue+" "+units);
@@ -534,7 +559,9 @@ function clearAnalysisPanel()
 	var cleartxt2="<div style='text-align:center;font:12pt arial;width:100%;height:100%;'><table style='width:100%;height:100%;'><tr><td align='center' valign='center'>Select Advanced->Haploview from the menu</td></tr></table></div>";
 	updateAnalysisPanel(cleartxt, false);
 	var ag=Ext.getCmp("analysisGridPanel");
-	ag.body.update("<div></div>");
+	if (typeof(ag.body) !== "undefined") {
+		ag.body.update("<div></div>");
+	}
 	var aog=Ext.getCmp("analysisOtherPanel");
 	if(aog) aog.body.update(cleartxt2);
 	clearGrid();

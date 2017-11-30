@@ -717,6 +717,9 @@ Ext.onReady(function () {
     /* load the legacy hardcoded tabs */
     loadPlugin('dalliance-plugin', '/Dalliance/loadScripts', function () {
         loadDalliance(resultsTabPanel);
+        Ext.getCmp('dallianceBrowser').on('deactivate', function() {
+            document.title = 'Dataset Explorer';
+        });
     }, true);
 
     if (GLOBAL.metacoreAnalyticsEnabled === 'true') {

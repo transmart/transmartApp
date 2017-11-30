@@ -138,7 +138,7 @@
                                         <tr>
                                             <td colspan="2" style="font-size:10px;">
                                                 Not a user ? Contact <a
-                                                    href="mailto:${grailsApplication.config.com.recomdata.administrator}"
+                                                    href="mailto:${grailsApplication.config.com.recomdata.adminEmail}"
                                                     target="_blank"
                                                     style="text-decoration:underline;color:#0000FF">administrator</a> to request an account.
                                             </td>
@@ -172,6 +172,46 @@
                     <div style="margin-right:auto;margin-left:auto;width:435px">
                         ${grailsApplication.config.ui.loginScreen.disclaimer}
                      </div>
+                </td>
+            </tr>
+        </g:if>
+        <g:if test='${grailsApplication?.config?.motd}'>
+            <tr><td colspan=2>&nbsp;</td></tr>
+            <tr>
+                <td colspan=2 valign="middle" style="text-align:center;vertical-align:middle;border:1px;font-size:11px"
+                    nowrap="nowrap">
+                    <div style="margin-right:auto;margin-left:auto;width:435px;">
+                        <div class="x-box-tl">
+                            <div class="x-box-tr">
+                                <div class="x-box-tc">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="x-box-ml">
+                            <div class="x-box-mr">
+                                <div class="x-box-mc" style="text-align:left">
+                                    <br />
+                                    <g:if test='${grailsApplication?.config?.motd?.motd_title}' >
+                                        <h3 class='motd-title'>
+                                            ${grailsApplication.config.motd.motd_title}
+                                        </h3>
+                                    </g:if>
+                                    <g:if test='${grailsApplication?.config?.motd?.motd_text}' >
+                                        <div class='motd-text'>
+                                            ${grailsApplication.config.motd.motd_text}
+                                        </div>
+                                    </g:if>
+                                    <br />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="x-box-bl">
+                            <div class="x-box-br">
+                                <div class="x-box-bc">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </g:if>

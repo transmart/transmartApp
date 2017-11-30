@@ -83,7 +83,7 @@ class ChartController {
         log.trace(user.toString());
         def concept_key = params.concept_key;
         log.trace("Requested counts for parent_concept_path=" + concept_key);
-        def counts = i2b2HelperService.getChildrenWithPatientCountsForConcept(concept_key)
+        def counts = i2b2HelperService.getChildrenWithPatientCountsForConcept(concept_key,user)
         def access = i2b2HelperService.getChildrenWithAccessForUserNew(concept_key, user)
         log.trace("access:" + (access as JSON));
         log.trace("counts = " + (counts as JSON))
@@ -232,6 +232,7 @@ class ChartController {
         String concept_key = params.concept_key;
         def result_instance_id1 = params.result_instance_id1;
         def result_instance_id2 = params.result_instance_id2;
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 
         /*which subsets are present? */
         boolean s1 = (result_instance_id1 == "" || result_instance_id1 == null) ? false : true;
@@ -245,8 +246,8 @@ class ChartController {
         if (table == null) {
 
             table = new ExportTableNew();
-            if (s1) i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id1, "subset1");
-            if (s2) i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id2, "subset2");
+            if (s1) i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id1, "subset1", user);
+            if (s2) i2b2HelperService.addAllPatientDemographicDataForSubsetToTable(table, result_instance_id2, "subset2", user);
 
             List<String> keys = i2b2HelperService.getConceptKeysInSubsets(result_instance_id1, result_instance_id2);
             Set<String> uniqueConcepts = i2b2HelperService.getDistinctConceptSet(result_instance_id1, result_instance_id2);
@@ -258,8 +259,8 @@ class ChartController {
 
                 if (!i2b2HelperService.isHighDimensionalConceptKey(keys.get(i))) {
                     log.trace("adding concept data for " + keys.get(i));
-                    if (s1) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id1);
-                    if (s2) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id2);
+                    if (s1) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id1, user);
+                    if (s2) i2b2HelperService.addConceptDataToTable(table, keys.get(i), result_instance_id2, user);
                 }
             }
 
@@ -300,8 +301,8 @@ class ChartController {
                     conceptKeys.add(concept_key);
 
                 for (ck in conceptKeys) {
-                    if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1);
-                    if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2);
+                    if (s1) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id1, user);
+                    if (s2) i2b2HelperService.addConceptDataToTable(table, ck, result_instance_id2, user);
                 }
             }
 
