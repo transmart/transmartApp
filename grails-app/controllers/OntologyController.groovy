@@ -6,7 +6,6 @@ import grails.converters.JSON
 import org.transmart.biomart.Experiment
 import org.transmart.searchapp.AuthUser
 import org.transmartproject.core.dataquery.highdim.HighDimensionResource
-import org.transmartproject.core.dataquery.highdim.Platform
 import org.transmartproject.core.dataquery.highdim.assayconstraints.AssayConstraint
 import org.transmartproject.core.ontology.ConceptsResource
 import org.transmartproject.core.ontology.OntologyTerm
@@ -98,12 +97,22 @@ class OntologyController {
                     .getSubResourcesAssayMultiMap([dataTypeConstraint])
         }
 
+        if (i2b2HelperService.isXTrialsConcept(params.conceptKey)) {
+            def node = conceptsResourceService.getByKey(params.conceptKey);
+            def tags = [];
+            if (node.modifierDimension.tooltip != null) {
+                tags.add(new i2b2.OntNodeTag(tagtype: 'Details', tag: node.modifierDimension.tooltip))
+                model.tags = tags;
+            }
+        }
+        else {
+            //ontology term tags
+            def tagsMap = ontologyTermTagsResourceService.getTags([ term ] as Set, false)
+            model.tags = tagsMap?.get(term)
+        }
+
         //browse tab tags
         model.browseStudyInfo = getBrowseStudyInfo(term)
-
-        //ontology term tags
-        def tagsMap = ontologyTermTagsResourceService.getTags([ term ] as Set, false)
-        model.tags = tagsMap?.get(term)
 
         render template: 'showDefinition', model: model
     }
