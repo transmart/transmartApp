@@ -42,7 +42,7 @@
             NumOfSubsets: 2,
             NumOfQueryCriteriaGroups: 20,
             NumOfQueryCriteriaGroupsAtStart: 3,
-            MaxSearchResults: 100,
+            MaxSearchResults: 500,
             ONTUrl: '',
             usePMHost: '${grailsApplication.config.com.recomdata.datasetExplorer.usePMHost}',
             Config: 'jj',

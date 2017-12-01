@@ -56,7 +56,7 @@ class OntologyService {
             log.debug(nodeQuery)
 
             myCount = i2b2.OntNode.executeQuery(countQuery)[0]
-            myNodes = i2b2.OntNode.executeQuery(nodeQuery, [max: 100])
+            myNodes = i2b2.OntNode.executeQuery(nodeQuery)
 
         } else {
 
@@ -69,7 +69,7 @@ class OntologyService {
 
             def nodeQuery = "SELECT o from i2b2.OntNode o WHERE o.sourcesystemcd IN (:scdArg) AND (_searchterms_) AND o.visualattributes NOT like '" + visualAttrHiddenWild + "'"
             nodeQuery = nodeQuery.replace("_searchterms_", searchtermstring)
-            myNodes = i2b2.OntNode.executeQuery(nodeQuery, [scdArg: allSystemCds], [max: 100])
+            myNodes = i2b2.OntNode.executeQuery(nodeQuery, [scdArg: allSystemCds])
         }
         //}
 
