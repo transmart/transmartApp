@@ -399,9 +399,11 @@ class ChartService {
                 plot?.backgroundPaint = transparent
 
                 if (plot instanceof CategoryPlot || plot instanceof XYPlot) {
-
+                    float[] dashArray = [2.0F, 2.0F] as float[]
                     plot?.domainGridlinePaint = Color.LIGHT_GRAY
+                    plot?.domainGridlineStroke = new BasicStroke(1F, 0, 2, 0.0F, dashArray, 0.0F);
                     plot?.rangeGridlinePaint = Color.LIGHT_GRAY
+                    plot?.rangeGridlineStroke = new BasicStroke(1F, 0, 2, 0.0F, dashArray, 0.0F);
                     plot?.renderer?.setSeriesPaint(0, subset1SeriesColor)
                     plot?.renderer?.setSeriesPaint(1, subset2SeriesColor)
                     plot?.renderer?.setSeriesOutlinePaint(0, subset1SeriesOutlineColor)
