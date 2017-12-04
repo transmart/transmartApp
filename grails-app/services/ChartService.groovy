@@ -2,6 +2,7 @@ import org.apache.commons.math.stat.inference.TestUtils
 import org.jfree.chart.ChartFactory
 import org.jfree.chart.ChartRenderingInfo
 import org.jfree.chart.JFreeChart
+import org.jfree.chart.axis.AxisLocation
 import org.jfree.chart.axis.CategoryAxis
 import org.jfree.chart.axis.NumberAxis
 import org.jfree.chart.axis.ValueAxis
@@ -112,8 +113,8 @@ class ChartService {
         }
 
         // Let's build our age diagrams now that we have all the points in
-        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle, title: "Age")
-        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle, title: "Age")
+        subsets.commons.ageHisto = getSVGChart(type: 'histogram', data: ageHistogramHandle, title: "Age Histogram", xlabel: "Age", ylabel: "Count")
+        subsets.commons.agePlot = getSVGChart(type: 'boxplot', data: agePlotHandle, title: "Age Comparison", ylabel: "Age")
 
         subsets
     }
@@ -309,7 +310,7 @@ class ChartService {
 
                 // Getting the concept data
                 p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance, user)
-                p.conceptBar = getSVGChart(type: 'bar', data: p.conceptData, size: [width: 400, height: p.conceptData.size() * 15 + 80])
+                p.conceptBar = getSVGChart(type: 'bar', data: p.conceptData, size: [width: 400, height: p.conceptData.size() * 15 + 80], ylabel: "Count", xlabel: "Concept")
             }
 
             // Let's calculate the χ² test if possible
@@ -462,7 +463,6 @@ class ChartService {
                     chart.plot.renderer.setSeriesPaint(0, subset2SeriesColor)
                     chart.plot.renderer.setSeriesOutlinePaint(0, subset2SeriesOutlineColor)
                 }
-                chart.legend.visible = false
 
                 break;
 
@@ -585,6 +585,7 @@ class ChartService {
 
                 chart = ChartFactory.createBarChart(title, xlabel, ylabel, set, PlotOrientation.HORIZONTAL, false, true, false)
                 chart.setChartParameters()
+                chart.getCategoryPlot().setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT)
 
                 chart.plot.renderer.setSeriesPaint(0, new Color(128, 193, 119))
                 chart.plot.renderer.setSeriesOutlinePaint(0, new Color(84, 151, 12))
