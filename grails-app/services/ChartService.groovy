@@ -171,6 +171,7 @@ class ChartService {
         result.commons.conceptKey = concept.substring(concept.substring(3).indexOf('\\') + 3)
         result.commons.conceptName = i2b2HelperService.getShortNameFromKey(concept);
         result.commons.conceptPath = concept
+        result.commons.conceptShortName = i2b2HelperService.getColumnNameFromKey(concept)
         result.commons.omics_params = args.omics_params ?: null
 
         if (i2b2HelperService.isValueConceptCode(result.commons.conceptCode)) {
@@ -198,8 +199,8 @@ class ChartService {
             }
 
             // Let's build our concept diagrams now that we have all the points in
-            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize)
-            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle, size: chartSize)
+            result.commons.conceptHisto = getSVGChart(type: 'histogram', data: conceptHistogramHandle, size: chartSize, ylabel: "Count", xlabel: result.commons.conceptShortName)
+            result.commons.conceptPlot = getSVGChart(type: 'boxplot', data: conceptPlotHandle, size: chartSize, ylabel: result.commons.conceptShortName)
 
             // Lets calculate the T test if possible
             if (result[1].exists && result[2].exists) {
