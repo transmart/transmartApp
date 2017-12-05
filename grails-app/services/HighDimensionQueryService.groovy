@@ -2,6 +2,7 @@ import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
 import groovy.sql.Sql
+import org.transmart.searchapp.AuthUser
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
 
