@@ -1582,6 +1582,7 @@ class I2b2HelperService {
                 WHERE pt.trial IN (""" + authStudiesString + """)
         ) base
         GROUP BY cat
+        ORDER BY cat
         """;
 
 //      String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
