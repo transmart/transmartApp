@@ -1555,6 +1555,7 @@ class I2b2HelperService {
                 ON ps.patient_num=pd.patient_num AND result_instance_id = ?
         ) base
         GROUP BY cat
+        ORDER BY cat
         """;
 
 //      String sqlt = """SELECT a.cat as demcategory, COALESCE(b.demcount,0) as demcount FROM
