@@ -73,7 +73,7 @@ class I2b2HelperService {
 			        from qt_patient_set_collection
 			        where result_instance_id = ?)""";
         sql.eachRow(sqlt, [result_instance_id], { row ->
-//            log.trace("row: " + row[0] + "," + row[1] + "," + row[2])
+            log.trace("row: " + row[0] + "," + row[1] + "," + row[2])
             def id = row[2];
             if (row[1]) {
                 def holder = []
@@ -82,7 +82,7 @@ class I2b2HelperService {
                     id = holder[1];
                 }
             }
-//            log.trace ("id = " + id)
+            log.trace ("id = " + id)
             if (!idSet.contains(id)) {
                 idSet.add(id)
                 values.add(row[0])
