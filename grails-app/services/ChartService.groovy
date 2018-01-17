@@ -19,8 +19,9 @@ import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.statistics.*
 import org.jfree.graphics2d.svg.SVGGraphics2D
-import org.jfree.ui.RectangleInsets
+import org.jfree.chart.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
+import org.transmart.searchapp.AuthUser
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.exceptions.EmptySetException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
@@ -36,6 +37,7 @@ class ChartService {
     def i2b2HelperService
     def highDimensionQueryService
     def highDimensionResourceService
+    def springSecurityService
     def public keyCache = []
 
     def getSubsetsFromRequest(params) {
@@ -83,11 +85,12 @@ class ChartService {
             // First we get the Query Definition
             i2b2HelperService.renderQueryDefinition(p.instance, "Query Summary for Subset ${n}", writer)
             p.query = output.toStringAndFlush()
+            def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
 
             // Let's fetch the patient count
-            p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+            p.patientCount = i2b2HelperService.getPatientSetSize(p.instance, user)
             // Getting the age data
-            p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance).toList()
+            p.ageData = i2b2HelperService.getPatientDemographicValueDataForSubset("AGE_IN_YEARS_NUM", p.instance, user).toList()
             if (p.ageData) {
                 p.ageStats = BoxAndWhiskerCalculator.calculateBoxAndWhiskerStatistics(p.ageData)
                 ageHistogramHandle["Subset $n"] = p.ageData
@@ -97,12 +100,12 @@ class ChartService {
             def moveKeyToEndOfMap = { map,key -> if (map.containsKey(key)) {def v=map[key];map.remove(key);map[key]=v} }
 
             // Sex chart has to be generated for each subset
-            p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance)
+            p.sexData = i2b2HelperService.getPatientDemographicDataForSubset("sex_cd", p.instance, user)
             moveKeyToEndOfMap(p.sexData,'')
             p.sexPie = getSVGChart(type: 'pie', data: p.sexData, title: "Sex")
 
             // Same thing for Race chart
-            p.raceData = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", p.instance)
+            p.raceData = i2b2HelperService.getPatientDemographicDataForSubset("race_cd", p.instance, user)
             moveKeyToEndOfMap(p.raceData,'')
             p.racePie = getSVGChart(type: 'pie', data: p.raceData, title: "Race")
 
@@ -152,6 +155,8 @@ class ChartService {
         def concept = args.concept ?: null
         def chartSize = args.chartSize ?: null
 
+        def user = AuthUser.findByUsername(springSecurityService.getPrincipal().username)
+
         // We create our result holder and initiate it from subsets
         def result = [:]
         subsets.each { k, v ->
@@ -180,7 +185,7 @@ class ChartService {
             }.each { n, p ->
 
                 if (p.instance != "")
-                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance, user)
                 else
                     p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
@@ -249,7 +254,7 @@ class ChartService {
                 }
 
                 if (p.instance != "")
-                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance, user)
                 else
                     p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
@@ -298,12 +303,12 @@ class ChartService {
             }.each { n, p ->
 
                 if (p.instance != "")
-                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance)
+                    p.patientCount = i2b2HelperService.getPatientSetSize(p.instance, user)
                 else
                     p.patientCount = i2b2HelperService.getPatientCountForConcept(concept)
 
                 // Getting the concept data
-                p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance)
+                p.conceptData = i2b2HelperService.getConceptDistributionDataForConcept(concept, p.instance, user)
                 p.conceptBar = getSVGChart(type: 'bar', data: p.conceptData, size: [width: 400, height: p.conceptData.size() * 15 + 80])
             }
 
@@ -450,6 +455,7 @@ class ChartService {
 
                 chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)
                 chart.setChartParameters()
+
                 // If the first series (index 0) is related to 'Subset 2' i.s.o. 'Subset 1'
                 // (e.g. because 'Subset 1' is empty or if no data is avaialable for the given concept)
                 // adjust the default coloring scheme
@@ -554,7 +560,6 @@ class ChartService {
                 chart.plot.maximumLabelWidth = 0.2
                 chart.plot.shadowPaint = transparent
                 chart.plot.interiorGap = 0
-                chart.plot.baseSectionOutlinePaint = new Color(213, 18, 42)
 
                 data.eachWithIndex { o, i ->
                     if(o.key){
@@ -579,8 +584,9 @@ class ChartService {
                 }
 
                 chart = ChartFactory.createBarChart(title, xlabel, ylabel, set, PlotOrientation.HORIZONTAL, false, true, false)
-                chart.setChartParameters()
+                chart.setChartParameters();
 
+                chart.getCategoryPlot().setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT)
                 chart.plot.renderer.setSeriesPaint(0, new Color(128, 193, 119))
                 chart.plot.renderer.setSeriesOutlinePaint(0, new Color(84, 151, 12))
 
