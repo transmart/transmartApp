@@ -47,6 +47,10 @@ grails.project.dependency.resolution = {
 
             mavenRepo "https://repo.transmartfoundation.org/content/repositories/public/"
 
+            // -- Genome Browser plugin --
+            //   to inclue the plugin, uncomment the following line
+            //   and see related comment block below
+            // mavenRepo "https://repo.thehyve.nl/content/repositories/public/"
         }
     } else {
         dm.configureRepositories delegate
