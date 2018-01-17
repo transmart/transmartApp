@@ -19,7 +19,7 @@ import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.statistics.*
 import org.jfree.graphics2d.svg.SVGGraphics2D
-import org.jfree.ui.RectangleInsets
+import org.jfree.chart.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
 import org.transmartproject.core.dataquery.highdim.projections.Projection
 import org.transmartproject.core.exceptions.EmptySetException
@@ -450,6 +450,7 @@ class ChartService {
 
                 chart = ChartFactory.createHistogram(title, xlabel, ylabel, set, PlotOrientation.VERTICAL, true, true, false)
                 chart.setChartParameters()
+
                 // If the first series (index 0) is related to 'Subset 2' i.s.o. 'Subset 1'
                 // (e.g. because 'Subset 1' is empty or if no data is avaialable for the given concept)
                 // adjust the default coloring scheme
@@ -554,7 +555,6 @@ class ChartService {
                 chart.plot.maximumLabelWidth = 0.2
                 chart.plot.shadowPaint = transparent
                 chart.plot.interiorGap = 0
-                chart.plot.baseSectionOutlinePaint = new Color(213, 18, 42)
 
                 data.eachWithIndex { o, i ->
                     if(o.key){
@@ -579,8 +579,9 @@ class ChartService {
                 }
 
                 chart = ChartFactory.createBarChart(title, xlabel, ylabel, set, PlotOrientation.HORIZONTAL, false, true, false)
-                chart.setChartParameters()
+                chart.setChartParameters();
 
+                chart.getCategoryPlot().setRangeAxisLocation(AxisLocation.BOTTOM_OR_RIGHT)
                 chart.plot.renderer.setSeriesPaint(0, new Color(128, 193, 119))
                 chart.plot.renderer.setSeriesOutlinePaint(0, new Color(84, 151, 12))
 
