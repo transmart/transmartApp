@@ -991,39 +991,48 @@ Ext.onReady(function () {
     );
 
     if (!this.omicsfilterwin) {
+        var omicsFilterWinButtons = [
+            {
+                text: 'No filter',
+                handler: function () {
+                    applyOmicsNoFilterDialog();
+                }
+            },
+            {
+                text: 'OK',
+                handler: function () {
+                    applyOmicsFilterDialog(true);
+                }
+            }
+            ,
+            {
+                text: 'Cancel',
+                handler: function () {
+                    applyOmicsFilterDialog(false);
+                }
+            }
+        ];
+        if (GLOBAL.hiDomePopUpHelpURL) {
+            omicsFilterWinButtons.push({
+                text: 'Help',
+                handler: function () {
+                    window.open(GLOBAL.hiDomePopUpHelpURL, '_blank').focus();
+                },
+                iconCls : 'contextHelpBtn'
+            });
+        }
         omicsfilterwin = new Ext.Window(
             {
                 id: 'omicsFilterWindow',
                 title: '',
                 layout: 'border',
-                width: 270,
                 height: 350,
                 closable: false,
                 plain: true,
                 modal: true,
                 border: false,
                 items: [omicsfilterpanel],
-                buttons: [
-                    {
-                        text: 'No filter',
-                        handler: function () {
-                            applyOmicsNoFilterDialog();
-                        }
-                    },
-                    {
-                        text: 'OK',
-                        handler: function () {
-                            applyOmicsFilterDialog(true);
-                        }
-                    }
-                    ,
-                    {
-                        text: 'Cancel',
-                        handler: function () {
-                            applyOmicsFilterDialog(false);
-                        }
-                    }
-                ],
+                buttons: omicsFilterWinButtons,
                 tools: []
             });
         omicsfilterwin.show();
@@ -1371,10 +1380,11 @@ function setupOntTree(id_in, title_in) {
             }
         }
     });
-    
+
     ontTree.on('beforecollapsenode', function (node, deep, anim) {
         Ext.Ajax.request({
-            url: removeNodeDseURL + "?node=" + node.id,
+            url: removeNodeDseURL,
+            params: { node: node.id },
             method: 'POST',
             success: function (result, request) {
             },
@@ -1398,7 +1408,8 @@ function setupOntTree(id_in, title_in) {
 
         if (expand) {
             Ext.Ajax.request({
-                url: addNodeDseURL + "?node=" + node.id,
+                url: addNodeDseURL,
+                params: { node: node.id },
                 method: 'POST',
                 success: function (result, request) {
                 },

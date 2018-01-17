@@ -137,7 +137,7 @@ function convertNodeToConcept(node)
 
 	return new Concept(name, key, level, tooltip, tablename, dimcode, comment, normalunits, oktousevalues, value, nodeType, visualattributes, applied_path, modifiedNode);
 }
-function createPanelItemNew(panel, concept)
+function createPanelItemNew(panel, concept, hideUpdateMenuItems)
 {
 	var li=document.createElement('div'); //was li
 	//convert all object attributes to element attributes so i can get them later (must be a way to keep them in object?)
@@ -227,7 +227,7 @@ function createPanelItemNew(panel, concept)
 	li.appendChild(textElem);
 	panel.appendChild(li);
 	Ext.get(li).addListener('click',conceptClick);
-	Ext.get(li).addListener('contextmenu',conceptRightClick);
+	Ext.get(li).addListener('contextmenu',conceptRightClickBuilder(!!hideUpdateMenuItems));
 	new Ext.ToolTip({ target:li, html:concept.key, dismissDelay:10000 });
 	li.concept=concept;
 	//return the node
@@ -327,57 +327,64 @@ function selectConcept(concept)
 	selectedConcept.className=selectedConcept.className+" selected";
 }
 
-function conceptRightClick(event)
-{
-	var conceptnode=this.dom;
-	selectConcept(conceptnode, true);
-	var conceptid=this.dom.attributes.conceptid.nodeValue;
-	var comment=this.dom.attributes.conceptcomment.nodeValue;
+function conceptRightClickBuilder(hideUpdateMenuItems) {
+    return function conceptRightClick(event) {
+        var conceptnode=this.dom;
+        selectConcept(conceptnode, true);
+        var conceptid=conceptnode.attributes.conceptid.nodeValue;
+        var comment=conceptnode.attributes.conceptcomment.nodeValue;
 
-	if (!this.contextMenuConcepts) {
-	this.contextMenuConcepts = new Ext.menu.Menu({
-		id: 'contextMenuConcepts',
-		items: [{
-			text: 'Delete', handler: function() {
-				selectedDiv.removeChild(selectedConcept);
-				removeUselessPanels();
-				invalidateSubset(getSubsetFromPanel(selectedDiv));
-			}
-		},{
-			id: 'setvaluemenu',
-			text: 'Set Value',
-			handler:function() {
-				showSetValueDialog();
-			}
-		}, {
-			id: 'geneexprfiltermenu',
-			text: 'Set Filter',
-			handler:function() {
-				// set the global variable for repopulating the filter window
-				omicsFilterRepopulateWindow = selectedConcept.attributes;
+        var menuItems = [
+            {
+                text: 'Delete', handler: function () {
+                selectedDiv.removeChild(selectedConcept);
+                removeUselessPanels();
+                invalidateSubset(getSubsetFromPanel(selectedDiv));
+            }
+            }
+        ];
 
-				// create mock node object for highDimensionalConceptDropped
-				var node = {id: selectedConcept.attributes.conceptid.nodeValue}
-				highDimensionalConceptDropped(node, true);
-			}
-		}, {
-			text: 'Show Definition',
-			handler: function() {
-				showConceptInfoDialog(conceptid, conceptid, comment);}
-			}]
-		});
-	}
-	var xy = event.getXY();
-	this.contextMenuConcepts.showAt(xy);
-	var m=Ext.getCmp('setvaluemenu');
-	var o=Ext.getCmp('geneexprfiltermenu');
-	m.hide();
-	o.hide();
-	if(this.dom.attributes.oktousevalues.nodeValue=='Y')
-		m.show();
-	else if (this.dom.attributes.oktousevalues.nodeValue == 'H')
-		o.show();
-	return false;
+        if (!hideUpdateMenuItems && conceptnode.attributes.oktousevalues.nodeValue == 'Y') {
+            menuItems.push({
+                id: 'setvaluemenu',
+                text: 'Set Value',
+                handler: function () {
+                    showSetValueDialog();
+                }
+            });
+        }
+
+        if (!hideUpdateMenuItems && conceptnode.attributes.oktousevalues.nodeValue == 'H') {
+            menuItems.push({
+                id: 'geneexprfiltermenu',
+                text: 'Set Filter',
+                handler: function () {
+                    // set the global variable for repopulating the filter window
+                    omicsFilterRepopulateWindow = selectedConcept.attributes;
+
+                    // create mock node object for highDimensionalConceptDropped
+                    var node = {id: selectedConcept.attributes.conceptid.nodeValue}
+                    highDimensionalConceptDropped(node, true);
+                }
+            });
+        }
+
+        menuItems.push({
+            text: 'Show Definition',
+            handler: function () {
+                showConceptInfoDialog(conceptid, conceptid, comment);
+            }
+        });
+
+        this.contextMenuConcepts = new Ext.menu.Menu({
+            id: 'contextMenuConcepts',
+            items: menuItems
+        });
+        var xy = event.getXY();
+        this.contextMenuConcepts.showAt(xy);
+
+        return false;
+    }
 }
 
 function setValue(conceptnode, setvaluemode, setvalueoperator, setvaluehighlowselect, setvaluehighvalue, setvaluelowvalue, setvalueunits)

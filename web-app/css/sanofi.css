@@ -291,6 +291,8 @@ table.menuDetail th.menuVisited {
 .greybutton.addanalysis { background-image: url('../images/addanalysis.png'); }
 .greybutton.close { background-image: url('../images/small_cross.png'); }
 .greybutton.deletefolder { background-image: url('../images/bin_closed.png'); }
+.greybutton.deleteprogram { background-image: url('../images/bin_closed.png'); }
+.greybutton.deletestudy { background-image: url('../images/bin_closed.png'); }
 .greybutton.uploadfiles { background-image: url('../images/text.png'); } 
 
 .greybutton.disabled {

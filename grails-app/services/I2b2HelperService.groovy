@@ -1363,6 +1363,10 @@ class I2b2HelperService {
                     if (value == null) {
                         value = "Y";
                     }
+                    if (isURL(value)) {
+                        /* Embed URL in a HTML Link */
+                        value = makeHtmlLink(value)
+                    }
                     if (tablein.containsRow(subject)) /*should contain all subjects already if I ran the demographics first*/ {
                         tablein.getRow(subject).put(columnid, value.toString());
                     } else /*fill the row*/ {
@@ -1418,12 +1422,16 @@ class I2b2HelperService {
                 }
                 if (isURL(value)) {
                     /* Embed URL in a HTML Link */
-                    value = "<a href=\"" + value + "\" target=\"_blank\">" + value + "</a>"
+                    value = makeHtmlLink(value)
                 }
                 dataList.add(['subject':subject, 'value':value])
             })
         }
         return dataList
+    }
+
+    private static String makeHtmlLink(String value) {
+        """<a href="${value}" target="_blank">${value}</a>"""
     }
 
     def insertConceptDataIntoTable(String columnid, String concept_key, String result_instance_id,
