@@ -19,6 +19,7 @@ import org.jfree.data.general.Dataset
 import org.jfree.data.general.DefaultPieDataset
 import org.jfree.data.statistics.*
 import org.jfree.graphics2d.svg.SVGGraphics2D
+import org.jfree.chart.axis.AxisLocation
 import org.jfree.chart.ui.RectangleInsets
 import org.jfree.util.ShapeUtilities
 import org.transmart.searchapp.AuthUser
