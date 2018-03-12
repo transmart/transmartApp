@@ -34,7 +34,7 @@
 	    <strong>Code Snippet:</strong><br/>
 	    <div class="snippet">
 	      <g:each var="cs" in="S{exception.codeSnippet}">
-		${cs?.encodeAsHTML()}<br/>
+		${cs?.encodeAsHTML()}
 	      </g:each>
 	    </div>
 	  </g:if>
@@ -45,7 +45,7 @@
 	<div class="stack">
 	  <pre>
 	    <g:each in="${exception.stackTraceLines}">
-	      ${it.encodeAsHTML()}<br/>
+	      ${it.encodeAsHTML()}
 	    </g:each>
 	  </pre>
 	</div>
