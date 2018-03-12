@@ -1,11 +1,12 @@
 import com.recomdata.export.ExportColumn
 import com.recomdata.export.ExportRowNew
 import com.recomdata.export.ExportTableNew
+import org.transmart.searchapp.AuthUser
 import groovy.sql.Sql
 import org.transmartproject.core.exceptions.InvalidRequestException
 import org.transmartproject.core.querytool.ConstraintByOmicsValue
-
 import static org.transmart.authorization.QueriesResourceAuthorizationDecorator.checkQueryResultAccess
+
 /**
  * Author: Denny Verbeeck (dverbeec@its.jnj.com)
  */
