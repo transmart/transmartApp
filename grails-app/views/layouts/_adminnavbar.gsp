@@ -193,6 +193,8 @@
         </h1>
         <ul class="navlist">
             <li>
+                <span class="adminMenuButton"><g:link class="list" controller="configInfo"
+                                                      action="index">Configuration Detail</g:link></span>
                 <span class="adminMenuButton"><g:link class="list" controller="buildInfo"
                                                       action="index">Build Information</g:link></span>
                 <span class="adminMenuButton"><g:link class="list" controller="statusInfo"
