@@ -89,7 +89,7 @@
                         <div class="x-box-mr">
                             <div class="x-box-mc" style="text-align:left">
                                 <h3 style="margin-bottom:20px; text-align:left; font-size:11px; color: #006dba;">
-                                    Please login...
+                                    ${grailsApplication.config.com.recomdata.appTitle}
                                 </h3>
                                 <g:if test='${flash.message}'>
                                     <div class='login_message' style="color:red; font-size:12px;">${flash.message}</div>
@@ -135,14 +135,17 @@
                                                 <br>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td colspan="2" style="font-size:10px;">
-                                                Not a user ? Contact <a
-                                                    href="mailto:${grailsApplication.config.com.recomdata.adminEmail}"
-                                                    target="_blank"
-                                                    style="text-decoration:underline;color:#0000FF">administrator</a> to request an account.
-                                            </td>
-                                        </tr>
+                                        <g:if test='${grailsApplication.config.com.recomdata.adminEmail}'>
+                                            <tr>
+                                                <td colspan="2" style="font-size:10px;">
+                                                    Not a user ? Contact <a
+                                                        href="mailto:${grailsApplication.config.com.recomdata.adminEmail}"
+                                                        target="_blank"
+                                                        style="text-decoration:underline;color:#0000FF">administrator</a>
+							to request an account.
+                                                </td>
+                                            </tr>
+                                        </g:if>
                                         <g:if test='${grailsApplication.config.org.transmart.security.samlEnabled}'>
                                             <tr>
                                                 <td colspan="2" style="font-size:10px;">
@@ -178,8 +181,23 @@
         <tr><td>&nbsp;</td></tr>
         <tr>
             <td style="text-align:center;vertical-align:middle;margin-left:-40px; padding-top: 10px;">
+                <g:set var="projectName" value="${grailsApplication.config?.com?.recomdata?.projectName}"/>
+                <g:set var="projectLogo" value="${grailsApplication.config?.com?.recomdata?.projectLogo}"/>
                 <g:set var="providerName" value="${grailsApplication.config?.com?.recomdata?.providerName}"/>
                 <g:set var="providerLogo" value="${grailsApplication.config?.com?.recomdata?.providerLogo}"/>
+                <g:if test="${projectName}">
+		    <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">Provided by&nbsp;</span>
+		    <g:if test="{$projectLogo}">
+                        <img src="${projectLogo}" alt="${projectName}"
+                             style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+                    </g:if>
+                    <g:else>
+		        <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">${projectName}</span>
+                    </g:else>
+                </g:if>
+                <g:if test="${projectName && providerName}">
+		    <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">&nbsp;and&nbsp;</span>
+                </g:if>
                 <g:if test="${providerName}">
                     <a id="providerpowered" target="_blank"
                        href="${grailsApplication.config?.com?.recomdata?.providerURL}" style="text-decoration: none;">
@@ -190,8 +208,7 @@
                                      style="height:35px;vertical-align:middle;margin-bottom: 12px;">
                             </g:if>
                             <g:else>
-                               <img src="${resource(dir: 'images', file: 'provider_logo.png')}" alt="${providerName}"
-                                     style="height:35px;vertical-align:middle;margin-bottom: 12px;">
+			        <span style="font-size:10px;display: inline-block;line-height: 35px; height: 35px;">${providerName}</span>
                             </g:else>
                         </div>
                     </a>
