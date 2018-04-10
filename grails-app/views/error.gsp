@@ -33,7 +33,7 @@
 	  <g:if test="${exception.lineNumber > 0}">
 	    <strong>Code Snippet:</strong><br/>
 	    <div class="snippet">
-	      <g:each var="cs" in="S{exception.codeSnippet}">
+	      <g:each var="cs" in="${exception.codeSnippet}">
 		${cs?.encodeAsHTML()}
 	      </g:each>
 	    </div>
