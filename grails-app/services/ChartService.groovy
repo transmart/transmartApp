@@ -518,7 +518,7 @@ class ChartService {
                 final NumberAxis yAxis = new NumberAxis(ylabel);
                 yAxis.setAutoRangeIncludesZero(false);
                 final BoxAndWhiskerRenderer boxAndWhiskerRenderer = new BoxAndWhiskerRenderer();
-                boxAndWhiskerRenderer.setBaseToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
+                boxAndWhiskerRenderer.setDefaultToolTipGenerator(new BoxAndWhiskerToolTipGenerator());
                 final CategoryPlot catplot = new CategoryPlot(set, xAxis, yAxis, boxAndWhiskerRenderer);
 
                 // add the points
