@@ -6,9 +6,7 @@
             <g:if test="${concept.value}">
                 <hr style="margin-bottom: 30px"/>
                 <div class="analysistitle" title="${concept.value.commons.conceptPath}">Analysis of ${concept.value.commons.conceptName}</div>
-                <g:if test="${concept.value?.commons?.omics_params != null}">
-                    <div class="analysissubtitle">${concept.value?.commons?.conceptKey ?: ""}</div>
-                </g:if>
+		<div class="analysissubtitle">${concept.value?.commons?.conceptTrimmed ?: ""}</div>
                 <div style="margin-top: -15px; padding-bottom: 10px;">
                     ${concept.value?.commons?.testmessage}<br/>
                     <g:if test="${concept.value?.commons.pvalue != null}">

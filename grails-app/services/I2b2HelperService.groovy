@@ -133,19 +133,42 @@ class I2b2HelperService {
     }
 
     /**
-     * Gets the short display name from a concept key
+     * Gets the trimmed last part of the display name from a concept key
+     */
+    def String getTrimmedNameFromKey(String concept_key, int maxTrimmed = 125) {
+        String[] splits = concept_key.split("\\\\");
+
+        String concept_name = ""
+        String node_name = ""
+        int fullName = 1
+        int nameLength
+
+        // skip 3 levels \\Top Node\ parse from repeated \Top Node\...
+        for(int i = (splits.length); i > 1; i--)  {
+            node_name = splits[i-1]
+            nameLength = concept_name.length() + node_name.length()
+            if(nameLength > maxTrimmed) {
+                concept_name = "..." + concept_name
+                fullName = 0
+                break
+            }
+
+            concept_name = "\\" + node_name + concept_name;
+        }
+
+        return concept_name;
+    }
+
+    /**
+     * Gets the last part of the display name from a concept key
      */
     def String getShortNameFromKey(String concept_key) {
         String[] splits = concept_key.split("\\\\");
 
         String concept_name = "";
-        if (splits.length > 2) {
-            concept_name = "...\\" + splits[splits.length - 3] + "\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
-        } else if (splits.length > 1) {
-            concept_name = "...\\" + splits[splits.length - 2] + "\\" + splits[splits.length - 1];
-        } else {
-            concept_name = splits[splits.length - 1]
-        };
+
+        concept_name = splits[splits.length - 1]
+
         return concept_name;
     }
 
@@ -601,17 +624,12 @@ class I2b2HelperService {
      * @return true if i2b2metadata.i2b2.c_visualattributes equals "LAH" for the given concept code
      */
     def Boolean isHighDimensionalConceptCode(String concept_code) {
-        log.info "Checking isHighDimensionalConceptCode for code:" + concept_code
         Boolean res = false;
         Sql sql = new Sql(dataSource);
         String sqlt = "SELECT C_VISUALATTRIBUTES FROM I2B2METADATA.I2B2 WHERE C_BASECODE = ?";
         sql.eachRow(sqlt, [concept_code], { row ->
             if (row.c_visualattributes == "LAH") {
                 res = true;
-                log.info("Positive for high dimensional node");
-            }
-            else {
-                log.info("Negative for high dimensional node");
             }
         })
 
