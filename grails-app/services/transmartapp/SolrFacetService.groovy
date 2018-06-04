@@ -60,7 +60,7 @@ class SolrFacetService {
                 if (page.equals('RWG')) {
                     categoryResultIds += getFolderList(xml)
                     if (categoryName.equals("GENE")) {
-                        searchLog += "Getting analyses for gene categories..."
+                        searchLog += "Getting browse folders for gene categories..."
                         categoryResultIds += getAnalysesForGenes(termList, operator, false)
                     }
                 } else {
