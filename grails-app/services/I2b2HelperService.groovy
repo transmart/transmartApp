@@ -501,9 +501,11 @@ class I2b2HelperService {
         log.debug("getPatientSetSize(): result_instance_id = " + result_instance_id);
         Integer i = 0;
         Sql sql = new Sql(dataSource);
+        // original code counted split_part(pd.sourcesystem_cd , ':', 2)
+        // but this is a postgres-only built-in function
         String sqlt = """select count(*) as patcount
             FROM (
-                SELECT DISTINCT split_part(pd.sourcesystem_cd , ':', 2) AS subject_id
+                SELECT DISTINCT pd.sourcesystem_cd AS subject_id
                 FROM qt_patient_set_collection ps
                     JOIN patient_dimension pd
                     ON ps.patient_num=pd.patient_num
