@@ -145,7 +145,9 @@ class ChartService {
         }.each {
             def key = it.concept_key + it.omics_selector + " - " + it.omics_projection_type
             if (!concepts.containsKey(key))
-              concepts[key] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
+		if (i2b2HelperService.isHighDimensionalConceptKey(it.concept_key)) {
+              		concepts[key] = getConceptAnalysis(concept: it.concept_key, subsets: subsets, omics_params: it)
+		}
         }
         concepts
     }
